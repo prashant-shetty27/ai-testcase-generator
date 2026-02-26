@@ -3,47 +3,29 @@ from testcase_generator import generate_testcases
 from engines.boundary_engine import generate_boundary_tests
 from engines.parameter_engine import generate_parameter_tests
 from engines.platform_engine import generate_platform_checks
-from engines.dedup_engine import deduplicate_full_suite
-from engines.risk_engine import apply_risk_to_tests
 
-def generate_full_test_suite(requirement):
+def generate_full_test_suite(request):
 
-    analysis = analyze_requirement(requirement)
-
-    analysis["platforms"] = [
-        "web",
-        "mobile_web",
-        "android_app",
-        "ios_app"
-    ]
+    analysis = analyze_requirement(request.requirement)
+    analysis["platforms"] = request.platforms
 
     tests = generate_testcases(analysis)
 
-    if not isinstance(tests, dict):
-       raise ValueError("AI returned invalid test structure")
-
-    # platform tests
-    tests.setdefault("platform_tests", [])
-    tests["platform_tests"].extend(
-        generate_platform_checks(
-            analysis.get("feature", "Feature"),
+    # Platform tests
+    if request.include_platform_tests:
+        tests["platform_tests"] = generate_platform_checks(
+            analysis["feature"],
             analysis["platforms"]
-    )
-)
+        )
 
-    # parameter negatives
-    tests.setdefault("negative_tests", [])
-    tests["negative_tests"].extend(generate_parameter_tests(analysis))
+    # Parameter negative tests
+    if request.include_parameter_tests:
+        tests.setdefault("negative_tests", [])
+        tests["negative_tests"].extend(generate_parameter_tests(analysis))
 
-    # boundary tests
-    tests.setdefault("boundary_value_tests", [])
-    tests["boundary_value_tests"].extend(generate_boundary_tests(analysis))
-
-
-    # ✅ Remove duplicates across engines
-    tests = deduplicate_full_suite(tests)
-
-    # ✅ Apply risk levels to tests
-    tests = apply_risk_to_tests(tests)
+    # Boundary tests
+    if request.include_boundary_tests:
+        tests.setdefault("boundary_value_tests", [])
+        tests["boundary_value_tests"].extend(generate_boundary_tests(analysis))
 
     return tests

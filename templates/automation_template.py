@@ -1,24 +1,22 @@
-def get_headers():
-    return [
-        "Test ID",
-        "Test Name",
-        "Preconditions",
-        "Test Steps",
-        "Assertions",
-        "Automation Candidate",
-        "Priority"
-    ]
+class AutomationTemplate:
 
+    @staticmethod
+    def map_testcase(category, tc):
+        steps = tc.get("steps", [])
 
-def map_testcase(category, tc):
-    return [
-        tc.get("testcase_id"),
-        tc.get("scenario"),
-        "User exists and system available",
-        "\n".join(
-    [f"{i+1}. {step}" for i, step in enumerate(tc.get("steps", []))]
-),
-        tc.get("expected_result"),
-        "Yes" if category == "automation_candidates" else "No",
-        "High"
-    ]
+        # Format steps
+        if not steps:
+            steps_text = ""
+        elif len(steps) == 1:
+            steps_text = steps[0]
+        else:
+            steps_text = "\n".join([f"{i+1}. {step}" for i, step in enumerate(steps)])
+
+        return [
+            tc.get("testcase_id"),
+            category,
+            tc.get("scenario"),
+            steps_text,
+            tc.get("expected_result"),
+            "AUTOMATION_CANDIDATE"
+        ]

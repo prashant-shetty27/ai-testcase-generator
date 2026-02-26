@@ -1,30 +1,32 @@
 from openpyxl import Workbook
-import importlib
-from openpyxl.styles import Alignment
+from datetime import datetime
+from templates.manual_template import ManualTemplate
+from templates.automation_template import AutomationTemplate
 
-def export_to_excel(testcases, template_name="manual"):
-
-    template = importlib.import_module(
-        f"templates.{template_name}_template"
-    )
+def export_to_excel(tests, template_type="manual"):
 
     wb = Workbook()
     ws = wb.active
-    ws.title = "AI Testcases"
+    ws.title = "Test Cases"
 
-    # headers from template
-    ws.append(template.get_headers())
+    # Header
+    ws.append(["Testcase ID", "Category", "Scenario", "Steps", "Expected Result"])
 
-    for category, tests in testcases.items():
-        for tc in tests:
+    # Choose template
+    if template_type == "automation":
+        template = AutomationTemplate
+    else:
+        template = ManualTemplate
+
+    # Fill rows
+    for category, cases in tests.items():
+        for tc in cases:
             row_data = template.map_testcase(category, tc)
             ws.append(row_data)
 
-# Apply wrap text to the entire row
-    for cell in ws[ws.max_row]:
-        cell.alignment = Alignment(wrap_text=True, vertical="top")
+    # Unique filename to avoid Windows lock
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_path = f"generated_testcases_{template_type}_{timestamp}.xlsx"
 
-    file_path = f"generated_testcases_{template_name}.xlsx"
     wb.save(file_path)
-
     return file_path

@@ -1,24 +1,21 @@
-def get_headers():
-    return [
-        "TestCase ID",
-        "Scenario",
-        "Steps",
-        "Expected Result",
-        "Type",
-        "Status",
-        "Comments"
-    ]
+class ManualTemplate:
 
+    @staticmethod
+    def map_testcase(category, tc):
+        steps = tc.get("steps", [])
 
-def map_testcase(category, tc):
-    return [
-        tc.get("testcase_id"),
-        tc.get("scenario"),
-        "\n".join(
-    [f"{i+1}. {step}" for i, step in enumerate(tc.get("steps", []))]
-),
-        tc.get("expected_result"),
-        category,
-        "Draft",
-        ""
-    ]
+        # Format steps: number only if more than 1 step
+        if not steps:
+            steps_text = ""
+        elif len(steps) == 1:
+            steps_text = steps[0]
+        else:
+            steps_text = "\n".join([f"{i+1}. {step}" for i, step in enumerate(steps)])
+
+        return [
+            tc.get("testcase_id"),
+            category,
+            tc.get("scenario"),
+            steps_text,
+            tc.get("expected_result")
+        ]

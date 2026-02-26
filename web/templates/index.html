@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Testcase Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        textarea { width: 100%; height: 150px; }
+        button { padding: 10px 20px; margin-top: 10px; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>AI Testcase Generator</h1>
+
+    <label>Paste your requirement:</label>
+    <textarea id="requirement"></textarea>
+
+    <br/>
+    <button id="generateBtn" onclick="generate()">Generate Testcases</button>
+    <div class="result" id="result"></div>
+
+    <script>
+async function generate() {
+    const requirement = document.getElementById("requirement").value;
+    const resultDiv = document.getElementById("result");
+    const btn = document.getElementById("generateBtn");
+
+    if (!requirement || requirement.trim().length === 0) {
+        resultDiv.innerHTML = "❌ Please enter a requirement first.";
+        return;
+    }
+
+    // Disable button & show loading state
+    btn.disabled = true;
+    btn.innerText = "Generating...";
+    resultDiv.innerHTML = "⏳ Generating test cases, please wait...";
+
+    try {
+        const response = await fetch("/generate-tests", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                requirement: requirement,
+                template: "manual"
+            })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            resultDiv.innerHTML = "❌ Failed to generate test cases.<br/>" + errText;
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data.excel_file) {
+            resultDiv.innerHTML = "❌ Test cases generated, but file was not created.";
+            return;
+        }
+
+        resultDiv.innerHTML =
+            `✅ Test cases generated.<br/>
+             <a href="/download/${data.excel_file}">Download Excel</a>`;
+    } catch (err) {
+        resultDiv.innerHTML = "❌ Error while generating test cases: " + err;
+    } finally {
+        // Re-enable button after completion (success or failure)
+        btn.disabled = false;
+        btn.innerText = "Generate Testcases";
+    }
+}
+</script>
+</body>
+</html>
