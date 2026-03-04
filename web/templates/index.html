@@ -53,6 +53,39 @@
             font-size: 14px;
         }
 
+        .session-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fbff;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .session-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logout-link {
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .logout-link:hover {
+            color: var(--accent-2);
+        }
+
         .section {
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -283,6 +316,12 @@
 <main class="container">
     <h1 class="title">AI Testcase Generator</h1>
     <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
+    {% if user %}
+    <div class="session-bar">
+        <span class="session-user">Signed in as {{ user.email or user.name or "Slack User" }}</span>
+        <a class="logout-link" href="/auth/logout">Logout</a>
+    </div>
+    {% endif %}
 
     <form id="generateForm" action="/generate-form" method="post">
         <section class="section">

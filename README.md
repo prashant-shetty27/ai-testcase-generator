@@ -86,3 +86,31 @@ Optional env vars:
 - `RUN_LOG_FILE` (default: `./logs/run_logs.json`)
 - `RUN_LOG_MAX_ENTRIES` (default: `300`)
 - `RUN_LOG_TITLE_LIMIT` (default: `100`)
+
+## 7) Slack Login (SSO)
+
+Slack OpenID Connect auth is now supported.
+
+Required env vars:
+- `SESSION_SECRET` (required in production)
+- `SLACK_CLIENT_ID`
+- `SLACK_CLIENT_SECRET`
+- `SLACK_REDIRECT_URI` (optional; auto-derived from callback URL if not set)
+
+Optional access restrictions:
+- `SLACK_ALLOWED_TEAM_ID` (allow only one Slack workspace)
+- `SLACK_ALLOWED_EMAIL_DOMAIN` (allow only users from this email domain)
+
+Auth endpoints:
+- `GET /auth/slack/login`
+- `GET /auth/slack/callback`
+- `GET /auth/logout`
+
+Protected endpoints now require login:
+- `/generate-tests`
+- `/generate-form`
+- `/generate-simple`
+- `/upload-testcases`
+- `/download/{filename}`
+- `/runs`
+- `/runs/latest`

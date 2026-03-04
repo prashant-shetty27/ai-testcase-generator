@@ -1,12 +1,17 @@
 import re
 import shutil
 import os
+import secrets
 from pathlib import Path
 from datetime import datetime
 from time import perf_counter
+from urllib.parse import urlencode
+
+import httpx
 from fastapi import Form, Request, FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
 
 from models.test_request import TestGenerationRequest
 from services.test_generation_service import generate_full_test_suite
@@ -23,6 +28,24 @@ from excel_exporter import (
 )
 
 app = FastAPI(title="AI Testcase Generator", version="1.0")
+
+SESSION_SECRET = os.getenv("SESSION_SECRET", "change-me-in-production")
+SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID", "")
+SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET", "")
+SLACK_REDIRECT_URI = os.getenv("SLACK_REDIRECT_URI", "")
+SLACK_ALLOWED_TEAM_ID = os.getenv("SLACK_ALLOWED_TEAM_ID", "")
+SLACK_ALLOWED_EMAIL_DOMAIN = os.getenv("SLACK_ALLOWED_EMAIL_DOMAIN", "")
+
+SLACK_OIDC_AUTHORIZE_URL = "https://slack.com/openid/connect/authorize"
+SLACK_OIDC_TOKEN_URL = "https://slack.com/api/openid.connect.token"
+SLACK_OIDC_USERINFO_URL = "https://slack.com/api/openid.connect.userInfo"
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=SESSION_SECRET,
+    same_site="lax",
+    https_only=False,
+)
 
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
 _JIRA_MACRO_RE = re.compile(r"\{[^}]{0,40}\}")           # {*}, {+}, {color:red}, {quote} …
@@ -54,6 +77,27 @@ UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", str(BASE_DIR / "uploads")))
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=BASE_DIR / "web/templates")
+
+
+def _slack_is_configured() -> bool:
+    return bool(SLACK_CLIENT_ID and SLACK_CLIENT_SECRET)
+
+
+def _resolve_slack_redirect_uri(request: Request) -> str:
+    if SLACK_REDIRECT_URI:
+        return SLACK_REDIRECT_URI
+    return str(request.url_for("auth_slack_callback"))
+
+
+def _get_current_user(request: Request):
+    return request.session.get("user")
+
+
+def _require_authenticated_user(request: Request):
+    user = _get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized. Please login via Slack.")
+    return user
 
 
 def _merge_existing_with_generated(existing_cases: list[dict], generated_tests: dict) -> dict:
@@ -104,7 +148,8 @@ def _build_run_request_payload(
 # GENERATE TESTS
 # -------------------------
 @app.post("/generate-tests")
-def generate(request: TestGenerationRequest):
+def generate(request: TestGenerationRequest, http_request: Request):
+    _require_authenticated_user(http_request)
     started_at = perf_counter()
     request.requirement = _clean_requirement(request.requirement)
     run_request_payload = _build_run_request_payload(
@@ -224,7 +269,8 @@ def generate(request: TestGenerationRequest):
 # UPLOAD EXISTING FILE
 # -------------------------
 @app.post("/upload-testcases")
-async def upload_testcases(file: UploadFile = File(...)):
+async def upload_testcases(request: Request, file: UploadFile = File(...)):
+    _require_authenticated_user(request)
 
     if not file.filename.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Only .xlsx allowed")
@@ -244,7 +290,8 @@ async def upload_testcases(file: UploadFile = File(...)):
 # DOWNLOAD
 # -------------------------
 @app.get("/download/{filename}", response_class=FileResponse, responses={404: {"description": "File not found"}, 200: {"content": {"application/octet-stream": {}}}})
-def download(filename: str):
+def download(filename: str, request: Request):
+    _require_authenticated_user(request)
 
     file_path = UPLOAD_DIR / filename
 
@@ -255,20 +302,135 @@ def download(filename: str):
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    response = templates.TemplateResponse("index.html", {"request": request})
+    user = _get_current_user(request)
+    if not user:
+        response = templates.TemplateResponse(
+            "login.html",
+            {"request": request, "slack_configured": _slack_is_configured()},
+        )
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+
+    response = templates.TemplateResponse("index.html", {"request": request, "user": user})
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
 
 
+@app.get("/auth/slack/login")
+async def auth_slack_login(request: Request):
+    if _get_current_user(request):
+        return RedirectResponse(url="/", status_code=302)
+
+    if not _slack_is_configured():
+        raise HTTPException(
+            status_code=500,
+            detail="Slack SSO not configured. Set SLACK_CLIENT_ID and SLACK_CLIENT_SECRET.",
+        )
+
+    state = secrets.token_urlsafe(24)
+    request.session["slack_oauth_state"] = state
+
+    params = {
+        "response_type": "code",
+        "client_id": SLACK_CLIENT_ID,
+        "scope": "openid profile email",
+        "redirect_uri": _resolve_slack_redirect_uri(request),
+        "state": state,
+    }
+    return RedirectResponse(
+        url=f"{SLACK_OIDC_AUTHORIZE_URL}?{urlencode(params)}",
+        status_code=302,
+    )
+
+
+@app.get("/auth/slack/callback")
+async def auth_slack_callback(
+    request: Request,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+):
+    if error:
+        raise HTTPException(status_code=400, detail=f"Slack login failed: {error}")
+
+    expected_state = request.session.pop("slack_oauth_state", None)
+    if not code or not state or state != expected_state:
+        raise HTTPException(status_code=400, detail="Invalid Slack OAuth state.")
+
+    redirect_uri = _resolve_slack_redirect_uri(request)
+    async with httpx.AsyncClient(timeout=20) as client:
+        token_response = await client.post(
+            SLACK_OIDC_TOKEN_URL,
+            data={
+                "grant_type": "authorization_code",
+                "code": code,
+                "client_id": SLACK_CLIENT_ID,
+                "client_secret": SLACK_CLIENT_SECRET,
+                "redirect_uri": redirect_uri,
+            },
+        )
+        token_json = token_response.json()
+        if not token_response.is_success or not token_json.get("ok"):
+            raise HTTPException(
+                status_code=401,
+                detail=f"Slack token exchange failed: {token_json.get('error', 'unknown_error')}",
+            )
+
+        access_token = token_json.get("access_token")
+        if not access_token:
+            raise HTTPException(status_code=401, detail="Slack access token missing.")
+
+        userinfo_response = await client.get(
+            SLACK_OIDC_USERINFO_URL,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        userinfo = userinfo_response.json()
+        if not userinfo_response.is_success or not userinfo.get("ok"):
+            raise HTTPException(
+                status_code=401,
+                detail=f"Slack userinfo fetch failed: {userinfo.get('error', 'unknown_error')}",
+            )
+
+    team_id = userinfo.get("https://slack.com/team_id") or userinfo.get("team_id")
+    email = userinfo.get("email", "")
+
+    if SLACK_ALLOWED_TEAM_ID and team_id != SLACK_ALLOWED_TEAM_ID:
+        raise HTTPException(status_code=403, detail="Your Slack workspace is not allowed.")
+
+    if SLACK_ALLOWED_EMAIL_DOMAIN:
+        allowed_suffix = f"@{SLACK_ALLOWED_EMAIL_DOMAIN.lower().lstrip('@')}"
+        if not email.lower().endswith(allowed_suffix):
+            raise HTTPException(status_code=403, detail="Your email domain is not allowed.")
+
+    request.session["user"] = {
+        "sub": userinfo.get("sub"),
+        "name": userinfo.get("name"),
+        "email": email,
+        "picture": userinfo.get("picture"),
+        "team_id": team_id,
+    }
+    return RedirectResponse(url="/", status_code=302)
+
+
+@app.get("/auth/logout")
+async def auth_logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/", status_code=302)
+
+
 @app.get("/runs")
-def get_runs(limit: int = 20):
+def get_runs(request: Request, limit: int = 20):
+    _require_authenticated_user(request)
     return {"runs": list_run_logs(limit=limit)}
 
 
 @app.get("/runs/latest")
-def get_latest_run():
+def get_latest_run(request: Request):
+    _require_authenticated_user(request)
     latest = get_latest_run_log()
     if not latest:
         raise HTTPException(status_code=404, detail="No run logs found yet.")
@@ -277,6 +439,7 @@ def get_latest_run():
 
 @app.post("/generate-form")
 async def generate_form(
+    request: Request,
     requirement: str = Form(...),
     platforms: list[str] = Form([]),
     modules: list[str] = Form([]),
@@ -286,6 +449,7 @@ async def generate_form(
     output_filename: str = Form(None),
 ):
     from models.test_request import TestGenerationRequest
+    _require_authenticated_user(request)
 
     started_at = perf_counter()
     requirement = _clean_requirement(requirement)
@@ -373,7 +537,8 @@ async def generate_form(
         raise
     
 @app.post("/generate-simple")
-async def generate_simple(requirement: str = Form(...)):
+async def generate_simple(request: Request, requirement: str = Form(...)):
+    _require_authenticated_user(request)
 
     from models.test_request import TestGenerationRequest
 
