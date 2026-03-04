@@ -30,6 +30,7 @@ from excel_exporter import (
 app = FastAPI(title="AI Testcase Generator", version="1.0")
 
 SESSION_SECRET = os.getenv("SESSION_SECRET", "change-me-in-production")
+ENABLE_SLACK_AUTH = os.getenv("ENABLE_SLACK_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"}
 SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "true").strip().lower() in {"1", "true", "yes", "on"}
 SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID", "")
 SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET", "")
@@ -81,7 +82,7 @@ templates = Jinja2Templates(directory=BASE_DIR / "web/templates")
 
 
 def _slack_is_configured() -> bool:
-    return bool(SLACK_CLIENT_ID and SLACK_CLIENT_SECRET)
+    return ENABLE_SLACK_AUTH and bool(SLACK_CLIENT_ID and SLACK_CLIENT_SECRET)
 
 
 def _resolve_slack_redirect_uri(request: Request) -> str:
@@ -91,10 +92,14 @@ def _resolve_slack_redirect_uri(request: Request) -> str:
 
 
 def _get_current_user(request: Request):
+    if not ENABLE_SLACK_AUTH:
+        return None
     return request.session.get("user")
 
 
 def _require_authenticated_user(request: Request):
+    if not ENABLE_SLACK_AUTH:
+        return None
     user = _get_current_user(request)
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized. Please login via Slack.")
@@ -304,7 +309,7 @@ def download(filename: str, request: Request):
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     user = _get_current_user(request)
-    if not user:
+    if ENABLE_SLACK_AUTH and not user:
         response = templates.TemplateResponse(
             "login.html",
             {"request": request, "slack_configured": _slack_is_configured()},
@@ -323,6 +328,9 @@ def home(request: Request):
 
 @app.get("/auth/slack/login")
 async def auth_slack_login(request: Request):
+    if not ENABLE_SLACK_AUTH:
+        return RedirectResponse(url="/", status_code=302)
+
     if _get_current_user(request):
         return RedirectResponse(url="/", status_code=302)
 
@@ -355,6 +363,9 @@ async def auth_slack_callback(
     state: str | None = None,
     error: str | None = None,
 ):
+    if not ENABLE_SLACK_AUTH:
+        return RedirectResponse(url="/", status_code=302)
+
     if error:
         raise HTTPException(status_code=400, detail=f"Slack login failed: {error}")
 
@@ -419,6 +430,8 @@ async def auth_slack_callback(
 
 @app.get("/auth/logout")
 async def auth_logout(request: Request):
+    if not ENABLE_SLACK_AUTH:
+        return RedirectResponse(url="/", status_code=302)
     request.session.clear()
     return RedirectResponse(url="/", status_code=302)
 
