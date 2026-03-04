@@ -93,6 +93,7 @@ Slack OpenID Connect auth is now supported.
 
 Required env vars:
 - `SESSION_SECRET` (required in production)
+- `SESSION_COOKIE_SECURE` (default: `true`; keep true in production HTTPS)
 - `SLACK_CLIENT_ID`
 - `SLACK_CLIENT_SECRET`
 - `SLACK_REDIRECT_URI` (optional; auto-derived from callback URL if not set)

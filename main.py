@@ -30,6 +30,7 @@ from excel_exporter import (
 app = FastAPI(title="AI Testcase Generator", version="1.0")
 
 SESSION_SECRET = os.getenv("SESSION_SECRET", "change-me-in-production")
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "true").strip().lower() in {"1", "true", "yes", "on"}
 SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID", "")
 SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET", "")
 SLACK_REDIRECT_URI = os.getenv("SLACK_REDIRECT_URI", "")
@@ -44,7 +45,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET,
     same_site="lax",
-    https_only=False,
+    https_only=SESSION_COOKIE_SECURE,
 )
 
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
