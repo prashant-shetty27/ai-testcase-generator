@@ -3,12 +3,19 @@ import shutil
 import os
 from pathlib import Path
 from datetime import datetime
+from time import perf_counter
 from fastapi import Form, Request, FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 
 from models.test_request import TestGenerationRequest
 from services.test_generation_service import generate_full_test_suite
+from run_logger import (
+    summarize_tests,
+    log_generation_run,
+    list_run_logs,
+    get_latest_run_log,
+)
 from excel_exporter import (
     export_to_excel,
     read_existing_testcases,
@@ -69,32 +76,105 @@ def _merge_existing_with_generated(existing_cases: list[dict], generated_tests: 
     return merged
 
 
+def _build_run_request_payload(
+    requirement: str,
+    template: str,
+    platforms=None,
+    modules=None,
+    pages=None,
+    test_types=None,
+    existing_filename=None,
+    output_filename=None,
+    update_comment=None,
+) -> dict:
+    return {
+        "requirement": requirement,
+        "template": template,
+        "platforms": [str(p) for p in (platforms or [])],
+        "modules": [str(m) for m in (modules or [])],
+        "pages": [str(p) for p in (pages or [])],
+        "test_types": [str(t) for t in (test_types or [])],
+        "existing_filename": existing_filename,
+        "output_filename": output_filename,
+        "update_comment": update_comment,
+    }
+
+
 # -------------------------
 # GENERATE TESTS
 # -------------------------
 @app.post("/generate-tests")
 def generate(request: TestGenerationRequest):
-
+    started_at = perf_counter()
     request.requirement = _clean_requirement(request.requirement)
-    if not request.requirement:
-        raise HTTPException(status_code=400, detail="Requirement cannot be empty")
+    run_request_payload = _build_run_request_payload(
+        requirement=request.requirement,
+        template=request.template,
+        platforms=request.platforms,
+        modules=request.modules,
+        pages=request.pages,
+        test_types=request.test_types,
+        existing_filename=request.existing_filename,
+        output_filename=request.output_filename,
+        update_comment=request.update_comment,
+    )
 
-    # -------- UPDATE FLOW --------
-    if request.existing_filename:
-        file_path = UPLOAD_DIR / request.existing_filename
+    try:
+        if not request.requirement:
+            raise HTTPException(status_code=400, detail="Requirement cannot be empty")
 
-        if not file_path.exists():
-            raise HTTPException(status_code=404, detail="File not found")
+        # -------- UPDATE FLOW --------
+        if request.existing_filename:
+            file_path = UPLOAD_DIR / request.existing_filename
 
-        raw_cases = read_existing_testcases(file_path)
-        existing_cases = normalize_existing_testcases(raw_cases)
+            if not file_path.exists():
+                raise HTTPException(status_code=404, detail="File not found")
 
-        generated_tests = generate_full_test_suite(
-            request,
-            existing_cases=existing_cases,
-            update_comment=request.update_comment
-        )
-        tests = _merge_existing_with_generated(existing_cases, generated_tests)
+            raw_cases = read_existing_testcases(file_path)
+            existing_cases = normalize_existing_testcases(raw_cases)
+
+            generated_tests = generate_full_test_suite(
+                request,
+                existing_cases=existing_cases,
+                update_comment=request.update_comment
+            )
+            tests = _merge_existing_with_generated(existing_cases, generated_tests)
+
+            export_to_excel(
+                tests,
+                template_type=request.template,
+                output_path=file_path
+            )
+
+            response_payload = {
+                "message": "Existing testcases updated",
+                "download_url": f"/download/{file_path.name}"
+            }
+
+            log_generation_run(
+                endpoint="/generate-tests",
+                status="success",
+                request_payload=run_request_payload,
+                result_payload={
+                    "mode": "update",
+                    "file_name": file_path.name,
+                    "download_url": response_payload["download_url"],
+                    "generated_summary": summarize_tests(generated_tests),
+                    "merged_summary": summarize_tests(tests),
+                },
+                duration_ms=int((perf_counter() - started_at) * 1000),
+            )
+            return response_payload
+
+        # -------- FRESH FLOW --------
+        tests = generate_full_test_suite(request)
+
+        if request.output_filename:
+            filename = f"{request.output_filename}.xlsx"
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"generated_{request.template}_{timestamp}.xlsx"
+        file_path = UPLOAD_DIR / filename
 
         export_to_excel(
             tests,
@@ -102,31 +182,42 @@ def generate(request: TestGenerationRequest):
             output_path=file_path
         )
 
-        return {
-            "message": "Existing testcases updated",
-            "download_url": f"/download/{file_path.name}"
+        response_payload = {
+            "message": "Generated successfully",
+            "download_url": f"/download/{filename}"
         }
 
-    # -------- FRESH FLOW --------
-    tests = generate_full_test_suite(request)
-
-    if request.output_filename:
-        filename = f"{request.output_filename}.xlsx"
-    else:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"generated_{request.template}_{timestamp}.xlsx"
-    file_path = UPLOAD_DIR / filename
-
-    export_to_excel(
-        tests,
-        template_type=request.template,
-        output_path=file_path
-    )
-
-    return {
-        "message": "Generated successfully",
-        "download_url": f"/download/{filename}"
-    }
+        log_generation_run(
+            endpoint="/generate-tests",
+            status="success",
+            request_payload=run_request_payload,
+            result_payload={
+                "mode": "fresh",
+                "file_name": filename,
+                "download_url": response_payload["download_url"],
+                "generated_summary": summarize_tests(tests),
+            },
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        return response_payload
+    except HTTPException as exc:
+        log_generation_run(
+            endpoint="/generate-tests",
+            status="failed",
+            request_payload=run_request_payload,
+            error=str(exc.detail),
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        raise
+    except Exception as exc:
+        log_generation_run(
+            endpoint="/generate-tests",
+            status="failed",
+            request_payload=run_request_payload,
+            error=str(exc),
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        raise
 
 
 # -------------------------
@@ -170,6 +261,20 @@ def home(request: Request):
     response.headers["Expires"] = "0"
     return response
 
+
+@app.get("/runs")
+def get_runs(limit: int = 20):
+    return {"runs": list_run_logs(limit=limit)}
+
+
+@app.get("/runs/latest")
+def get_latest_run():
+    latest = get_latest_run_log()
+    if not latest:
+        raise HTTPException(status_code=404, detail="No run logs found yet.")
+    return latest
+
+
 @app.post("/generate-form")
 async def generate_form(
     requirement: str = Form(...),
@@ -182,75 +287,159 @@ async def generate_form(
 ):
     from models.test_request import TestGenerationRequest
 
+    started_at = perf_counter()
     requirement = _clean_requirement(requirement)
-    if not requirement:
-        raise HTTPException(status_code=400, detail="Requirement cannot be empty")
-
-    selected_platforms = [p for p in platforms if p]
-    if not selected_platforms:
-        raise HTTPException(status_code=400, detail="At least one platform must be selected.")
-
-    # Build request object manually
-    request_obj = TestGenerationRequest(
+    run_request_payload = _build_run_request_payload(
         requirement=requirement,
-        platforms=selected_platforms,
+        template="manual",
+        platforms=platforms,
         modules=modules,
         pages=pages,
         test_types=test_types,
+        output_filename=output_filename,
         update_comment=update_comment,
-        template="manual",
     )
 
-    tests = generate_full_test_suite(request_obj, update_comment=update_comment)
+    try:
+        if not requirement:
+            raise HTTPException(status_code=400, detail="Requirement cannot be empty")
 
-    # Filename logic
-    if output_filename:
-        filename = f"{output_filename}.xlsx"
-    else:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"generated_{timestamp}.xlsx"
+        selected_platforms = [p for p in platforms if p]
+        if not selected_platforms:
+            raise HTTPException(status_code=400, detail="At least one platform must be selected.")
 
-    file_path = UPLOAD_DIR / filename
+        # Build request object manually
+        request_obj = TestGenerationRequest(
+            requirement=requirement,
+            platforms=selected_platforms,
+            modules=modules,
+            pages=pages,
+            test_types=test_types,
+            update_comment=update_comment,
+            template="manual",
+        )
 
-    export_to_excel(
-        tests,
-        template_type="manual",
-        output_path=file_path
-    )
+        tests = generate_full_test_suite(request_obj, update_comment=update_comment)
 
-    return FileResponse(
-        file_path,
-        filename=filename,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+        # Filename logic
+        if output_filename:
+            filename = f"{output_filename}.xlsx"
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"generated_{timestamp}.xlsx"
+
+        file_path = UPLOAD_DIR / filename
+
+        export_to_excel(
+            tests,
+            template_type="manual",
+            output_path=file_path
+        )
+
+        log_generation_run(
+            endpoint="/generate-form",
+            status="success",
+            request_payload=run_request_payload,
+            result_payload={
+                "file_name": filename,
+                "download_url": f"/download/{filename}",
+                "generated_summary": summarize_tests(tests),
+            },
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+
+        return FileResponse(
+            file_path,
+            filename=filename,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    except HTTPException as exc:
+        log_generation_run(
+            endpoint="/generate-form",
+            status="failed",
+            request_payload=run_request_payload,
+            error=str(exc.detail),
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        raise
+    except Exception as exc:
+        log_generation_run(
+            endpoint="/generate-form",
+            status="failed",
+            request_payload=run_request_payload,
+            error=str(exc),
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        raise
     
 @app.post("/generate-simple")
 async def generate_simple(requirement: str = Form(...)):
 
     from models.test_request import TestGenerationRequest
 
-    request_obj = TestGenerationRequest(
+    started_at = perf_counter()
+    requirement = _clean_requirement(requirement)
+    run_request_payload = _build_run_request_payload(
         requirement=requirement,
-        template="manual"
+        template="manual",
     )
 
-    tests = generate_full_test_suite(request_obj)
+    try:
+        if not requirement:
+            raise HTTPException(status_code=400, detail="Requirement cannot be empty")
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"generated_{timestamp}.xlsx"
-    file_path = UPLOAD_DIR / filename
+        request_obj = TestGenerationRequest(
+            requirement=requirement,
+            template="manual"
+        )
 
-    export_to_excel(
-        tests,
-        template_type="manual",
-        output_path=file_path
-    )
+        tests = generate_full_test_suite(request_obj)
 
-    return FileResponse(
-        file_path,
-        filename=filename,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"generated_{timestamp}.xlsx"
+        file_path = UPLOAD_DIR / filename
+
+        export_to_excel(
+            tests,
+            template_type="manual",
+            output_path=file_path
+        )
+
+        log_generation_run(
+            endpoint="/generate-simple",
+            status="success",
+            request_payload=run_request_payload,
+            result_payload={
+                "file_name": filename,
+                "download_url": f"/download/{filename}",
+                "generated_summary": summarize_tests(tests),
+            },
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+
+        return FileResponse(
+            file_path,
+            filename=filename,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    except HTTPException as exc:
+        log_generation_run(
+            endpoint="/generate-simple",
+            status="failed",
+            request_payload=run_request_payload,
+            error=str(exc.detail),
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        raise
+    except Exception as exc:
+        log_generation_run(
+            endpoint="/generate-simple",
+            status="failed",
+            request_payload=run_request_payload,
+            error=str(exc),
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        raise
 
 
 if __name__ == "__main__":

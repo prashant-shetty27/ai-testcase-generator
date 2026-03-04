@@ -72,3 +72,17 @@ For persistent downloads in production, store generated files in object storage 
 - `OPENAI_API_KEY` (required)
 - `UPLOAD_DIR` (optional, default: `./uploads` locally or `/tmp/uploads` in Render config)
 - `AI_MAX_TOKENS` (optional, default: `7000`; increase if you want more generated cases per run)
+
+## 6) Run History Logs
+
+The app now keeps generation run logs in JSON.
+
+- Default file: `logs/run_logs.json`
+- Latest run API: `GET /runs/latest`
+- Recent runs API: `GET /runs?limit=20`
+
+Optional env vars:
+- `RUN_LOG_DIR` (default: `./logs`)
+- `RUN_LOG_FILE` (default: `./logs/run_logs.json`)
+- `RUN_LOG_MAX_ENTRIES` (default: `300`)
+- `RUN_LOG_TITLE_LIMIT` (default: `100`)
