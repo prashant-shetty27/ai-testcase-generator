@@ -22,15 +22,25 @@ ALL_LAYERS = [
 ]
 
 LAYER_KEYWORDS = {
-    "ui": ["ui", "ux", "design", "layout"],
+    "ui": ["ui", "ux", "design", "layout", "frontend", "front-end", "front end", "display", "popup", "alert", "warning", "pop up", "modal"],
     "api": ["api", "endpoint", "service"],
     "security": ["security", "auth", "authentication", "authorization", "encryption"],
     "performance": ["performance", "latency", "response time", "load", "throughput"],
-    "state": ["state", "session"],
+    "state": [
+        "state",
+        "session",
+        "resume",
+        "relaunch",
+        "last searched",
+        "last visited",
+        "restore",
+    ],
     "cross_browser": ["cross browser", "browser compatibility", "all browsers"],
+    "validation": ["validation", "validate", "function", "functional", "verify", "check", "business rule", "business logic"],
 }
 
 STRICT_PATTERN = re.compile(r"^\s*ps-only\s+(.+)", re.IGNORECASE)
+STRICT_GENERIC_VALIDATION_VERBS = {"verify", "validate", "check"}
 
 # -------------------------------------------------
 # CLASSIFICATION ENGINE (Deterministic)
@@ -58,6 +68,12 @@ def classify_requirement(requirement: str) -> Dict:
 
         for layer, keywords in LAYER_KEYWORDS.items():
             for keyword in keywords:
+                if (
+                    layer == "validation"
+                    and keyword in STRICT_GENERIC_VALIDATION_VERBS
+                ):
+                    # In strict mode, generic verbs should not expand scope.
+                    continue
                 if re.search(rf"\b{re.escape(keyword)}\b", strict_scope_text):
                     included_layers.append(layer)
                     break
@@ -214,10 +230,21 @@ def generate_full_test_suite(
 
     analysis = analyze_requirement(request.requirement)
 
-    analysis["platforms"] = [p.value for p in request.platforms]
-    analysis["modules"] = [m.value for m in request.modules]
-    analysis["pages"] = [p.value for p in request.pages]
-    analysis["test_types"] = [t.value for t in request.test_types]
+    # Preserve original requirement text so generate_testcases can use
+    # it for keyword detection and as the authoritative prompt content.
+    # analysis["feature"] is only a short AI-extracted name — not the full text.
+    analysis["_original_requirement"] = request.requirement
+
+    def _enum_or_value(items):
+        values = []
+        for item in items or []:
+            values.append(item.value if hasattr(item, "value") else item)
+        return values
+
+    analysis["platforms"] = _enum_or_value(request.platforms)
+    analysis["modules"] = _enum_or_value(request.modules)
+    analysis["pages"] = _enum_or_value(request.pages)
+    analysis["test_types"] = _enum_or_value(request.test_types)
     analysis["self_learning"] = request.enable_self_learning
     analysis["third_party_learning"] = request.learn_from_third_party
 
