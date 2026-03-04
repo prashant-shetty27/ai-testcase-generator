@@ -1,4 +1,5 @@
 import shutil
+import os
 from pathlib import Path
 from datetime import datetime
 from fastapi import Form, Request, FastAPI, UploadFile, File, HTTPException
@@ -16,7 +17,7 @@ from excel_exporter import (
 app = FastAPI(title="AI Testcase Generator", version="1.0")
 
 BASE_DIR = Path(__file__).resolve().parent
-UPLOAD_DIR = BASE_DIR / "uploads"
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", str(BASE_DIR / "uploads")))
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=BASE_DIR / "web/templates")

@@ -2,9 +2,9 @@ class ManualTemplate:
 
     @staticmethod
     def map_testcase(category, tc):
+
         steps = tc.get("steps", [])
 
-        # Format steps: number only if more than 1 step
         if not steps:
             steps_text = ""
         elif len(steps) == 1:
@@ -14,8 +14,9 @@ class ManualTemplate:
 
         return [
             tc.get("testcase_id"),
+            tc.get("priority", "Medium"),
             category,
-            tc.get("scenario"),
+            tc.get("scenario") or tc.get("title") or "N/A",
             steps_text,
-            tc.get("expected_result")
+            tc.get("expected_result", "")
         ]
