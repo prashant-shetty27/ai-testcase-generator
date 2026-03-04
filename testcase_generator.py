@@ -419,6 +419,12 @@ CROSS_PLATFORM_HANDOFF_KEYWORDS = {
     "app link",
 }
 
+PLATFORM_TITLE_DETAIL_KEYWORDS = {
+    "android", "ios", "chrome", "firefox", "safari", "edge", "opera",
+    "windows", "macos", "ubuntu", "samsung", "xiaomi", "oneplus", "iphone",
+    "ipad", "resolution", "zoom", "ram", "fhd", "qhd", "hd", "inch", "dynamic island"
+}
+
 
 def _normalize_platform_keys(platforms: list) -> list[str]:
     matched: list[str] = []
@@ -489,6 +495,8 @@ def _build_platform_instruction_block(platforms: list, allow_cross_platform_hand
         lines.append("- Label each test case with target platform in title (e.g., '[Android] ...', '[iOS] ...', '[Web] ...')")
         lines.append("- A test case for Android must only reference Android OS versions, Android browsers, Android device brands")
         lines.append("- A test case for iOS must only reference iOS versions, iOS devices, Safari/iOS Chrome")
+        lines.append("- Use specific device/browser/OS names only in representative coverage cases (~20-30% cases), not in every testcase title")
+        lines.append("- Keep most scenario titles concise and human-readable; avoid long device matrix text in titles")
         lines.append("- Exception: cross-platform mixing is allowed ONLY for explicit handoff journeys, and must be labeled '[Cross-Platform] Source -> Target'")
         lines.append("- Cross-platform cases must keep clean source->target transitions (e.g., web share link -> app open), no domain/platform contradiction")
         if allow_cross_platform_handoff:
@@ -504,8 +512,9 @@ def _build_platform_instruction_block(platforms: list, allow_cross_platform_hand
     else:
         label = PLATFORM_MANDATORY_SCENARIOS[matched[0]]["label"] if matched[0] in PLATFORM_MANDATORY_SCENARIOS else matched[0]
         lines.append(f"- Single platform selected: {label}")
-        lines.append(f"- Every test case must reference the specific {label} OS version, device type, or browser being tested")
-        lines.append(f"- Do NOT write generic steps — reference actual device names, OS versions, or browser names from the lists above")
+        lines.append(f"- Mention explicit {label} OS/device/browser details in selected representative cases only (~20-30% cases)")
+        lines.append(f"- Keep remaining titles natural and concise; avoid adding long hardware/browser suffixes to every case title")
+        lines.append(f"- Do NOT write generic steps — include concrete platform validation where relevant")
 
     return "\n".join(lines) + "\n"
 
@@ -705,9 +714,36 @@ def _deduplicate_across_categories(positive: list[dict], negative: list[dict]):
     return p_out, n_out
 
 
+def _extract_trailing_parenthetical(text: str) -> str:
+    match = re.search(r"\(([^()]*)\)\s*$", text or "")
+    return match.group(1).strip() if match else ""
+
+
+def _is_over_detailed_platform_suffix(scenario: str) -> bool:
+    tail = _extract_trailing_parenthetical(scenario)
+    if not tail:
+        return False
+    lowered = tail.lower()
+    keyword_hits = sum(1 for kw in PLATFORM_TITLE_DETAIL_KEYWORDS if kw in lowered)
+    return (tail.count(",") >= 2 and keyword_hits >= 2) or (len(tail) >= 60 and keyword_hits >= 1)
+
+
+def _humanize_scenario_title(scenario: str, keep_detailed: bool = False) -> str:
+    cleaned = (scenario or "").strip()
+    if not cleaned or keep_detailed:
+        return cleaned
+
+    if _is_over_detailed_platform_suffix(cleaned):
+        cleaned = re.sub(r"\s*\([^()]*\)\s*$", "", cleaned).strip()
+
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    return cleaned.rstrip(" -,:;")
+
+
 def _sanitize_generated_cases(testcases: dict, existing_cases=None, requirement: str = "") -> dict:
     positive = []
     negative = []
+    detailed_title_kept = 0
 
     for source, target in [
         (testcases.get("positive_tests", []), positive),
@@ -718,6 +754,13 @@ def _sanitize_generated_cases(testcases: dict, existing_cases=None, requirement:
                 continue
 
             scenario = _repair_domain_text(str(case.get("scenario", "")))
+            if _is_over_detailed_platform_suffix(scenario):
+                keep_detailed = detailed_title_kept < 2
+                if keep_detailed:
+                    detailed_title_kept += 1
+                scenario = _humanize_scenario_title(scenario, keep_detailed=keep_detailed)
+            else:
+                scenario = _humanize_scenario_title(scenario)
             steps = [
                 _repair_domain_text(str(step))
                 for step in (case.get("steps", []) or [])
