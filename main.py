@@ -1,3 +1,4 @@
+import re
 import shutil
 import os
 from pathlib import Path
@@ -16,11 +17,57 @@ from excel_exporter import (
 
 app = FastAPI(title="AI Testcase Generator", version="1.0")
 
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+_JIRA_MACRO_RE = re.compile(r"\{[^}]{0,40}\}")           # {*}, {+}, {color:red}, {quote} …
+_JIRA_HEADING_RE = re.compile(r"^h[1-6]\.\s*", re.MULTILINE)  # h1. h2. h3. …
+_JIRA_UNDERLINE_RE = re.compile(r"\+([^+\n]{1,300}?)\+")      # +underline+ → text
+_JIRA_BULLET_RE = re.compile(r"^[ \t]*\*+\s+", re.MULTILINE)  # " * item" bullets
+
+_HTML_ENTITIES = {
+    "&amp;": "&", "&lt;": "<", "&gt;": ">",
+    "&nbsp;": " ", "&quot;": '"', "&apos;": "'",
+}
+
+def _clean_requirement(text: str) -> str:
+    """Strip HTML tags, HTML entities, and Jira wiki markup so the AI receives clean plain text."""
+    if not text:
+        return text
+    for entity, char in _HTML_ENTITIES.items():
+        text = text.replace(entity, char)
+    text = _HTML_TAG_RE.sub("", text)
+    text = _JIRA_MACRO_RE.sub("", text)
+    text = _JIRA_HEADING_RE.sub("", text)
+    text = _JIRA_UNDERLINE_RE.sub(r"\1", text)
+    text = _JIRA_BULLET_RE.sub("- ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", str(BASE_DIR / "uploads")))
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=BASE_DIR / "web/templates")
+
+
+def _merge_existing_with_generated(existing_cases: list[dict], generated_tests: dict) -> dict:
+    """
+    Preserve uploaded cases while appending newly generated unique cases.
+    """
+    merged: dict = {}
+
+    for case in existing_cases or []:
+        if not isinstance(case, dict):
+            continue
+        category = case.get("category") or "existing_tests"
+        merged.setdefault(category, []).append(case)
+
+    for category, cases in (generated_tests or {}).items():
+        if not isinstance(cases, list):
+            continue
+        merged.setdefault(category, []).extend(cases)
+
+    return merged
+
 
 # -------------------------
 # GENERATE TESTS
@@ -28,7 +75,8 @@ templates = Jinja2Templates(directory=BASE_DIR / "web/templates")
 @app.post("/generate-tests")
 def generate(request: TestGenerationRequest):
 
-    if not request.requirement.strip():
+    request.requirement = _clean_requirement(request.requirement)
+    if not request.requirement:
         raise HTTPException(status_code=400, detail="Requirement cannot be empty")
 
     # -------- UPDATE FLOW --------
@@ -41,11 +89,12 @@ def generate(request: TestGenerationRequest):
         raw_cases = read_existing_testcases(file_path)
         existing_cases = normalize_existing_testcases(raw_cases)
 
-        tests = generate_full_test_suite(
+        generated_tests = generate_full_test_suite(
             request,
             existing_cases=existing_cases,
             update_comment=request.update_comment
         )
+        tests = _merge_existing_with_generated(existing_cases, generated_tests)
 
         export_to_excel(
             tests,
@@ -115,7 +164,11 @@ def download(filename: str):
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    response = templates.TemplateResponse("index.html", {"request": request})
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 @app.post("/generate-form")
 async def generate_form(
@@ -129,16 +182,26 @@ async def generate_form(
 ):
     from models.test_request import TestGenerationRequest
 
+    requirement = _clean_requirement(requirement)
+    if not requirement:
+        raise HTTPException(status_code=400, detail="Requirement cannot be empty")
+
+    selected_platforms = [p for p in platforms if p]
+    if not selected_platforms:
+        raise HTTPException(status_code=400, detail="At least one platform must be selected.")
+
     # Build request object manually
     request_obj = TestGenerationRequest(
         requirement=requirement,
-        platforms=platforms,
+        platforms=selected_platforms,
         modules=modules,
         pages=pages,
         test_types=test_types,
+        update_comment=update_comment,
+        template="manual",
     )
 
-    tests = generate_full_test_suite(request_obj)
+    tests = generate_full_test_suite(request_obj, update_comment=update_comment)
 
     # Filename logic
     if output_filename:

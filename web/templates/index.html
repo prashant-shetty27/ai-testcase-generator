@@ -3,21 +3,559 @@
 <head>
     <title>AI Testcase Generator</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        textarea { width: 100%; height: 150px; }
-        button { padding: 10px 20px; margin-top: 10px; }
+        :root {
+            --bg-a: #f5f2e8;
+            --bg-b: #fffaf0;
+            --panel: #ffffff;
+            --ink: #1f2630;
+            --muted: #5d6b7b;
+            --accent: #145da0;
+            --accent-2: #0f4c81;
+            --ring: rgba(20, 93, 160, 0.16);
+            --border: #d9e2ea;
+            --ok: #1f7a4f;
+            --warn: #a04f1f;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", Verdana, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 10% 10%, #fff3cf 0%, transparent 30%),
+                radial-gradient(circle at 85% 0%, #d8ebff 0%, transparent 35%),
+                linear-gradient(160deg, var(--bg-a), var(--bg-b));
+            min-height: 100vh;
+            padding: 28px;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 14px 30px rgba(20, 40, 60, 0.08);
+        }
+
+        .title {
+            margin: 0 0 4px;
+            font-size: 28px;
+            letter-spacing: 0.2px;
+        }
+
+        .subtitle {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .section {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background: #fcfdff;
+        }
+
+        .section h2 {
+            margin: 0 0 12px;
+            font-size: 17px;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        textarea, input[type="text"], .req-editor {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+            color: var(--ink);
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 126px;
+            resize: vertical;
+        }
+
+        .req-editor {
+            min-height: 126px;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            word-break: break-word;
+            cursor: text;
+            outline: none;
+        }
+
+        .req-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #aab4be;
+            pointer-events: none;
+        }
+
+        .req-editor:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--ring);
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--ring);
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .platform-card {
+            position: relative;
+        }
+
+        .platform-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .platform-card label {
+            display: block;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            background: #fff;
+            transition: 0.16s ease;
+        }
+
+        .platform-name {
+            font-weight: 700;
+            font-size: 14px;
+            margin: 0 0 2px;
+        }
+
+        .platform-note {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .platform-card input:checked + label {
+            border-color: var(--accent);
+            background: #edf5ff;
+            box-shadow: inset 0 0 0 1px var(--accent);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tools {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 6px 10px;
+            background: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--ink);
+        }
+
+        .chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .meta {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            background: var(--accent);
+            color: #fff;
+            transition: 0.16s ease;
+        }
+
+        button:hover { background: var(--accent-2); }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.85;
+        }
+
+        .generate-btn {
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .generate-btn.loading {
+            background: #3f6d95;
+        }
+
+        .generate-btn.loading:hover {
+            background: #3f6d95;
+        }
+
+        .generate-btn.loading,
+        .generate-btn:disabled {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+        }
+
+        .loader {
+            width: 16px;
+            height: 16px;
+            border: 2.5px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .hidden { display: none; }
+
+        .status {
+            margin: 10px 0 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .error {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #9a2f1a;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 860px) {
+            body { padding: 14px; }
+            .container { padding: 14px; }
+            .platform-grid, .row { grid-template-columns: 1fr; }
+            .title { font-size: 22px; }
+        }
     </style>
 </head>
 <body>
 
-<h1>AI Testcase Generator (Internal)</h1>
+<main class="container">
+    <h1 class="title">AI Testcase Generator</h1>
+    <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
 
-<form action="/generate-simple" method="post">
-    <label><b>Paste your requirement:</b></label><br/>
-    <textarea name="requirement" required></textarea>
-    <br/>
-    <button type="submit">Generate & Download</button>
-</form>
+    <form id="generateForm" action="/generate-form" method="post">
+        <section class="section">
+            <h2>Requirement</h2>
+            <label class="label" for="requirementEditor">Paste your requirement</label>
+            <div
+                id="requirementEditor"
+                class="req-editor"
+                contenteditable="true"
+                role="textbox"
+                aria-multiline="true"
+                aria-label="Requirement"
+                data-placeholder="Example: Verify last session state is restored when user relaunches Android app after search and page navigation."
+            ></div>
+            <textarea id="requirement" name="requirement" style="display:none" aria-hidden="true"></textarea>
+        </section>
+
+        <section class="section">
+            <div class="toolbar">
+                <h2 style="margin: 0;">Platforms (Mandatory)</h2>
+                <div class="tools">
+                    <button type="button" class="chip" id="selectAllPlatforms">Select All</button>
+                    <button type="button" class="chip" id="clearPlatforms">Clear</button>
+                </div>
+            </div>
+            <p class="meta">Only selected platforms are used. Illogical platform mixing is filtered; explicit handoff flows (for example Web -> App) are generated when requested.</p>
+            <div class="platform-grid">
+                <div class="platform-card">
+                    <input type="checkbox" id="p_web" name="platforms" value="web">
+                    <label for="p_web">
+                        <p class="platform-name">Web</p>
+                        <p class="platform-note">Desktop browsers and responsive web behavior.</p>
+                    </label>
+                </div>
+                <div class="platform-card">
+                    <input type="checkbox" id="p_touch" name="platforms" value="touch">
+                    <label for="p_touch">
+                        <p class="platform-name">Mobile Web (Touch)</p>
+                        <p class="platform-note">Android/iOS mobile browser behavior and gestures.</p>
+                    </label>
+                </div>
+                <div class="platform-card">
+                    <input type="checkbox" id="p_android" name="platforms" value="android_app">
+                    <label for="p_android">
+                        <p class="platform-name">Android App</p>
+                        <p class="platform-note">Android lifecycle, permissions, device/OS coverage.</p>
+                    </label>
+                </div>
+                <div class="platform-card">
+                    <input type="checkbox" id="p_ios" name="platforms" value="ios_app">
+                    <label for="p_ios">
+                        <p class="platform-name">iOS App</p>
+                        <p class="platform-note">iOS lifecycle, permissions, iPhone/iPad variants.</p>
+                    </label>
+                </div>
+                <div class="platform-card">
+                    <input type="checkbox" id="p_hybrid" name="platforms" value="hybrid_app">
+                    <label for="p_hybrid">
+                        <p class="platform-name">Hybrid App</p>
+                        <p class="platform-note">WebView + native bridge scenarios.</p>
+                    </label>
+                </div>
+                <div class="platform-card">
+                    <input type="checkbox" id="p_api" name="platforms" value="api">
+                    <label for="p_api">
+                        <p class="platform-name">API</p>
+                        <p class="platform-note">Request/response, schema, auth, and rate limiting.</p>
+                    </label>
+                </div>
+                <div class="platform-card">
+                    <input type="checkbox" id="p_backend" name="platforms" value="backend">
+                    <label for="p_backend">
+                        <p class="platform-name">Backend</p>
+                        <p class="platform-note">Service and business-logic level behavior.</p>
+                    </label>
+                </div>
+                <div class="platform-card">
+                    <input type="checkbox" id="p_internal" name="platforms" value="internal">
+                    <label for="p_internal">
+                        <p class="platform-name">Internal Tool</p>
+                        <p class="platform-note">Ops/admin/internal workflow scenarios.</p>
+                    </label>
+                </div>
+            </div>
+            <p id="platformError" class="error hidden">Select at least one platform.</p>
+        </section>
+
+        <section class="section">
+            <h2>Optional Settings</h2>
+            <div class="row">
+                <div>
+                    <label class="label" for="outputFilename">Output file name (without .xlsx)</label>
+                    <input id="outputFilename" name="output_filename" type="text" placeholder="generated_platform_suite">
+                </div>
+                <div>
+                    <label class="label" for="updateComment">Update comment</label>
+                    <input id="updateComment" name="update_comment" type="text" placeholder="Optional context for update runs">
+                </div>
+            </div>
+            <input type="hidden" name="test_types" value="e2e">
+        </section>
+
+        <button id="generateBtn" class="generate-btn" type="submit">
+            <span id="btnText">Generate & Download</span>
+            <span id="btnLoader" class="loader hidden" aria-hidden="true"></span>
+        </button>
+        <p id="statusText" class="status" aria-live="polite"></p>
+    </form>
+</main>
+
+<script>
+    const form = document.getElementById("generateForm");
+    const button = document.getElementById("generateBtn");
+    const buttonText = document.getElementById("btnText");
+    const loader = document.getElementById("btnLoader");
+    const statusText = document.getElementById("statusText");
+    const requirementEditor = document.getElementById("requirementEditor");
+    const requirement = document.getElementById("requirement");
+    const platformError = document.getElementById("platformError");
+
+    // Intercept paste: render HTML visually but strip tags for submission
+    requirementEditor.addEventListener("paste", function (e) {
+        e.preventDefault();
+        const html = e.clipboardData.getData("text/html");
+        const plain = e.clipboardData.getData("text/plain");
+
+        if (html) {
+            // Render HTML visually inside the editor
+            const tmp = document.createElement("div");
+            tmp.innerHTML = html;
+            // Insert as HTML so formatting is visible
+            document.execCommand("insertHTML", false, tmp.innerHTML);
+        } else {
+            document.execCommand("insertText", false, plain);
+        }
+    });
+    const platformInputs = Array.from(document.querySelectorAll('input[name="platforms"]'));
+    const selectAllPlatforms = document.getElementById("selectAllPlatforms");
+    const clearPlatforms = document.getElementById("clearPlatforms");
+    const defaultButtonText = "Generate & Download";
+    const MIN_LOADING_MS = 600;
+    let loadingStartTime = 0;
+    let loadingDots = 1;
+    let loadingTextTimer = null;
+
+    function selectedPlatformCount() {
+        return platformInputs.filter(input => input.checked).length;
+    }
+
+    function setPlatformError(show) {
+        platformError.classList.toggle("hidden", !show);
+    }
+
+    selectAllPlatforms.addEventListener("click", function () {
+        platformInputs.forEach(input => { input.checked = true; });
+        setPlatformError(false);
+    });
+
+    clearPlatforms.addEventListener("click", function () {
+        platformInputs.forEach(input => { input.checked = false; });
+        setPlatformError(true);
+    });
+
+    platformInputs.forEach(input => {
+        input.addEventListener("change", function () {
+            if (selectedPlatformCount() > 0) {
+                setPlatformError(false);
+            }
+        });
+    });
+
+    function startLoadingTextAnimation() {
+        buttonText.textContent = "Testcase generating.";
+        if (loadingTextTimer) {
+            clearInterval(loadingTextTimer);
+        }
+        loadingTextTimer = setInterval(function () {
+            loadingDots = (loadingDots % 3) + 1;
+            buttonText.textContent = "Testcase generating" + ".".repeat(loadingDots);
+        }, 320);
+    }
+
+    function stopLoadingTextAnimation() {
+        if (loadingTextTimer) {
+            clearInterval(loadingTextTimer);
+            loadingTextTimer = null;
+        }
+        loadingDots = 1;
+        buttonText.textContent = defaultButtonText;
+    }
+
+    function setLoadingState(isLoading, text) {
+        button.disabled = isLoading;
+        button.classList.toggle("loading", isLoading);
+        button.setAttribute("aria-busy", isLoading ? "true" : "false");
+        loader.classList.toggle("hidden", !isLoading);
+        if (isLoading) {
+            loadingStartTime = Date.now();
+            startLoadingTextAnimation();
+        } else {
+            stopLoadingTextAnimation();
+        }
+    }
+
+    async function triggerFileDownload(response) {
+        const blob = await response.blob();
+        const contentDisposition = response.headers.get("content-disposition") || "";
+        const match = contentDisposition.match(/filename=\"?([^\";]+)\"?/i);
+        const filename = (match && match[1]) ? match[1] : "generated_testcases.xlsx";
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    }
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        // Extract plain text (strips all HTML tags) from the rich editor
+        const plainText = requirementEditor.innerText.trim();
+        requirement.value = plainText;
+
+        if (!plainText) {
+            return;
+        }
+
+        if (selectedPlatformCount() === 0) {
+            setPlatformError(true);
+            return;
+        }
+
+        if (button.disabled) {
+            return;
+        }
+
+        setLoadingState(true, "Generating...");
+        statusText.textContent = "Please wait. Your file is being generated.";
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form)
+            });
+
+            if (!response.ok) {
+                let errorMessage = "Generation failed. Please retry.";
+                try {
+                    const errorJson = await response.json();
+                    errorMessage = errorJson.detail || errorMessage;
+                } catch (_) {}
+                statusText.textContent = errorMessage;
+                return;
+            }
+
+            await triggerFileDownload(response);
+            statusText.textContent = "File generated and download started.";
+        } catch (_) {
+            statusText.textContent = "Network error while generating file. Please retry.";
+        } finally {
+            const elapsed = Date.now() - loadingStartTime;
+            if (elapsed < MIN_LOADING_MS) {
+                await new Promise(resolve => setTimeout(resolve, MIN_LOADING_MS - elapsed));
+            }
+            setLoadingState(false);
+        }
+    });
+</script>
 
 </body>
 </html>
