@@ -568,20 +568,45 @@
         }
     });
 
+    const NAME_KEY = "ai_tcgen_requester_name";
+
+    // On load: if popup is visible but localStorage has a name, restore it and hide popup
+    (function () {
+        const saved = normalizeName(localStorage.getItem(NAME_KEY) || "");
+        if (saved && nameGate.classList.contains("hidden") === false) {
+            requesterNameInput.value = saved;
+            requesterNameField.value = saved;
+            nameGate.classList.add("hidden");
+        }
+    })();
+
     nameGateForm.addEventListener("submit", function (event) {
+        event.preventDefault();
         const normalizedRequesterName = normalizeName(requesterNameInput.value);
         if (!normalizedRequesterName) {
-            event.preventDefault();
             setNameError(true);
             requesterNameInput.focus();
             return;
         }
-        requesterNameInput.value = normalizedRequesterName;
+        // Save locally and hide immediately
+        localStorage.setItem(NAME_KEY, normalizedRequesterName);
         requesterNameField.value = normalizedRequesterName;
+        nameGate.classList.add("hidden");
+        // Persist to server in background for logging
+        const fd = new FormData();
+        fd.append("requester_name", normalizedRequesterName);
+        fetch("/set-requester-name", {
+            method: "POST",
+            headers: { "Accept": "application/json" },
+            body: fd,
+        }).catch(() => {});
     });
 
     if (!normalizeName(requesterNameField.value)) {
-        requesterNameInput.focus();
+        const saved = normalizeName(localStorage.getItem(NAME_KEY) || "");
+        if (saved) {
+            requesterNameField.value = saved;
+        }
     }
 
     function selectedPlatformCount() {

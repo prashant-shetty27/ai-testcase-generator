@@ -31,7 +31,8 @@ app = FastAPI(title="AI Testcase Generator", version="1.0")
 
 SESSION_SECRET = os.getenv("SESSION_SECRET", "change-me-in-production")
 ENABLE_SLACK_AUTH = os.getenv("ENABLE_SLACK_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"}
-SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "true").strip().lower() in {"1", "true", "yes", "on"}
+_default_cookie_secure = "true" if os.getenv("ENABLE_SLACK_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"} else "false"
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", _default_cookie_secure).strip().lower() in {"1", "true", "yes", "on"}
 SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID", "")
 SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET", "")
 SLACK_REDIRECT_URI = os.getenv("SLACK_REDIRECT_URI", "")
@@ -91,7 +92,7 @@ def _resolve_slack_redirect_uri(request: Request) -> str:
     return str(request.url_for("auth_slack_callback"))
 
 
-_LOCAL_DEV_USER = {"name": "Local Dev", "email": "local@dev.local", "sub": "local"}
+_LOCAL_DEV_USER = {"name": "", "email": "local@dev.local", "sub": "local"}
 
 def _get_current_user(request: Request):
     if not ENABLE_SLACK_AUTH:
@@ -356,6 +357,9 @@ async def set_requester_name(request: Request, requester_name: str = Form(...)):
     if not cleaned_name:
         raise HTTPException(status_code=400, detail="Name is required.")
     request.session["requester_name"] = cleaned_name
+    if "application/json" in (request.headers.get("Accept") or ""):
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"ok": True, "requester_name": cleaned_name})
     return RedirectResponse(url="/", status_code=303)
 
 
