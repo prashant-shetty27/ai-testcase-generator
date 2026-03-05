@@ -569,13 +569,17 @@
 
     const NAME_KEY = "ai_tcgen_requester_name";
 
+    function hideNameGate() {
+        nameGate.style.display = "none";
+    }
+
     // On load: if popup is visible but localStorage has a name, restore it and hide popup
     (function () {
         const saved = normalizeName(localStorage.getItem(NAME_KEY) || "");
-        if (saved && nameGate.classList.contains("hidden") === false) {
+        if (saved) {
             requesterNameInput.value = saved;
             requesterNameField.value = saved;
-            nameGate.classList.add("hidden");
+            hideNameGate();
         }
     })();
 
@@ -590,7 +594,7 @@
         // Save locally and hide immediately
         localStorage.setItem(NAME_KEY, normalizedRequesterName);
         requesterNameField.value = normalizedRequesterName;
-        nameGate.classList.add("hidden");
+        hideNameGate();
         // Persist to server in background for logging
         const fd = new FormData();
         fd.append("requester_name", normalizedRequesterName);
@@ -688,7 +692,7 @@
 
         if (!normalizeName(requesterNameField.value)) {
             setNameError(true);
-            nameGate.classList.remove("hidden");
+            nameGate.style.display = "flex";
             requesterNameInput.focus();
             statusText.textContent = "Enter your name before generating.";
             return;
