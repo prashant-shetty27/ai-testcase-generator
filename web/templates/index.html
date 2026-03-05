@@ -569,13 +569,13 @@
 
     const NAME_KEY = "ai_tcgen_requester_name";
 
-    function hideNameGate() {
-        nameGate.style.display = "none";
-    }
+    function hideNameGate() { nameGate.style.display = "none"; }
+    function storageSave(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
+    function storageGet(k) { try { return localStorage.getItem(k) || ""; } catch (_) { return ""; } }
 
-    // On load: if popup is visible but localStorage has a name, restore it and hide popup
+    // On load: if localStorage has a name, pre-fill and hide popup
     (function () {
-        const saved = normalizeName(localStorage.getItem(NAME_KEY) || "");
+        const saved = normalizeName(storageGet(NAME_KEY));
         if (saved) {
             requesterNameInput.value = saved;
             requesterNameField.value = saved;
@@ -591,11 +591,9 @@
             requesterNameInput.focus();
             return;
         }
-        // Save locally and hide immediately
-        localStorage.setItem(NAME_KEY, normalizedRequesterName);
+        storageSave(NAME_KEY, normalizedRequesterName);
         requesterNameField.value = normalizedRequesterName;
         hideNameGate();
-        // Persist to server in background for logging
         const fd = new FormData();
         fd.append("requester_name", normalizedRequesterName);
         fetch("/set-requester-name", {
@@ -606,10 +604,8 @@
     });
 
     if (!normalizeName(requesterNameField.value)) {
-        const saved = normalizeName(localStorage.getItem(NAME_KEY) || "");
-        if (saved) {
-            requesterNameField.value = saved;
-        }
+        const saved = normalizeName(storageGet(NAME_KEY));
+        if (saved) { requesterNameField.value = saved; }
     }
 
     function selectedPlatformCount() {
