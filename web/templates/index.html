@@ -53,6 +53,20 @@
             font-size: 14px;
         }
 
+        .build-tag {
+            margin: -14px 0 18px;
+            color: #7a8796;
+            font-size: 11px;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .build-notes {
+            margin: -12px 0 16px;
+            color: #5d6b7b;
+            font-size: 12px;
+        }
+
         .session-bar {
             display: flex;
             justify-content: space-between;
@@ -368,6 +382,8 @@
 <main class="container">
     <h1 class="title">AI Testcase Generator</h1>
     <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
+    <p class="build-tag">Build: 20260305-name-gate-v2</p>
+    <p class="build-notes">Changes: mandatory name popup before testcase generation.</p>
     {% if user %}
     <div class="session-bar">
         <span class="session-user">Signed in as {{ user.email or user.name or "Slack User" }}</span>
