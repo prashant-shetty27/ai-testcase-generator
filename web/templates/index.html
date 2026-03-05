@@ -504,11 +504,13 @@
             <input id="requesterNameField" type="hidden" name="requester_name" value="{{ requester_name or '' }}">
         </section>
 
-        <button id="generateBtn" class="generate-btn" type="submit">
-            <span id="btnText">Generate & Download</span>
-            <span id="btnLoader" class="loader hidden" aria-hidden="true"></span>
-        </button>
-        <p id="statusText" class="status" aria-live="polite"></p>
+        <div style="position:sticky;bottom:0;left:0;right:0;z-index:100;background:var(--panel);padding:16px 0 0 0;box-shadow:0 -2px 16px rgba(20,40,60,0.08);margin-top:24px;">
+            <button id="generateBtn" class="generate-btn" type="submit" style="width:100%;max-width:400px;margin:0 auto;display:block;">
+                <span id="btnText">Generate & Download</span>
+                <span id="btnLoader" class="loader hidden" aria-hidden="true"></span>
+            </button>
+            <p id="statusText" class="status" aria-live="polite" style="text-align:center;margin-top:8px;"></p>
+        </div>
     </form>
 </main>
 
