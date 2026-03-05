@@ -381,7 +381,7 @@
             <label class="label" for="requesterName">Name (required)</label>
             <input id="requesterName" type="text" maxlength="100" placeholder="Your full name">
             <p id="nameError" class="error hidden">Please enter your name.</p>
-            <button type="submit">Continue</button>
+            <button id="nameGateContinue" type="submit">Continue</button>
         </form>
     </div>
 </div>
@@ -389,8 +389,8 @@
 <main class="container">
     <h1 class="title">AI Testcase Generator</h1>
     <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
-    <p class="build-tag">Build: 20260305-name-gate-v2</p>
-    <p class="build-notes">Changes: mandatory name popup before testcase generation.</p>
+    <p class="build-tag">Build: 20260305-name-gate-v3</p>
+    <p class="build-notes">Changes: fixed name popup continue flow; logs requester name, prompt text, and output file details.</p>
     <p class="signature">Prepared by: Prashant Shetty</p>
     {% if user %}
     <div class="session-bar">
@@ -521,6 +521,7 @@
     const requesterNameField = document.getElementById("requesterNameField");
     const nameGate = document.getElementById("nameGate");
     const nameGateForm = document.getElementById("nameGateForm");
+    const nameGateContinue = document.getElementById("nameGateContinue");
     const requesterNameInput = document.getElementById("requesterName");
     const nameError = document.getElementById("nameError");
     const NAME_STORAGE_KEY = "ai_testcase_generator_name";
@@ -558,8 +559,18 @@
         nameError.classList.toggle("hidden", !show);
     }
 
-    nameGateForm.addEventListener("submit", function (event) {
-        event.preventDefault();
+    function closeNameGate() {
+        setNameError(false);
+        nameGate.classList.add("hidden");
+        statusText.textContent = "Name captured. You can generate testcases now.";
+        requirementEditor.focus();
+    }
+
+    function submitRequesterName(event) {
+        if (event) {
+            event.preventDefault();
+        }
+
         const normalizedRequesterName = normalizeName(requesterNameInput.value);
         if (!normalizedRequesterName) {
             setNameError(true);
@@ -569,18 +580,26 @@
 
         requesterNameField.value = normalizedRequesterName;
         requesterNameInput.value = normalizedRequesterName;
-        window.localStorage.setItem(NAME_STORAGE_KEY, normalizedRequesterName);
-        setNameError(false);
-        nameGate.classList.add("hidden");
-        statusText.textContent = "Name captured. You can generate testcases now.";
-        requirementEditor.focus();
-    });
+        try {
+            window.localStorage.setItem(NAME_STORAGE_KEY, normalizedRequesterName);
+        } catch (_) {}
+        closeNameGate();
+    }
 
-    const savedRequesterName = normalizeName(window.localStorage.getItem(NAME_STORAGE_KEY));
+    nameGateForm.addEventListener("submit", submitRequesterName);
+    nameGateContinue.addEventListener("click", submitRequesterName);
+
+    let savedRequesterName = "";
+    try {
+        savedRequesterName = normalizeName(window.localStorage.getItem(NAME_STORAGE_KEY));
+    } catch (_) {}
     if (savedRequesterName) {
         requesterNameInput.value = savedRequesterName;
+        requesterNameField.value = savedRequesterName;
+        closeNameGate();
+    } else {
+        requesterNameInput.focus();
     }
-    requesterNameInput.focus();
 
     function selectedPlatformCount() {
         return platformInputs.filter(input => input.checked).length;

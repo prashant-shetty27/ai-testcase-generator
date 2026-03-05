@@ -91,9 +91,11 @@ def _resolve_slack_redirect_uri(request: Request) -> str:
     return str(request.url_for("auth_slack_callback"))
 
 
+_LOCAL_DEV_USER = {"name": "Local Dev", "email": "local@dev.local", "sub": "local"}
+
 def _get_current_user(request: Request):
     if not ENABLE_SLACK_AUTH:
-        return None
+        return _LOCAL_DEV_USER
     return request.session.get("user")
 
 
@@ -136,6 +138,7 @@ def _build_run_request_payload(
     existing_filename=None,
     output_filename=None,
     update_comment=None,
+    requester_name=None,
 ) -> dict:
     return {
         "requirement": requirement,
@@ -147,7 +150,15 @@ def _build_run_request_payload(
         "existing_filename": existing_filename,
         "output_filename": output_filename,
         "update_comment": update_comment,
+        "requester_name": requester_name,
     }
+
+
+def _resolve_requester_name(request: Request, provided_name: str | None = None) -> str | None:
+    user = _get_current_user(request) or {}
+    fallback_name = str(user.get("name") or "").strip() or None
+    chosen_name = str(provided_name or "").strip() or fallback_name
+    return chosen_name
 
 
 # -------------------------
@@ -158,6 +169,7 @@ def generate(request: TestGenerationRequest, http_request: Request):
     _require_authenticated_user(http_request)
     started_at = perf_counter()
     request.requirement = _clean_requirement(request.requirement)
+    requester_name = _resolve_requester_name(http_request)
     run_request_payload = _build_run_request_payload(
         requirement=request.requirement,
         template=request.template,
@@ -168,6 +180,7 @@ def generate(request: TestGenerationRequest, http_request: Request):
         existing_filename=request.existing_filename,
         output_filename=request.output_filename,
         update_comment=request.update_comment,
+        requester_name=requester_name,
     )
 
     try:
@@ -455,6 +468,7 @@ def get_latest_run(request: Request):
 async def generate_form(
     request: Request,
     requirement: str = Form(...),
+    requester_name: str = Form(...),
     platforms: list[str] = Form([]),
     modules: list[str] = Form([]),
     pages: list[str] = Form([]),
@@ -467,6 +481,8 @@ async def generate_form(
 
     started_at = perf_counter()
     requirement = _clean_requirement(requirement)
+    requester_name = (requester_name or "").strip()
+    resolved_requester_name = _resolve_requester_name(request, requester_name)
     run_request_payload = _build_run_request_payload(
         requirement=requirement,
         template="manual",
@@ -476,9 +492,13 @@ async def generate_form(
         test_types=test_types,
         output_filename=output_filename,
         update_comment=update_comment,
+        requester_name=resolved_requester_name,
     )
 
     try:
+        if not requester_name:
+            raise HTTPException(status_code=400, detail="Name is required.")
+
         if not requirement:
             raise HTTPException(status_code=400, detail="Requirement cannot be empty")
 
@@ -558,9 +578,11 @@ async def generate_simple(request: Request, requirement: str = Form(...)):
 
     started_at = perf_counter()
     requirement = _clean_requirement(requirement)
+    requester_name = _resolve_requester_name(request)
     run_request_payload = _build_run_request_payload(
         requirement=requirement,
         template="manual",
+        requester_name=requester_name,
     )
 
     try:
