@@ -491,7 +491,7 @@ def get_latest_run(request: Request):
 @app.get("/admin/runs")
 def runs_dashboard(request: Request, limit: int = 100):
     _require_authenticated_user(request)
-    runs = list(reversed(list_run_logs(limit=limit)))
+    runs = list_run_logs(limit=limit)
     return templates.TemplateResponse("runs_dashboard.html", {"request": request, "runs": runs})
 
 
