@@ -67,6 +67,13 @@
             font-size: 12px;
         }
 
+        .signature {
+            margin: -10px 0 18px;
+            color: #4d5b69;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         .session-bar {
             display: flex;
             justify-content: space-between;
@@ -384,6 +391,7 @@
     <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
     <p class="build-tag">Build: 20260305-name-gate-v2</p>
     <p class="build-notes">Changes: mandatory name popup before testcase generation.</p>
+    <p class="signature">Prepared by: Prashant Shetty</p>
     {% if user %}
     <div class="session-bar">
         <span class="session-user">Signed in as {{ user.email or user.name or "Slack User" }}</span>
