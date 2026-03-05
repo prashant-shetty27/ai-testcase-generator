@@ -385,7 +385,7 @@
             <label class="label" for="requesterName">Name (required)</label>
             <input id="requesterName" name="requester_name" type="text" maxlength="100" placeholder="Your full name" value="{{ requester_name or '' }}" required>
             <p id="nameError" class="error hidden">Please enter your name.</p>
-            <button id="nameGateContinue" type="submit">Continue</button>
+            <button id="nameGateContinue" type="button">Continue</button>
         </form>
     </div>
 </div>
@@ -561,52 +561,24 @@
     }
 
     requesterNameInput.addEventListener("input", function () {
-        requesterNameField.value = normalizeName(requesterNameInput.value);
-        if (requesterNameField.value) {
-            setNameError(false);
-        }
+        if (normalizeName(requesterNameInput.value)) setNameError(false);
     });
 
-    const NAME_KEY = "ai_tcgen_requester_name";
-
-    function hideNameGate() { nameGate.style.display = "none"; }
-    function storageSave(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
-    function storageGet(k) { try { return localStorage.getItem(k) || ""; } catch (_) { return ""; } }
-
-    // On load: if localStorage has a name, pre-fill and hide popup
-    (function () {
-        const saved = normalizeName(storageGet(NAME_KEY));
-        if (saved) {
-            requesterNameInput.value = saved;
-            requesterNameField.value = saved;
-            hideNameGate();
-        }
-    })();
-
-    nameGateForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const normalizedRequesterName = normalizeName(requesterNameInput.value);
-        if (!normalizedRequesterName) {
+    document.getElementById("nameGateContinue").addEventListener("click", function () {
+        const name = normalizeName(requesterNameInput.value);
+        if (!name) {
             setNameError(true);
             requesterNameInput.focus();
             return;
         }
-        storageSave(NAME_KEY, normalizedRequesterName);
-        requesterNameField.value = normalizedRequesterName;
-        hideNameGate();
+        setNameError(false);
+        requesterNameField.value = name;
+        nameGate.style.display = "none";
+        // Background server save for logging
         const fd = new FormData();
-        fd.append("requester_name", normalizedRequesterName);
-        fetch("/set-requester-name", {
-            method: "POST",
-            headers: { "Accept": "application/json" },
-            body: fd,
-        }).catch(() => {});
+        fd.append("requester_name", name);
+        fetch("/set-requester-name", { method: "POST", headers: { "Accept": "application/json" }, body: fd }).catch(() => {});
     });
-
-    if (!normalizeName(requesterNameField.value)) {
-        const saved = normalizeName(storageGet(NAME_KEY));
-        if (saved) { requesterNameField.value = saved; }
-    }
 
     function selectedPlatformCount() {
         return platformInputs.filter(input => input.checked).length;
