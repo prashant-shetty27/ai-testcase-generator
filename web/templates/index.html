@@ -377,7 +377,7 @@
 </head>
 <body>
 
-<div id="nameGate" class="name-gate{% if requester_name %} hidden{% endif %}" role="dialog" aria-modal="true" aria-labelledby="nameGateTitle">
+<div id="nameGate" class="name-gate" {% if requester_name %}style="display: none;"{% endif %} role="dialog" aria-modal="true" aria-labelledby="nameGateTitle">
     <div class="name-gate-card">
         <h2 id="nameGateTitle">Enter your name to continue</h2>
         <p>Name is required before using the testcase generation tool.</p>
