@@ -156,6 +156,9 @@ def _build_run_request_payload(
 
 def _resolve_requester_name(request: Request, provided_name: str | None = None) -> str | None:
     user = _get_current_user(request) or {}
+    session_name = str(request.session.get("requester_name") or "").strip() or None
+    if session_name:
+        return session_name
     fallback_name = str(user.get("name") or "").strip() or None
     chosen_name = str(provided_name or "").strip() or fallback_name
     return chosen_name
@@ -332,11 +335,28 @@ def home(request: Request):
         response.headers["Expires"] = "0"
         return response
 
-    response = templates.TemplateResponse("index.html", {"request": request, "user": user})
+    response = templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "user": user,
+            "requester_name": _resolve_requester_name(request),
+        },
+    )
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+
+@app.post("/set-requester-name")
+async def set_requester_name(request: Request, requester_name: str = Form(...)):
+    _require_authenticated_user(request)
+    cleaned_name = " ".join((requester_name or "").split()).strip()
+    if not cleaned_name:
+        raise HTTPException(status_code=400, detail="Name is required.")
+    request.session["requester_name"] = cleaned_name
+    return RedirectResponse(url="/", status_code=303)
 
 
 @app.get("/auth/slack/login")

@@ -377,13 +377,13 @@
 </head>
 <body>
 
-<div id="nameGate" class="name-gate" role="dialog" aria-modal="true" aria-labelledby="nameGateTitle">
+<div id="nameGate" class="name-gate{% if requester_name %} hidden{% endif %}" role="dialog" aria-modal="true" aria-labelledby="nameGateTitle">
     <div class="name-gate-card">
         <h2 id="nameGateTitle">Enter your name to continue</h2>
         <p>Name is required before using the testcase generation tool.</p>
-        <form id="nameGateForm" autocomplete="off">
+        <form id="nameGateForm" action="/set-requester-name" method="post" autocomplete="off">
             <label class="label" for="requesterName">Name (required)</label>
-            <input id="requesterName" type="text" maxlength="100" placeholder="Your full name">
+            <input id="requesterName" name="requester_name" type="text" maxlength="100" placeholder="Your full name" value="{{ requester_name or '' }}" required>
             <p id="nameError" class="error hidden">Please enter your name.</p>
             <button id="nameGateContinue" type="submit">Continue</button>
         </form>
@@ -393,8 +393,8 @@
 <main class="container">
     <h1 class="title">AI Testcase Generator</h1>
     <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
-    <p class="build-tag">Build: 20260305-name-gate-v4</p>
-    <p class="build-notes">Changes: fixed popup hide CSS precedence; logs requester name, prompt text, and output file details.</p>
+    <p class="build-tag">Build: 20260305-name-gate-v5</p>
+    <p class="build-notes">Changes: continue uses server-backed name save; logs requester name, prompt text, and output file details.</p>
     <p class="signature">Prepared by: Prashant Shetty</p>
     {% if user %}
     <div class="session-bar">
@@ -502,7 +502,7 @@
                 </div>
             </div>
             <input type="hidden" name="test_types" value="e2e">
-            <input id="requesterNameField" type="hidden" name="requester_name" value="">
+            <input id="requesterNameField" type="hidden" name="requester_name" value="{{ requester_name or '' }}">
         </section>
 
         <button id="generateBtn" class="generate-btn" type="submit">
@@ -525,10 +525,8 @@
     const requesterNameField = document.getElementById("requesterNameField");
     const nameGate = document.getElementById("nameGate");
     const nameGateForm = document.getElementById("nameGateForm");
-    const nameGateContinue = document.getElementById("nameGateContinue");
     const requesterNameInput = document.getElementById("requesterName");
     const nameError = document.getElementById("nameError");
-    const NAME_STORAGE_KEY = "ai_testcase_generator_name";
 
     // Intercept paste: render HTML visually but strip tags for submission
     requirementEditor.addEventListener("paste", function (e) {
@@ -563,45 +561,26 @@
         nameError.classList.toggle("hidden", !show);
     }
 
-    function closeNameGate() {
-        setNameError(false);
-        nameGate.classList.add("hidden");
-        statusText.textContent = "Name captured. You can generate testcases now.";
-        requirementEditor.focus();
-    }
-
-    function submitRequesterName(event) {
-        if (event) {
-            event.preventDefault();
+    requesterNameInput.addEventListener("input", function () {
+        requesterNameField.value = normalizeName(requesterNameInput.value);
+        if (requesterNameField.value) {
+            setNameError(false);
         }
+    });
 
+    nameGateForm.addEventListener("submit", function (event) {
         const normalizedRequesterName = normalizeName(requesterNameInput.value);
         if (!normalizedRequesterName) {
+            event.preventDefault();
             setNameError(true);
             requesterNameInput.focus();
             return;
         }
-
-        requesterNameField.value = normalizedRequesterName;
         requesterNameInput.value = normalizedRequesterName;
-        try {
-            window.localStorage.setItem(NAME_STORAGE_KEY, normalizedRequesterName);
-        } catch (_) {}
-        closeNameGate();
-    }
+        requesterNameField.value = normalizedRequesterName;
+    });
 
-    nameGateForm.addEventListener("submit", submitRequesterName);
-    nameGateContinue.addEventListener("click", submitRequesterName);
-
-    let savedRequesterName = "";
-    try {
-        savedRequesterName = normalizeName(window.localStorage.getItem(NAME_STORAGE_KEY));
-    } catch (_) {}
-    if (savedRequesterName) {
-        requesterNameInput.value = savedRequesterName;
-        requesterNameField.value = savedRequesterName;
-        closeNameGate();
-    } else {
+    if (!normalizeName(requesterNameField.value)) {
         requesterNameInput.focus();
     }
 
