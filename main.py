@@ -488,6 +488,13 @@ def get_latest_run(request: Request):
     return latest
 
 
+@app.get("/admin/runs")
+def runs_dashboard(request: Request, limit: int = 100):
+    _require_authenticated_user(request)
+    runs = list(reversed(list_run_logs(limit=limit)))
+    return templates.TemplateResponse("runs_dashboard.html", {"request": request, "runs": runs})
+
+
 @app.post("/generate-form")
 async def generate_form(
     request: Request,

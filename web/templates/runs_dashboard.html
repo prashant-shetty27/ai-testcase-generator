@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Run Logs — AI Testcase Generator</title>
+    <style>
+        :root {
+            --bg-a: #f5f2e8;
+            --bg-b: #fffaf0;
+            --panel: #ffffff;
+            --ink: #1f2630;
+            --muted: #5d6b7b;
+            --accent: #145da0;
+            --accent-2: #0f4c81;
+            --border: #d9e2ea;
+            --ok: #1f7a4f;
+            --ok-bg: #edfaf3;
+            --fail: #9a2f1a;
+            --fail-bg: #fdf0ee;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", Verdana, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 10% 10%, #fff3cf 0%, transparent 30%),
+                radial-gradient(circle at 85% 0%, #d8ebff 0%, transparent 35%),
+                linear-gradient(160deg, var(--bg-a), var(--bg-b));
+            min-height: 100vh;
+            padding: 28px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 14px 30px rgba(20, 40, 60, 0.08);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .title { margin: 0; font-size: 24px; }
+
+        .back-link {
+            font-size: 13px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover { color: var(--accent-2); }
+
+        .summary-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: #f4f8ff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 22px;
+            color: var(--ink);
+            line-height: 1.2;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-bar input {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 13px;
+            color: var(--ink);
+            background: #fff;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-bar input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead th {
+            background: #f4f8ff;
+            border-bottom: 2px solid var(--border);
+            padding: 10px 12px;
+            text-align: left;
+            color: var(--muted);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover { background: #f8fbff; }
+
+        td {
+            padding: 10px 12px;
+            vertical-align: top;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-success { background: var(--ok-bg); color: var(--ok); }
+        .badge-failed  { background: var(--fail-bg); color: var(--fail); }
+
+        .requirement-cell {
+            max-width: 320px;
+            word-break: break-word;
+            line-height: 1.45;
+        }
+
+        .file-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .file-link:hover { color: var(--accent-2); }
+
+        .error-text {
+            color: var(--fail);
+            font-size: 12px;
+            word-break: break-word;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--muted);
+        }
+
+        .ts { color: var(--muted); font-size: 12px; white-space: nowrap; }
+        .duration { color: var(--muted); font-size: 12px; }
+        .count { font-weight: 700; }
+
+        @media (max-width: 800px) {
+            body { padding: 12px; }
+            .container { padding: 14px; }
+            table { font-size: 12px; }
+            thead th, td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 class="title">Run Logs</h1>
+        <a class="back-link" href="/">← Back to Tool</a>
+    </div>
+
+    <div class="summary-bar">
+        <div class="stat"><strong>{{ runs | length }}</strong> runs shown</div>
+        <div class="stat"><strong>{{ runs | selectattr("status", "equalto", "success") | list | length }}</strong> succeeded</div>
+        <div class="stat"><strong>{{ runs | selectattr("status", "equalto", "failed") | list | length }}</strong> failed</div>
+    </div>
+
+    <div class="filter-bar">
+        <input type="text" id="searchBox" placeholder="Filter by name, requirement, file…" oninput="filterRows()">
+    </div>
+
+    {% if runs %}
+    <table id="runsTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Time (UTC)</th>
+                <th>Requester</th>
+                <th>Requirement</th>
+                <th>Output File</th>
+                <th>Tests</th>
+                <th>Status</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for run in runs %}
+        <tr>
+            <td class="ts">{{ loop.index }}</td>
+            <td class="ts">{{ run.timestamp_utc[:19].replace("T", " ") if run.timestamp_utc else "—" }}</td>
+            <td><strong>{{ run.request.requester_name or "—" }}</strong></td>
+            <td class="requirement-cell">{{ (run.request.requirement or "—")[:200] }}{% if (run.request.requirement or "") | length > 200 %}…{% endif %}</td>
+            <td>
+                {% if run.result and run.result.file_name %}
+                <a class="file-link" href="{{ run.result.download_url }}" target="_blank">{{ run.result.file_name }}</a>
+                {% elif run.error %}
+                <span class="error-text">{{ run.error[:120] }}</span>
+                {% else %}
+                —
+                {% endif %}
+            </td>
+            <td class="count">
+                {% if run.result and run.result.generated_summary %}
+                {{ run.result.generated_summary.total_count }}
+                {% else %}—{% endif %}
+            </td>
+            <td>
+                <span class="badge badge-{{ run.status }}">{{ run.status }}</span>
+            </td>
+            <td class="duration">
+                {% if run.duration_ms is not none %}{{ run.duration_ms }}ms{% else %}—{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">No runs logged yet. Generate some test cases first.</div>
+    {% endif %}
+</div>
+
+<script>
+    function filterRows() {
+        const q = document.getElementById("searchBox").value.toLowerCase();
+        const rows = document.querySelectorAll("#runsTable tbody tr");
+        rows.forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+    }
+</script>
+</body>
+</html>
