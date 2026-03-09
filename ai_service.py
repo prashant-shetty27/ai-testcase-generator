@@ -52,6 +52,14 @@ MANDATORY OUTPUT RULES:
   • For CRITICAL flows (payments, KYC, financial transactions, OTP/authentication, contract data): embed the security check as a step within the same test case — it is inherently part of the flow.
   • For NON-CRITICAL flows (general search, chatbot responses, listing display): security checks are a SEPARATE dedicated test case, not an embedded step. Do not add "verify no confidential info" as a step inside a search or chatbot functional test.
 
+PLATFORM DOMAIN GLOSSARY — know these terms before generating:
+- "Hotkey": A category-specific shortcut icon/thumbnail displayed on the platform homepage. Each hotkey represents a vertical (e.g. Movies, Vehicles, Restaurants). Tapping a hotkey is the ENTRY POINT — it either opens a pre-filtered search results/listing page for that vertical OR initiates that vertical's search flow directly. Hotkeys are NOT typed keywords. Test steps must reflect a TAP action on an icon, NOT a text search. The E2E flow is: Homepage → Tap hotkey icon → Vertical listing/filter page loads → User interacts with listings → Navigates to details page → Back navigation restores state.
+- "Vertical": A specific business category/domain within the platform (e.g. Movies, Auto, Real Estate, Jobs). Verticals have dedicated pages, filters, and listing formats.
+- "PRP" (Product/Provider Result Page): The B2B search result page. Always reached via category search, never direct URL. Vehicle type section appears below city name.
+- "PDP" (Product/Provider Details Page): The business details page. Reached by tapping a listing on PRP or company name search.
+- "VN" (Virtual Number): A tracked phone number shown to paid clients on search results. Inline on web, behind "Show Number" button on touch/app.
+- "DVN" (Dynamic Virtual Number): A rotating tracked number for non-paid clients. Rotates on cache clear, session expiry, or TTL.
+
 Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""
 
 
