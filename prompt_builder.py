@@ -161,11 +161,11 @@ Instructions:
 
 {dynamic_generation_rules}
 
-16. B2B and B2C are SEARCH TYPES — the search query determines whether a search is B2B or B2C, and businesses/contracts in results are automatically classified accordingly. A user is always just a user who performs a B2B-type or B2C-type search. There is no such thing as a "B2B user" or "authorized B2B user". Never use these phrases in any test step.
-    Login steps must be context-driven — only include a login step when the flow genuinely requires user identity:
-    - INCLUDE login when the requirement or flow involves: dashboards, leads, saved searches, account settings, profile management, RFQ submission, paid features, contract management, or any action that requires the user to be identified/authenticated.
-    - DO NOT include login for: category search, result page browsing, details page viewing, B2B/B2C search directories — these are publicly accessible flows. Start those test cases directly from opening the URL or search page.
-    - If login IS needed, say "Login with valid credentials" or "Login as a registered user" — never "B2B user", "authorized B2B user", "admin user", or any invented role unless that exact role is explicitly named in the requirement.
+16. B2B and B2C are SEARCH TYPES — the search query determines whether a search is B2B or B2C, and businesses/contracts in results are automatically classified accordingly. A user is always just a user. STRICTLY FORBIDDEN phrases in any test step: "B2B user", "B2C user", "authorized B2B user", "B2B credentials", "B2B login", "B2B account". These do not exist.
+    Login steps must be context-driven — ask yourself: does this flow REQUIRE the user to be logged in?
+    - PUBLIC flows (NO login step): category search, result page browsing, details page viewing, vehicle directory browsing, B2B/B2C search directories. Start directly from opening the URL.
+    - AUTHENTICATED flows (login step allowed): dashboards, leads, saved searches, account settings, profile management, RFQ submission, paid features, contract management, wishlists, personalised recommendations.
+    - If login IS needed, write ONLY: "Login with valid credentials" or "Login as a registered user". Never attach B2B/B2C/role labels to the login step.
 
 Each test case must:
 - Have 6–8 meaningful steps
