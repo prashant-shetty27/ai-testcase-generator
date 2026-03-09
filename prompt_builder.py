@@ -206,6 +206,22 @@ Apply ONLY when the requirement explicitly mentions call numbers, phone display,
     - Paid Expired contract → VN must deactivate (number no longer shown inline or via button).
     - Non-paid → paid upgrade → DVN must be replaced by VN (verify old DVN is removed).
 
+RULE J — Multilingual / Regional Language cases (India context):
+Apply when the requirement involves ANY of the following:
+  - Text INPUT by a user: search queries, form fields, chatbot messages, reviews, addresses, company name entry.
+  - Text DISPLAY to a user: listings, company names, categories, banners, product descriptions, autosuggest results, error messages.
+  - Text EXTRACTION or PROCESSING: OCR, autosuggest indexing, search ranking, content moderation.
+  India operates in 22+ official languages across multiple scripts (Devanagari, Tamil, Telugu, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Odia, and more). Any feature involving user-facing text must be tested for language handling.
+  Generate `@Lang` labelled test cases covering:
+  - `@Lang Regional Script`: input or display of text in a regional language script — verify no garbling, symbol substitution, or encoding error.
+  - `@Lang Bilingual`: content appears in both English and a regional language on the same screen — verify both are rendered correctly without overlap or truncation.
+  - `@Lang Mixed Script`: some words in English, some in regional script in the same field — verify the system accepts and displays correctly without forcing one script.
+  - `@Lang Input Search`: user types a search query in a regional language — verify autosuggest, results, and page content respond correctly to the regional language query.
+  Skip `@Lang` cases ONLY when:
+  - The requirement is purely numeric (prices, counts, IDs, dates with no label text).
+  - The requirement is about system-level or backend behaviour with no user-facing text at all.
+  - The requirement explicitly states it is English-only scope.
+
 RULE I — Search routing (enforced in all search-related test cases only — skip for non-search requirements like KYC, payments, profile):
   Category search (autosuggest OR freetext) → ALWAYS lands on Result Page.
     Result Page test areas: filters, sorting, listing count, vehicle type section below city, pagination, no-result state, back navigation restoring scroll and filters.
