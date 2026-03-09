@@ -217,9 +217,9 @@ Apply when the requirement involves ANY of the following:
   - `@Lang Bilingual`: content appears in both English and a regional language on the same screen — verify both are rendered correctly without overlap or truncation.
   - `@Lang Mixed Script`: some words in English, some in regional script in the same field — verify the system accepts and displays correctly without forcing one script.
   - `@Lang Input Search`: user types a search query in a regional language — verify autosuggest, results, and page content respond correctly to the regional language query.
+  Note: Prices, counts, and dates are NOT purely numeric in India context — they appear with labels, units, currency symbols, and month names that can all be rendered in regional language. Include @Lang cases for any requirement involving price display, listing counts, date labels, or any numeric value shown alongside user-facing text.
   Skip `@Lang` cases ONLY when:
-  - The requirement is purely numeric (prices, counts, IDs, dates with no label text).
-  - The requirement is about system-level or backend behaviour with no user-facing text at all.
+  - The requirement is strictly about a backend API, database operation, or system config with zero user-facing rendering.
   - The requirement explicitly states it is English-only scope.
 
 RULE I — Search routing (enforced in all search-related test cases only — skip for non-search requirements like KYC, payments, profile):
