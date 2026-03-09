@@ -147,6 +147,12 @@ Instructions:
     e. One test case for a boundary-city scenario (e.g., Mumbai/Thane, Delhi/Gurgaon, Bengaluru/Whitefield) — results must not bleed across city boundaries.
     Label each location case with `@Location` in the scenario title (e.g., `@Location GPS auto-detect`, `@Location Permission Denied`, `@Location City Change`).
     These location cases are IN ADDITION to all other required test cases — do NOT replace existing scenarios with location ones.
+14. If the requirement is related to call numbers, phone display, VN, DVN, Actual number, Preferred number, or "Show Number" behavior — generate SEPARATE test cases per number type. Use `@VN`, `@DVN`, `@Actual`, `@Preferred` labels in the scenario title. Apply these mandatory rules per type:
+    @VN — WEB: number shown inline (no button). TOUCH/APP: "Show Number" button reveals single mobile-type number. VN is ONLY for paid clients — verify blocked for non-paid.
+    @DVN — Number shown but MUST change after: (a) cache clear, (b) session expiry, (c) ~1-minute TTL. Generate one test case per rotation trigger. DVN is ONLY for non-paid — verify blocked for paid clients.
+    @Actual — "Show Number" button on all platforms. May reveal single OR multiple numbers (mobile/landline/tollfree). Test both single and multi-number variants. Emergency/helpline Actual numbers must display regardless of contract status.
+    @Preferred — Sourced from Google; behaves identically to Actual for display and routing. Must not be misclassified as VN or DVN.
+    Cross-cutting for ALL types: number must be masked/hidden before reveal (not in DOM or network response); every reveal must fire a lead event; Paid Expired contract must deactivate VN; non-paid → paid upgrade must replace DVN with VN.
 
 {dynamic_generation_rules}
 

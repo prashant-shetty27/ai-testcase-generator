@@ -224,6 +224,36 @@ def get_module_context(modules: list[str]) -> str:
             "Revenue-critical: Paid Expired must not display as Active Paid anywhere in the UI or API response"
         ],
 
+        "calls": [
+            # ── Number type definitions ──
+            "VN (Virtual Number): Fixed number allocated ONLY to PAID clients — single mobile-type number, never changes",
+            "DVN (Dynamic Virtual Number): Range of fixed numbers allocated to NON-PAID businesses — number CHANGES after cache clear, session end, or ~1 minute; must be tested for each expiry trigger",
+            "Actual Number: For PAID clients who opted out of VN, OR emergency services / helplines — can be single or multiple numbers (mobile, landline, tollfree)",
+            "Preferred Number: Actual number (mobile/landline/tollfree) fetched from Google when JD does not have the number — behaves identically to Actual Number for display and routing",
+            # ── Platform-specific display rules ──
+            "WEB + VN: Display the fixed VN number DIRECTLY on the page (no 'Show Number' button) — single mobile-type number only",
+            "WEB + DVN: Display the DVN number directly on the page — number must change after cache clear, session expiry, or ~1-minute interval; verify the new number is still from the allocated DVN range",
+            "WEB + Actual / Preferred: Show 'Show Number' button — on click reveals single or multiple numbers (all number types: mobile, landline, tollfree)",
+            "TOUCH / APP + VN: Show 'Show Number' button — on tap reveals single mobile-type VN number",
+            "TOUCH / APP + DVN: Show number (or Show Number button per platform) — number must rotate after cache clear, session end, or ~1-minute TTL; verify each rotation gives a valid DVN range number",
+            "TOUCH / APP + Actual / Preferred: Show 'Show Number' button — on tap reveals single or multiple numbers",
+            # ── DVN-specific rotation rules ──
+            "DVN rotation trigger 1: Hard browser/app cache clear — number must change on next load",
+            "DVN rotation trigger 2: Session expiry — new session must get a different DVN from the pool",
+            "DVN rotation trigger 3: ~1-minute TTL — revisiting the same listing after 60+ seconds must show a different DVN",
+            "DVN pool exhaustion: when all numbers in the range are allocated, system must not crash or show null — must recycle or queue gracefully",
+            # ── Actual / Preferred number rules ──
+            "Actual Number — single number: button reveals one number; verify correct formatting (mobile 10-digit, landline with STD, tollfree 1800-series)",
+            "Actual Number — multiple numbers: button reveals list; verify all numbers are displayed, none truncated",
+            "Preferred Number: sourced from Google; display and routing must be identical to Actual Number; must not be misclassified as VN or DVN",
+            # ── Cross-cutting rules ──
+            "Number masking: before user clicks 'Show Number', number must be partially masked or hidden — not visible in page source or API response",
+            "Call tracking: every number reveal must log a lead event — verify lead is recorded for VN, DVN, Actual, and Preferred types separately",
+            "Non-paid business with VN: should NOT be possible — verify VN is blocked for non-paid contracts",
+            "Paid client with DVN: should NOT be possible — verify DVN is blocked for paid contracts with active VN",
+            "Emergency / helpline numbers (Actual): must always display regardless of contract status — never blocked by paid/non-paid rules",
+        ],
+
         "movies": [
             "City selection must filter multiplex listings correctly — results must match selected city only",
             "Genre, language, and format filters (2D, 3D, IMAX, 4DX, Dolby) must work independently and in combination",
@@ -296,6 +326,19 @@ def get_page_context(pages: list[str]) -> str:
             "Payment failure/retry behavior",
             "Final status display consistency"
         ],
+        "vn an dvn calls": [
+            "WEB: VN listings must show the number inline — no button, no click required",
+            "WEB: DVN listings must show number inline — verify number rotates on cache/session/TTL expiry",
+            "WEB / TOUCH / APP: Actual and Preferred listings must show 'Show Number' button — number(s) revealed only on interaction",
+            "Before reveal: number must not appear in DOM source, network response, or page meta — anti-scraping requirement",
+            "After reveal: all numbers formatted correctly — 10-digit mobile, STD+landline, 1800-series tollfree",
+            "Lead event fired on every reveal — verify in analytics/backend for all 4 number types",
+            "DVN: after 60 seconds, refreshing listing must serve a different number from the DVN pool",
+            "Multiple Actual numbers: all numbers displayed in list; tapping any number initiates call correctly",
+            "Paid Expired contract: VN must be deactivated — verify number is no longer reachable / shown",
+            "Non-paid → Paid upgrade: DVN must be replaced by VN within expected SLA — verify no DVN shown after upgrade",
+        ],
+
         "kyc": [
             "Alert popup appears on KYC page load when any document is >2 years old",
             "Alert message shows exact document type, upload date/vintage, and contract category",

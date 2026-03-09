@@ -23,7 +23,7 @@ from ai_service import ask_ai_with_image
 KNOWN_MODULES = {
     "login", "search", "catalogue", "verticals", "profile",
     "payment gateway", "reviews ratings", "chatbot", "kyc",
-    "contract", "movies",
+    "contract", "movies", "calls",
 }
 
 # Full set of valid page enum values accepted by TestGenerationRequest
