@@ -96,6 +96,29 @@ Ensure no repetition of previous patterns.
     return f"""
 You are a Senior QA Architect with strong experience in Indian SaaS platforms.
 
+╔══════════════════════════════════════════════════════════════╗
+║   CRITICAL HARD RULES — READ BEFORE ANYTHING ELSE           ║
+║   These OVERRIDE every other instruction. No exceptions.     ║
+╚══════════════════════════════════════════════════════════════╝
+
+BANNED WORDS — If any of these appear anywhere in your output, DELETE them before returning:
+  • "directory" / "B2B directory" / "search directory" → NEVER use. There is no directory.
+  • "B2B user" / "B2C user" / "authorized B2B user" / "B2B credentials" / "B2B login" / "B2B account" → NEVER use. A user is just a user.
+  • "B2B search page" / "B2B search platform" / "B2B platform" / "B2B homepage" / "B2B URL" → NEVER use. B2B is a SEARCH TYPE, not a page. There is no B2B page — there is only the platform.
+  • Inches or pixels for device size: "6.1-inch" / "6.7-inch" / "1080x2400" / "375px" → NEVER use. Use ONLY: "compact phone", "standard phone", "large phone", "tablet".
+
+BANNED STEP PATTERNS — Delete any step matching these patterns:
+  • "Observe the UI" | "Check the page" | "Verify the screen loads" | "Ensure the app is open" | "Wait for the page to load" → Filler. Remove.
+  • Any step that verifies city name, location name, or area name as the PRIMARY thing being checked → Wrong focus. City/location are reference anchors, not test subjects.
+  • Any step that introduces data (city names, vehicle types, prices, counts, company names) not explicitly stated in the requirement → Data leakage. Remove.
+
+MANDATORY — Before returning JSON:
+  • EVERY step must be directly relevant to the PRIMARY TEST SUBJECT identified in Phase 1G.
+  • For any frontend requirement: ALL 4 @Lang cases MUST be present (@Lang Regional Script, @Lang Bilingual, @Lang Mixed Script, @Lang Input Search). Non-negotiable.
+  • Browser mention: MAXIMUM ONCE, only at step 1, only when layout/rendering is being tested.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 Requirement:
 {requirement}
 
@@ -257,11 +280,17 @@ Test case TITLE — must be scenario-specific, never generic:
     GOOD: "Vehicle type section absent for city with no associated types — empty state handling"
   - Do NOT reuse the same title structure across multiple test cases. Each title must be unique and self-describing.
 
+Step 1 — Navigation (how to write the starting step correctly):
+  - Search/browse flows (public access): Start with "Open the platform URL and perform [category] search" — NOT "Open the B2B homepage" or "Navigate to the B2B search page" (B2B is a search TYPE, not a page).
+  - Authenticated flows (dashboards, leads, contracts, profile): Start with "Login with valid credentials and navigate to [specific section]".
+  - NEVER say "Open the B2B directory", "Open the B2B homepage", "Open the B2B search platform" — there is no B2B-specific page.
+
 Every step must earn its place:
   - Each step = one purposeful action + its expected outcome in the same sentence.
     BAD: "Navigate to the results page."
     GOOD: "Navigate to the results page and verify listings load with correct filters applied."
   - Steps must build on each other — each step advances the scenario forward.
+  - Every step must be DIRECTLY relevant to the PRIMARY TEST SUBJECT. If a step tests something outside the requirement scope (unrelated UI, keyboard navigation not asked for, unrelated autosuggest behaviour), DELETE IT.
   - FORBIDDEN step patterns (these add zero value, remove them):
     "Observe the UI" | "Check the page" | "Verify the screen loads" | "Ensure the app is open" | "Wait for the page to load" | "Open the app"
 
@@ -294,18 +323,31 @@ Each test case must:
 - If the requirement has explicit conditions/rules, reference them exactly in the relevant step (e.g., "RC - Address Proof >2 years, Approved, live contract"). If no explicit condition exists, describe the scenario state clearly without fabricating conditions.
 - Be business-realistic and self-contained
 
-BEFORE RETURNING OUTPUT — RUN THIS SELF-CHECK ON EVERY SINGLE TEST CASE AND EVERY SINGLE STEP:
-  ✗ Does any step contain "directory", "B2B directory", "search directory"? → REMOVE IT. Use "search platform" or "search page".
-  ✗ Does any step contain inches ("6.1-inch", "6.7-inch") or pixel resolution ("1080x2400")? → REMOVE IT. Use "standard phone", "large phone", "compact phone", or no size at all.
-  ✗ Does any step say "B2B user", "B2C user", "authorized B2B user", "B2B credentials"? → REMOVE IT. A user is just a user.
-  ✗ Does any step add a login step for a search/result page/browsing flow? → REMOVE IT. Public flows start directly from the URL.
-  ✗ Does any step say "Observe the UI", "Check the page", "Verify the screen loads", "Ensure the app is open"? → REMOVE IT. Replace with a purposeful action + expected outcome.
-  ✗ Does any step use a city name, vehicle type example, company name, or price value NOT in the requirement? → REMOVE IT. Use the generic term only.
-  ✗ Does any step verify city name as the PRIMARY purpose? → WRONG. City is a reference anchor only — steps must verify the primary test subject.
-  ✗ Is the browser mentioned more than once, or mentioned for a non-layout functional test? → REMOVE extra mentions. One mention max at step 1 only when layout is tested.
-  ✗ Are ALL 4 @Lang cases present (Regional Script, Bilingual, Mixed Script, Input Search)? → If any are missing, ADD THEM. @Lang is mandatory for all frontend requirements.
-  ✗ Are @Location cases present for a requirement where city is only a positional reference? → REMOVE THEM. @Location fires only when city-switching is the core tested behaviour.
-  Only after all checks pass, return the JSON.
+BEFORE RETURNING OUTPUT — MANDATORY SELF-CHECK (fix violations before returning, do not skip):
+
+  BANNED WORDS CHECK:
+  ✗ Does any output contain "directory" / "B2B directory" / "search directory"? → DELETE. No replacement needed — just remove the word. Do NOT substitute "B2B search page" or "B2B platform" (also banned).
+  ✗ Does any output contain "B2B user" / "B2C user" / "authorized B2B user" / "B2B credentials" / "B2B login"? → DELETE. Say "user" only.
+  ✗ Does any output contain "B2B page" / "B2B search page" / "B2B homepage" / "B2B platform" / "B2B URL"? → DELETE. B2B is a search TYPE, not a page. Navigate to the platform URL only.
+  ✗ Does any output contain inches ("6.1-inch", "6.7-inch") or pixel resolution ("1080x2400", "375px")? → DELETE. Replace with "compact phone", "standard phone", "large phone", or "tablet" — or omit size entirely if layout is not being tested.
+
+  STEP QUALITY CHECK:
+  ✗ Does any step say "Observe the UI", "Check the page", "Verify the screen loads", "Ensure the app is open", "Wait for page to load"? → DELETE. Replace with a specific action + expected outcome.
+  ✗ Does any step use a city name, vehicle type name, company name, price, or count NOT explicitly stated in the requirement? → DELETE. Use the generic term only.
+  ✗ Does any step verify city name / location name as the PRIMARY thing being checked? → WRONG. City is a reference anchor. Re-write to verify the primary test subject.
+  ✗ Are ALL steps in a test case directly relevant to the PRIMARY TEST SUBJECT identified in Phase 1G? If any step is about an unrelated UI element, navigation hint, or keyboard shortcut not asked for in the requirement, DELETE IT.
+
+  AUTH / FLOW CHECK:
+  ✗ Does any step add a login step for a search/result page/browsing flow (public access)? → REMOVE. Public flows start directly from the URL.
+
+  BROWSER / DEVICE CHECK:
+  ✗ Is the browser mentioned more than once in a test case? → REMOVE extra mentions. One mention max at step 1, only when layout or rendering is being tested.
+
+  COVERAGE CHECK:
+  ✗ Are ALL 4 @Lang cases present (Regional Script, Bilingual, Mixed Script, Input Search) for this frontend requirement? → If any are missing, ADD THEM before returning.
+  ✗ Are @Location cases present where city is only a positional reference (not the core tested behaviour)? → REMOVE THEM.
+
+  Only after ALL checks pass, return the JSON.
 
 Return STRICT JSON only:
 
