@@ -169,12 +169,27 @@ Instructions:
     - AUTHENTICATED flows (login step allowed): dashboards, leads, saved searches, account settings, profile management, RFQ submission, paid features, contract management, wishlists, personalised recommendations.
     - If login IS needed, write ONLY: "Login with valid credentials" or "Login as a registered user". Never attach B2B/B2C/role labels to the login step.
 17. NEVER invent or assume examples for domain-specific terms (e.g., vehicle type, category, product type, service type) unless the requirement explicitly names them. "Vehicle type" can mean a car as a product, a truck as a transport service, or car dealers as a category — the context is requirement-specific. Do NOT write "(e.g., Car, Truck, Bike)" unless those exact values appear in the requirement. Use the generic term as-is.
+18. STEP QUALITY — every step must earn its place:
+    - Each step must be a direct, purposeful action tied to testing the specific scenario. Remove any step that is generic, filler, or could be copy-pasted unchanged into any other test case.
+    - Format: Action + expected outcome in the same step. NOT "Navigate to the page." — YES "Navigate to the search results page and verify the page loads with results visible."
+    - FORBIDDEN step patterns: "Observe the UI", "Check the page", "Verify the screen loads", "Ensure the app is open", "Wait for the page to load" — these add no value.
+    - Steps must build on each other — each step advances the scenario, not restates the previous one.
+19. BROWSER AND DEVICE USAGE — mention only when it genuinely affects the test outcome:
+    - ONLY mention browser/device when the test is specifically about: layout on a screen size, touch behaviour, browser-specific rendering, platform-specific feature (e.g., Safari back-swipe, Android back button).
+    - When mentioned, state it ONCE at step 1 as setup context (e.g., "Open the search platform in Chrome on Android") — do NOT repeat device/browser in subsequent steps.
+    - NEVER add device or browser details just to make the step look specific. If the test logic is the same on any device, do not mention a device at all.
+    - NEVER write "(e.g., Chrome, Samsung Internet)" in a step unless the test is comparing browser behaviour.
+20. NO DATA LEAKAGE OR MISINTERPRETATION:
+    - Do NOT reference internal system terms, API field names, backend configs, or database values unless they appear verbatim in the requirement.
+    - Do NOT assume data values (IDs, counts, thresholds, URLs, phone numbers, prices) unless explicitly stated in the requirement.
+    - Do NOT introduce business logic that isn't in the requirement — only test what is described.
+    - If the requirement is ambiguous, generate the test for the most literal reading — do not fill in gaps with assumptions.
 
 Each test case must:
 - Have 6–8 meaningful steps
-- Include validation logic
-- Be business realistic
-- Avoid generic statements
+- Every step must have a clear action AND a verifiable expected outcome
+- Include validation logic tied directly to the requirement
+- Be business realistic with no filler, no assumed data, no invented role labels
 - Reference the EXACT category/rule/condition from the requirement (e.g., "RC - Address Proof >2 years, Approved, live contract")
 
 Return STRICT JSON only:
