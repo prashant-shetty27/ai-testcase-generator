@@ -169,11 +169,17 @@ RULE E — Type fields:
 If the requirement explicitly names type variants (e.g., vehicle type, document type, contract type), generate AT LEAST ONE dedicated test case per named type. Label each with `@TypeName` in the scenario title. Do NOT collapse variants. Do NOT generate type-variant test cases if the requirement does not name specific types — use the generic term only.
   Contract types (use ONLY if the requirement mentions contracts): Paid-Platinum, Paid-Diamond, Paid-Normal, Paid-NationalListing, Paid-Other, NonPaid, PaidExpired.
 
-RULE F — Platform-specific browser scope:
+RULE F — Platform-specific browser and device scope:
   Web (desktop): test on Chrome and Safari. Do NOT assume Firefox or Edge unless the requirement explicitly names them.
   Touch/mobile web: valid browsers are Chrome and Samsung Internet on Android; Safari and Chrome on iOS. Do NOT generate Firefox Mobile cases.
   Android app / iOS app: native app — no browser mentioned in steps unless the requirement is about in-app browser behaviour.
   Do NOT include native app lifecycle steps (background/foreground, push notifications) for mobile web touch platform.
+  Device size terminology — NEVER use inches (e.g., 6.1-inch, 6.7-inch) or pixel resolutions (e.g., 1080x2400) in any test step. Use ONLY these plain terms:
+    "compact phone" — small screen, one-hand use (think budget/SE-size phones)
+    "standard phone" — everyday mid-size phone (most common)
+    "large phone" — bigger display, two-hand use (Pro Max / Ultra class)
+    "tablet" — iPad or Android tablet form factor
+  Mention device size ONLY when the test is specifically about layout behaviour on that screen size. For all other tests, do not mention any size.
 
 RULE G — Location-aware cases (search with geographic relevance):
 Apply ONLY when ALL of the following are true:
@@ -256,6 +262,7 @@ Browser and device — mention only when it directly affects the test outcome:
   - Mention ONCE at step 1 when testing: screen layout, touch behaviour, browser-specific rendering, platform-specific gestures (Safari swipe, Android back button).
   - If the test logic is platform-agnostic, do NOT mention any device or browser.
   - Never list multiple browsers as examples in a step — "(e.g., Chrome, Samsung Internet)" belongs in a dedicated browser-comparison test case only.
+  - Device size: use ONLY "compact phone", "standard phone", "large phone", or "tablet" — NEVER use inches or pixel resolution. Mention size only when layout is being tested.
 
 No data leakage or assumption:
   - Do NOT reference internal API field names, backend config values, database terms, or system IDs unless they appear verbatim in the requirement.
