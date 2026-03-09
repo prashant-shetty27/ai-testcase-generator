@@ -126,71 +126,114 @@ System Classification:
 Type: {classified_type}
 Confidence: {confidence}
 
-Instructions:
-1. Identify complete business flows.
-2. Identify revenue impact areas.
-3. Identify integration risks.
-4. Identify boundary values.
-5. Identify negative paths.
-6. Identify data consistency risks.
-7. If the requirement lists CATEGORY-WISE rules or numbered conditions, generate AT LEAST ONE dedicated test case per category and per condition combination. Do NOT collapse multiple rules into a single generic test case.
-8. If the requirement mentions specific statuses (e.g., Approved, Unverified, Unapproved, Active, Inactive), generate separate test cases for EACH status variant.
-9. If alert/warning popups are mentioned, include tests for: popup display, popup content accuracy (vintage date shown), popup dismiss, and post-action state.
-10. If delete actions are mentioned, test: delete confirmation, UI refresh after delete, undo/re-upload prevention, and impact on associated contract state.
-11. If the requirement mentions a "type" field (e.g., vehicle type, category type, listing type, document type, contract type), generate AT LEAST ONE dedicated test case per type variant. Label each variant scenario with `@TypeName` in the scenario title (e.g., `@Car`, `@Bike`, `@Truck`, `@Platinum`, `@PaidExpired`). Do NOT collapse all type variants into a single generic test case. Contract types include: Paid-Platinum, Paid-Diamond, Paid-Normal, Paid-NationalListing, Paid-Other, NonPaid, PaidExpired — each needs its own test case.
-12. For mobile web test cases: target browsers are Chrome + Samsung Internet on Android, and Safari + Chrome on iOS. Do NOT generate Firefox Mobile test cases for mobile web. This is a mobile touch website — do not include native app lifecycle steps (background/foreground, push notifications).
-13. If the requirement is related to any of the following search intents — category search, company search, product search, service search, business search, or movies search — ALWAYS include location-aware test cases:
-    a. One test case where user location is auto-detected via GPS and results are verified to match that city/area.
-    b. One test case where user manually changes location mid-session and results refresh to the new location.
-    c. One test case where location permission is DENIED — verify graceful fallback to manual city selection (no crash, no empty screen).
-    d. One test case for hyperlocal/proximity search (area or pincode level) — results ranked by proximity to user.
-    e. One test case for a boundary-city scenario (e.g., Mumbai/Thane, Delhi/Gurgaon, Bengaluru/Whitefield) — results must not bleed across city boundaries.
-    Label each location case with `@Location` in the scenario title (e.g., `@Location GPS auto-detect`, `@Location Permission Denied`, `@Location City Change`).
-    These location cases are IN ADDITION to all other required test cases — do NOT replace existing scenarios with location ones.
-14. If the requirement is related to call numbers, phone display, VN, DVN, Actual number, Preferred number, or "Show Number" behavior — generate SEPARATE test cases per number type. Use `@VN`, `@DVN`, `@Actual`, `@Preferred` labels in the scenario title. Apply these mandatory rules per type:
-    @VN — WEB: number shown inline (no button). TOUCH/APP: "Show Number" button reveals single mobile-type number. VN is ONLY for paid clients — verify blocked for non-paid.
-    @DVN — Number shown but MUST change after: (a) cache clear, (b) session expiry, (c) ~1-minute TTL. Generate one test case per rotation trigger. DVN is ONLY for non-paid — verify blocked for paid clients.
-    @Actual — "Show Number" button on all platforms. May reveal single OR multiple numbers (mobile/landline/tollfree). Test both single and multi-number variants. Emergency/helpline Actual numbers must display regardless of contract status.
-    @Preferred — Sourced from Google; behaves identically to Actual for display and routing. Must not be misclassified as VN or DVN.
-    Cross-cutting for ALL types: number must be masked/hidden before reveal (not in DOM or network response); every reveal must fire a lead event; Paid Expired contract must deactivate VN; non-paid → paid upgrade must replace DVN with VN.
-15. SEARCH RESULT PAGE vs DETAILS PAGE routing — strictly enforce this in ALL test cases:
-    RESULT PAGE: Category search (autosuggest OR freetext) ALWAYS lands on Result Page. Generate listing-level test cases: filters, sorting, count accuracy, vehicle type section below city, pagination, no-result state, back navigation restoring scroll+filters.
-    DETAILS PAGE: Company/brand name direct search ALWAYS lands on Details Page. Generate company profile test cases: contact data, address, ratings, claimed/unclaimed badge, branch selection.
-    COMPANY RESULT PAGE (exception): Company freetext OR outlet-grouped search (e.g. "Pizza Hut", "McDonald's outlets") lands on a Company Result Page showing multiple outlet listings — generate outlet-listing test cases here, NOT company profile test cases.
-    For B2B requirements: if the page is a B2B result page (PRP), ALL test cases must be category-search-based. DO NOT generate company profile, company name search, or Details Page test cases for a B2B result page requirement. Vehicle type display below city is a mandatory test area for every B2B result page requirement.
+═══════════════════════════════════════════
+PHASE 1 — ANALYSE BEFORE YOU GENERATE
+═══════════════════════════════════════════
+Before writing any test case, read the requirement fully and identify:
+A. Complete end-to-end business flows involved.
+B. Revenue-impacting paths (payments, contracts, leads, upgrades).
+C. Integration touchpoints (API calls, third-party systems, data sync).
+D. Boundary values (min/max, thresholds, limits explicitly stated).
+E. Negative paths (invalid input, blocked access, error states).
+F. Data consistency risks (state changes, concurrent actions, rollback).
+Only after this analysis, proceed to generate test cases.
+
+═══════════════════════════════════════════
+PHASE 2 — COVERAGE RULES (apply conditionally)
+═══════════════════════════════════════════
+Apply each rule ONLY when the condition is true for this requirement:
+
+RULE A — Category-wise conditions:
+If the requirement lists CATEGORY-WISE rules or numbered conditions, generate AT LEAST ONE dedicated test case per category and per condition combination. Do NOT collapse multiple rules into a single generic test case.
+
+RULE B — Status variants:
+If the requirement mentions specific statuses (e.g., Approved, Unverified, Unapproved, Active, Inactive), generate a separate test case for EACH status variant.
+
+RULE C — Popup / alert actions:
+If alert or warning popups are mentioned, cover: popup display trigger, popup content accuracy, popup dismiss, and post-action state verification.
+
+RULE D — Delete actions:
+If delete is mentioned, cover: delete confirmation dialog, UI refresh after delete, prevention of undo/re-upload, and impact on any associated contract or record state.
+
+RULE E — Type fields:
+If the requirement explicitly names type variants (e.g., vehicle type, document type, contract type), generate AT LEAST ONE dedicated test case per named type. Label each with `@TypeName` in the scenario title. Do NOT collapse variants. Do NOT generate type-variant test cases if the requirement does not name specific types — use the generic term only.
+  Contract types (use ONLY if the requirement mentions contracts): Paid-Platinum, Paid-Diamond, Paid-Normal, Paid-NationalListing, Paid-Other, NonPaid, PaidExpired.
+
+RULE F — Platform-specific browser scope (mobile web only):
+For touch/mobile web platform: valid browsers are Chrome and Samsung Internet on Android; Safari and Chrome on iOS. Do NOT generate Firefox Mobile cases. Do NOT include native app lifecycle steps (background/foreground, push notifications) for mobile web.
+
+RULE G — Location-aware cases (search with geographic relevance):
+Apply ONLY when the requirement explicitly involves search results that are location-sensitive (category search, product search, service search, movies search where city/area matters).
+  Add these ADDITIONAL test cases (labelled `@Location` in scenario title):
+  - `@Location GPS Auto-detect`: location auto-detected, results match detected city.
+  - `@Location City Change`: user changes city mid-session, results refresh correctly.
+  - `@Location Permission Denied`: GPS denied, graceful fallback to manual city selection, no crash or blank screen.
+  - `@Location Hyperlocal`: search by area or pincode, results ranked by proximity.
+  - `@Location Boundary City`: search near a city boundary (e.g., Mumbai/Thane), results do not bleed across boundary.
+  These are IN ADDITION to all other required cases — do NOT replace existing cases with location ones.
+
+RULE H — Call number types (VN / DVN / Actual / Preferred):
+Apply ONLY when the requirement explicitly mentions call numbers, phone display, VN, DVN, Actual, Preferred, or "Show Number" behaviour.
+  Generate SEPARATE test cases per number type, labelled `@VN`, `@DVN`, `@Actual`, `@Preferred`:
+  @VN: WEB — number shown inline, no button. TOUCH/APP — "Show Number" button, single mobile number. VN is for paid clients only — verify it is blocked for non-paid.
+  @DVN: Number rotates after (a) cache clear, (b) session expiry, (c) ~1-minute TTL — one test case per trigger. DVN is for non-paid only — verify blocked for paid clients.
+  @Actual: "Show Number" button on all platforms. Test single-number and multi-number (mobile/landline/tollfree) variants. Helpline/emergency numbers display regardless of contract status.
+  @Preferred: Google-sourced number. Display and routing identical to Actual. Must not be misclassified as VN or DVN.
+  Cross-cutting (ALL types): number hidden before reveal (not in DOM or network); every reveal fires a lead event; Paid Expired contract deactivates VN; non-paid → paid upgrade replaces DVN with VN.
+
+RULE I — Search routing (strictly enforced in ALL test cases):
+  Category search (autosuggest OR freetext) → ALWAYS lands on Result Page.
+    Result Page test areas: filters, sorting, listing count, vehicle type section below city, pagination, no-result state, back navigation restoring scroll and filters.
+  Company/brand name direct search → ALWAYS lands on Details Page.
+    Details Page test areas: contact data, address, ratings, claimed/unclaimed badge, branch selection.
+  Company freetext OR outlet-grouped search (e.g. "Pizza Hut outlets") → lands on Company Result Page.
+    Company Result Page test areas: outlet listings, not company profile.
+  B2B Result Page (PRP): ALL test cases must be category-search-based. DO NOT generate company profile, company name search, or Details Page test cases for a B2B PRP requirement. Vehicle type display below city is mandatory.
+
+═══════════════════════════════════════════
+PHASE 3 — TERMINOLOGY AND FORBIDDEN PATTERNS
+═══════════════════════════════════════════
+FORBIDDEN — never use these in any test step or title:
+  "B2B user" | "B2C user" | "authorized B2B user" | "B2B credentials" | "B2B login" | "B2B account" | "directory" | "B2B directory" | "search directory"
+
+B2B and B2C are SEARCH TYPES — the search query classifies the intent, and businesses/results are automatically classified accordingly. A user is always just a user.
+
+LOGIN — include a login step only when the flow genuinely requires authentication:
+  Requires login: dashboards, leads, saved searches, account settings, profile, RFQ submission, paid features, contract management.
+  Does NOT require login: category search, result page browsing, details page viewing, B2B/B2C search platforms — start directly from opening the URL.
+  When login IS needed: write "Login with valid credentials" or "Login as a registered user" — no role labels ever.
+
+DOMAIN TERMS — never invent or assume examples unless the requirement explicitly names them.
+  "Vehicle type", "category", "product type", "service type" are context-specific — do not assume values like "Car, Truck, Bike" unless those exact values appear in the requirement.
+
+═══════════════════════════════════════════
+PHASE 4 — STEP WRITING RULES
+═══════════════════════════════════════════
+Every step must earn its place:
+  - Each step = one purposeful action + its expected outcome in the same sentence.
+    BAD: "Navigate to the results page."
+    GOOD: "Navigate to the results page and verify listings load with correct filters applied."
+  - Steps must build on each other — each step advances the scenario forward.
+  - FORBIDDEN step patterns (these add zero value, remove them):
+    "Observe the UI" | "Check the page" | "Verify the screen loads" | "Ensure the app is open" | "Wait for the page to load" | "Open the app"
+
+Browser and device — mention only when it directly affects the test outcome:
+  - Mention ONCE at step 1 when testing: screen layout, touch behaviour, browser-specific rendering, platform-specific gestures (Safari swipe, Android back button).
+  - If the test logic is platform-agnostic, do NOT mention any device or browser.
+  - Never list multiple browsers as examples in a step — "(e.g., Chrome, Samsung Internet)" belongs in a dedicated browser-comparison test case only.
+
+No data leakage or assumption:
+  - Do NOT reference internal API field names, backend config values, database terms, or system IDs unless they appear verbatim in the requirement.
+  - Do NOT assume data values (counts, thresholds, prices, phone numbers, URLs) not stated in the requirement.
+  - Do NOT introduce business logic beyond what the requirement describes — test the literal requirement, not your interpretation of it.
 
 {dynamic_generation_rules}
 
-16. B2B and B2C are SEARCH TYPES — the search query determines whether a search is B2B or B2C, and businesses/contracts in results are automatically classified accordingly. A user is always just a user.
-    STRICTLY FORBIDDEN words/phrases in ANY test step: "B2B user", "B2C user", "authorized B2B user", "B2B credentials", "B2B login", "B2B account", "directory", "B2B directory", "search directory". These must never appear.
-    Instead use: "Open the B2B search platform", "Navigate to the search page", "Open the site".
-    Login steps must be context-driven — ask yourself: does this flow REQUIRE the user to be logged in?
-    - PUBLIC flows (NO login step): category search, result page browsing, details page viewing, B2B/B2C search platforms. Start directly from opening the URL.
-    - AUTHENTICATED flows (login step allowed): dashboards, leads, saved searches, account settings, profile management, RFQ submission, paid features, contract management, wishlists, personalised recommendations.
-    - If login IS needed, write ONLY: "Login with valid credentials" or "Login as a registered user". Never attach B2B/B2C/role labels to the login step.
-17. NEVER invent or assume examples for domain-specific terms (e.g., vehicle type, category, product type, service type) unless the requirement explicitly names them. "Vehicle type" can mean a car as a product, a truck as a transport service, or car dealers as a category — the context is requirement-specific. Do NOT write "(e.g., Car, Truck, Bike)" unless those exact values appear in the requirement. Use the generic term as-is.
-18. STEP QUALITY — every step must earn its place:
-    - Each step must be a direct, purposeful action tied to testing the specific scenario. Remove any step that is generic, filler, or could be copy-pasted unchanged into any other test case.
-    - Format: Action + expected outcome in the same step. NOT "Navigate to the page." — YES "Navigate to the search results page and verify the page loads with results visible."
-    - FORBIDDEN step patterns: "Observe the UI", "Check the page", "Verify the screen loads", "Ensure the app is open", "Wait for the page to load" — these add no value.
-    - Steps must build on each other — each step advances the scenario, not restates the previous one.
-19. BROWSER AND DEVICE USAGE — mention only when it genuinely affects the test outcome:
-    - ONLY mention browser/device when the test is specifically about: layout on a screen size, touch behaviour, browser-specific rendering, platform-specific feature (e.g., Safari back-swipe, Android back button).
-    - When mentioned, state it ONCE at step 1 as setup context (e.g., "Open the search platform in Chrome on Android") — do NOT repeat device/browser in subsequent steps.
-    - NEVER add device or browser details just to make the step look specific. If the test logic is the same on any device, do not mention a device at all.
-    - NEVER write "(e.g., Chrome, Samsung Internet)" in a step unless the test is comparing browser behaviour.
-20. NO DATA LEAKAGE OR MISINTERPRETATION:
-    - Do NOT reference internal system terms, API field names, backend configs, or database values unless they appear verbatim in the requirement.
-    - Do NOT assume data values (IDs, counts, thresholds, URLs, phone numbers, prices) unless explicitly stated in the requirement.
-    - Do NOT introduce business logic that isn't in the requirement — only test what is described.
-    - If the requirement is ambiguous, generate the test for the most literal reading — do not fill in gaps with assumptions.
-
 Each test case must:
-- Have 6–8 meaningful steps
-- Every step must have a clear action AND a verifiable expected outcome
-- Include validation logic tied directly to the requirement
-- Be business realistic with no filler, no assumed data, no invented role labels
-- Reference the EXACT category/rule/condition from the requirement (e.g., "RC - Address Proof >2 years, Approved, live contract")
+- Have 6–8 steps — every step has a clear action AND a verifiable expected outcome
+- Cover the exact scenario described — no filler, no assumed data, no invented role labels
+- Reference the EXACT condition from the requirement (e.g., "RC - Address Proof >2 years, Approved, live contract")
+- Be business-realistic and self-contained
 
 Return STRICT JSON only:
 
