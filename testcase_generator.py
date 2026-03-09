@@ -5,6 +5,7 @@ from collections import Counter
 from ai_service import ask_ai, TESTCASE_SYSTEM_PROMPT
 from memory.memory_engine import get_patterns_for_requirement, store_patterns
 from context_builder import build_context_block
+from prompt_builder import build_complete_prompt
 
 
 JUSTDIAL_DOMAIN_KEYWORDS = {
@@ -1089,59 +1090,31 @@ Generate complete business workflow validation including:
         constraints_text = "\n".join(f"- {c}" for c in constraints)
         analysis_block += f"\nExtracted Constraints:\n{constraints_text}\n"
 
-    prompt = f"""
-You are a Senior QA Architect with 12+ years of experience.
+    # Build the extended context block: combines platform context with
+    # all dynamic blocks built above (e2e, kyc, domain, update, classification)
+    extended_context = "\n".join(filter(None, [
+        context_block,
+        classification_guidance,
+        analysis_block,
+        platform_instruction_block,
+        kyc_domain_block,
+        update_mode_block,
+        e2e_block,
+        domain_guardrails,
+        "- Currency must be INR (₹) only when monetary validation is relevant.",
+        "- Apply GST/cancellation/booking rules only if requirement explicitly asks for those flows.",
+    ]))
 
-Requirement:
-{original_requirement}
-
-Platforms: {platforms}
-Modules: {modules}
-Pages: {pages}
-Test Types: {test_types}
-
-Classification:
-Mode: {mode}
-Type: {classified_type}
-Confidence: {confidence}
-
-{classification_guidance}
-{analysis_block}
-{platform_instruction_block}
-{kyc_domain_block}
-{update_mode_block}
-
-Previously learned important scenarios:
-{memory_patterns}
-
-Generate REALISTIC, production-level test cases.
-
-{e2e_block}
-
-    Each test case must:
-    - Be business realistic
-    - Be detailed
-    - Have minimum 6 meaningful steps
-    - Keep wording concise and to the point
-    - Include validation checks
-    - Include varied priorities (High/Medium/Low)
-    - Have specific, observable expected results (manual tester style)
-    - Avoid generic expected results like "should work correctly"
-
-IMPORTANT CONTEXT:
-{context_block}
-{domain_guardrails}
-- Currency must be INR (₹) only when monetary validation is relevant.
-- Apply GST/cancellation/booking rules only if requirement explicitly asks for those flows.
-
-Return STRICT JSON ONLY in this structure:
-{{
-  "positive_tests": [],
-  "negative_tests": []
-}}
-
-Return JSON only.
-"""
+    prompt = build_complete_prompt(
+        requirement=original_requirement,
+        platforms=platforms,
+        modules=modules,
+        pages=pages,
+        test_types=test_types,
+        memory_patterns=memory_patterns,
+        context_block=extended_context,
+        classification={"type": classified_type, "confidence": confidence},
+    )
 
     strict_mode = mode == "strict"
 
