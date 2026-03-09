@@ -68,6 +68,8 @@ def _encode_image_to_base64(image_path: str) -> tuple[str, str]:
     return data, media_type
 
 
+_REASONING_MODELS = {"o1", "o3", "o4-mini", "o1-mini", "o1-preview"}
+
 def ask_ai(
     prompt: str,
     strict_mode: bool = False,
@@ -77,44 +79,50 @@ def ask_ai(
     """
     Central AI invocation layer.
     Supports:
-    - Strict mode (lower temperature)
+    - o3 / reasoning models (no temperature, uses reasoning_effort)
     - JSON enforcement
     - Custom system prompt (pass hard rules here for maximum compliance)
     - Error resilience
     """
 
-    temperature = 0.3 if strict_mode else 0.6
+    model = os.getenv("OPENAI_MODEL", "o3")
+    is_reasoning = model in _REASONING_MODELS
+
     # Allow scaling output size via env; keep safe defaults.
-    max_tokens_env = os.getenv("AI_MAX_TOKENS", "7000")
+    max_tokens_env = os.getenv("AI_MAX_TOKENS", "12000")
     try:
         max_tokens = int(max_tokens_env)
     except ValueError:
-        max_tokens = 7000
-    max_tokens = max(1000, min(max_tokens, 12000))
+        max_tokens = 12000
+    max_tokens = max(1000, min(max_tokens, 100000))
 
     default_system = (
         "You are a senior QA architect with strong "
         "focus on structured, deterministic output."
     )
 
-    try:
-        response = _get_client().chat.completions.create(
-            model="gpt-4.1",
-            temperature=temperature,
-            max_tokens=max_tokens,
-            response_format={"type": "json_object"} if expect_json else None,
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt if system_prompt else default_system
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
+    kwargs = {
+        "model": model,
+        "max_completion_tokens": max_tokens,
+        "response_format": {"type": "json_object"} if expect_json else None,
+        "messages": [
+            {
+                "role": "system",
+                "content": system_prompt if system_prompt else default_system
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    }
 
+    if not is_reasoning:
+        # Reasoning models don't accept temperature
+        kwargs["temperature"] = 0.3 if strict_mode else 0.6
+
+    try:
+        response = _get_client().chat.completions.create(**kwargs)
         return response.choices[0].message.content
 
     except Exception as e:
