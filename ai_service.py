@@ -28,6 +28,7 @@ BANNED STEPS — delete any step that:
 - Tests orientation changes (portrait/landscape rotation), pinch-to-zoom, double-tap zoom, horizontal swipe gestures, or tap target pixel sizes (e.g. "44x44px") UNLESS the requirement explicitly asks for those. If the requirement does NOT mention orientation, rotation, zoom, or tap targets — do NOT generate those steps.
 - Mentions two different browsers in one step — browsers are tested ONE PER dedicated test case.
 - Introduces a city name, vehicle type example, company name, price, pixel size, or count NOT explicitly stated in the requirement — data leakage.
+- Uses pixel measurements for tap targets (e.g. "44x44px", "48dp") — NEVER use pixel sizes. If tap accessibility must be verified, use qualitative terms only: "clearly tappable", "easily selectable", "visually distinct", "not cramped", "comfortably tappable without mis-taps".
 - Verifies a city name or location name as the PRIMARY outcome — city is always a reference anchor, never the test subject.
 - Is not directly relevant to the PRIMARY TEST SUBJECT of the requirement.
 
