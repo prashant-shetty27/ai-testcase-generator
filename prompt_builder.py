@@ -161,6 +161,12 @@ Instructions:
 
 {dynamic_generation_rules}
 
+16. B2B and B2C describe the PLATFORM and SEARCH CONTEXT — NOT the user. There is no such thing as a "B2B user" or "authorized B2B user". Never use these phrases in any test step.
+    Login steps must be context-driven — only include a login step when the flow genuinely requires user identity:
+    - INCLUDE login when the requirement or flow involves: dashboards, leads, saved searches, account settings, profile management, RFQ submission, paid features, contract management, or any action that requires the user to be identified/authenticated.
+    - DO NOT include login for: category search, result page browsing, details page viewing, B2B/B2C search directories — these are publicly accessible flows. Start those test cases directly from opening the URL or search page.
+    - If login IS needed, say "Login with valid credentials" or "Login as a registered user" — never "B2B user", "authorized B2B user", "admin user", or any invented role unless that exact role is explicitly named in the requirement.
+
 Each test case must:
 - Have 6–8 meaningful steps
 - Include validation logic
