@@ -927,6 +927,7 @@
 
             await triggerFileDownload(response);
             statusText.textContent = "File generated and download started.";
+            document.getElementById("outputFilename").value = "";
         } catch (_) {
             statusText.textContent = "Network error while generating file. Please retry.";
         } finally {
@@ -1131,6 +1132,7 @@ async function submitImageForm() {
             document.body.appendChild(a); a.click(); a.remove();
             URL.revokeObjectURL(url);
             imgStatusText.textContent = "File generated and download started.";
+            document.getElementById("imgOutputFilename").value = "";
         }
     } catch (_) {
         clearInterval(loadingTimer);
