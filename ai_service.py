@@ -85,7 +85,7 @@ def ask_ai(
     - Error resilience
     """
 
-    model = os.getenv("OPENAI_MODEL", "o3")
+    model = os.getenv("OPENAI_MODEL", "gpt-4.1")
     is_reasoning = model in _REASONING_MODELS
 
     # Allow scaling output size via env; keep safe defaults.
