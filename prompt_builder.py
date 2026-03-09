@@ -161,11 +161,14 @@ Instructions:
 
 {dynamic_generation_rules}
 
-16. B2B and B2C are SEARCH TYPES — the search query determines whether a search is B2B or B2C, and businesses/contracts in results are automatically classified accordingly. A user is always just a user. STRICTLY FORBIDDEN phrases in any test step: "B2B user", "B2C user", "authorized B2B user", "B2B credentials", "B2B login", "B2B account". These do not exist.
+16. B2B and B2C are SEARCH TYPES — the search query determines whether a search is B2B or B2C, and businesses/contracts in results are automatically classified accordingly. A user is always just a user.
+    STRICTLY FORBIDDEN words/phrases in ANY test step: "B2B user", "B2C user", "authorized B2B user", "B2B credentials", "B2B login", "B2B account", "directory", "B2B directory", "search directory". These must never appear.
+    Instead use: "Open the B2B search platform", "Navigate to the search page", "Open the site".
     Login steps must be context-driven — ask yourself: does this flow REQUIRE the user to be logged in?
-    - PUBLIC flows (NO login step): category search, result page browsing, details page viewing, B2B/B2C search platforms. Start directly from opening the URL — say "Navigate to the B2B/B2C search platform" or "Open the search page", never "directory".
+    - PUBLIC flows (NO login step): category search, result page browsing, details page viewing, B2B/B2C search platforms. Start directly from opening the URL.
     - AUTHENTICATED flows (login step allowed): dashboards, leads, saved searches, account settings, profile management, RFQ submission, paid features, contract management, wishlists, personalised recommendations.
     - If login IS needed, write ONLY: "Login with valid credentials" or "Login as a registered user". Never attach B2B/B2C/role labels to the login step.
+17. NEVER invent or assume examples for domain-specific terms (e.g., vehicle type, category, product type, service type) unless the requirement explicitly names them. "Vehicle type" can mean a car as a product, a truck as a transport service, or car dealers as a category — the context is requirement-specific. Do NOT write "(e.g., Car, Truck, Bike)" unless those exact values appear in the requirement. Use the generic term as-is.
 
 Each test case must:
 - Have 6–8 meaningful steps
