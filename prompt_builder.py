@@ -136,6 +136,14 @@ C. Integration touchpoints (API calls, third-party systems, data sync).
 D. Boundary values (min/max, thresholds, limits explicitly stated).
 E. Negative paths (invalid input, blocked access, error states).
 F. Data consistency risks (state changes, concurrent actions, rollback).
+G. PRIMARY TEST SUBJECT vs REFERENCE TERMS — this is critical:
+   - PRIMARY TEST SUBJECT: the feature, behaviour, or element the requirement is actually asking you to test.
+   - REFERENCE TERM: a word or element used to describe position, condition, or context — NOT the thing being tested.
+   Examples:
+     "vehicle type section BELOW CITY" → PRIMARY = vehicle type section behaviour | REFERENCE = city (positional anchor only)
+     "listing WITH APPROVED CONTRACT" → PRIMARY = listing behaviour | REFERENCE = Approved contract (condition/filter)
+     "search results FOR MUMBAI" → PRIMARY = search result behaviour | REFERENCE = Mumbai (geographic filter)
+   Rule: Reference terms set up the scenario context. They must NOT become the focus of test steps. Do NOT write steps that primarily validate the reference term — only validate the primary test subject, using the reference term as setup context.
 Only after this analysis, proceed to generate test cases.
 
 ═══════════════════════════════════════════
@@ -219,6 +227,15 @@ Every step must earn its place:
   - Steps must build on each other — each step advances the scenario forward.
   - FORBIDDEN step patterns (these add zero value, remove them):
     "Observe the UI" | "Check the page" | "Verify the screen loads" | "Ensure the app is open" | "Wait for the page to load" | "Open the app"
+
+Step structure — reference terms vs primary test subject:
+  - Use the PRIMARY TEST SUBJECT (identified in Phase 1G) as the focus of every step's verification.
+  - Reference terms (city, contract status, document type used as context) appear only in setup steps or as condition context — never as the primary thing being verified.
+  - Step flow must be: [setup/navigate using reference context] → [act on primary subject] → [verify primary subject behaviour].
+    WRONG: "Verify city name is displayed at top of page. Verify vehicle type section is below city."
+      (city is a reference — its display is not the test. Vehicle type is the subject.)
+    RIGHT: "Scroll to the section below the city name and verify the vehicle type section is present, correctly positioned, and fully rendered with no overlap."
+      (city used as positional anchor; vehicle type section is what is actually verified)
 
 Browser and device — mention only when it directly affects the test outcome:
   - Mention ONCE at step 1 when testing: screen layout, touch behaviour, browser-specific rendering, platform-specific gestures (Safari swipe, Android back button).
