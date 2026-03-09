@@ -309,6 +309,12 @@ Browser and device — mention only when it directly affects the test outcome:
   - Never list multiple browsers as examples in a step — "(e.g., Chrome, Samsung Internet)" belongs in a dedicated browser-comparison test case only.
   - Device size: use ONLY "compact phone", "standard phone", "large phone", or "tablet" — NEVER use inches or pixel resolution. Mention size only when layout is being tested.
 
+Cross-cutting concerns (logging, compliance, analytics, audit):
+  - NEVER append logging/compliance/audit as a final step to a functional test case. These are separate test cases.
+  - If the requirement mentions logging or compliance, write EXACTLY ONE dedicated test case for it — do not repeat it as a tail step across multiple test cases.
+  - Wrong: Step 7 of a search test = "Ensure all interactions are logged for compliance."
+  - Right: A standalone test case titled "Chatbot interaction log recorded correctly for compliance — positive"
+
 No data leakage or assumption:
   - Do NOT reference internal API field names, backend config values, database terms, or system IDs unless they appear verbatim in the requirement.
   - Do NOT assume data values (counts, thresholds, prices, phone numbers, URLs) not stated in the requirement.

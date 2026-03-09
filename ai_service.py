@@ -31,6 +31,7 @@ BANNED STEPS — delete any step that:
 - Uses pixel measurements for tap targets (e.g. "44x44px", "48dp") — NEVER use pixel sizes. If tap accessibility must be verified, use qualitative terms only: "clearly tappable", "easily selectable", "visually distinct", "not cramped", "comfortably tappable without mis-taps".
 - Verifies a city name or location name as the PRIMARY outcome — city is always a reference anchor, never the test subject.
 - Is not directly relevant to the PRIMARY TEST SUBJECT of the requirement.
+- Appends a cross-cutting concern (logging, analytics, compliance monitoring, session recording, audit trail) as a final step to a functional test case — these are SEPARATE test cases, not tail steps. If logging must be tested, write exactly ONE dedicated logging test case. Never repeat it as a step in other test cases.
 
 MANDATORY OUTPUT RULES:
 - For any frontend/UI requirement: ALL 4 @Lang cases MUST be in your output: @Lang Regional Script, @Lang Bilingual, @Lang Mixed Script, @Lang Input Search. Missing even one is invalid.
