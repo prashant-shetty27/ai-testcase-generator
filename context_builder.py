@@ -289,17 +289,35 @@ def get_module_context(modules: list[str]) -> str:
 def get_page_context(pages: list[str]) -> str:
     page_map = {
         "result page": [
-            "Result count and relevance accuracy",
-            "Filter/sort impact reflected in listing order",
-            "Pagination or infinite scroll control validation",
-            "No-result and weak-network messaging"
+            # ── Search-to-page routing rules (CRITICAL) ──
+            "ROUTING RULE: Category search (via autosuggest OR freetext) ALWAYS lands on Result Page — generate category-focused listing test cases here",
+            "ROUTING RULE: Company/brand name search ALWAYS lands on Details Page (PDP) — do NOT generate company profile test cases on result page",
+            "ROUTING EXCEPTION: Company freetext search OR outlet-grouped search (e.g. 'Pizza Hut', 'McDonald's outlets') lands on Company Result Page — a special result page showing multiple outlet listings of that company, NOT a category result page",
+            # ── Result page content rules ──
+            "Result count accuracy — verify total count matches applied category and location filters",
+            "Filter/sort: category, sub-category, rating, distance, verified badge — each filter must independently narrow results; combinations must AND correctly",
+            "Vertical/vehicle-type filters displayed below city header — @Car, @Bike, @Truck, @Commercial etc. must each return distinct, correctly-filtered listing sets",
+            "Sponsored / premium listings must be visually distinct (badge/highlight) and appear in correct positions",
+            "Pagination and infinite scroll — boundary: last page, empty page, scroll-to-top",
+            "No-result state: friendly message with alternative suggestions shown; no blank page, no 500 error",
+            "Weak network / offline: skeleton loader or cached results shown; retry CTA available",
+            "Back navigation from Details Page must restore result page at same scroll position with filters intact",
+            "Sorting options (relevance, rating, distance, newest) — each must reorder listing set correctly",
+            "For B2B result page: vehicle type section below city must be a primary navigational element — missing or broken vehicle type display is a critical defect",
         ],
         "details page": [
-            "Listing vs details data consistency",
-            "Business contact data consistency",
-            "Address/location consistency",
-            "Ratings/reviews summary consistency",
-            "Back navigation consistency"
+            # ── Search-to-page routing rules (CRITICAL) ──
+            "ROUTING RULE: Company/brand name search ALWAYS lands on Details Page — generate company profile, contact, and location test cases here",
+            "ROUTING RULE: Category searches do NOT land here — do NOT generate category listing test cases on details page",
+            "ROUTING EXCEPTION: Company freetext / outlet search lands on Company Result Page, not this Details Page",
+            # ── Details page content rules ──
+            "Listing vs details data consistency — name, category, address must match across result page and details page",
+            "Business contact data consistency — phone, email, website must be accurate and actionable",
+            "Address / location consistency — map pin must match displayed address; directions must open correct map",
+            "Ratings/reviews summary consistency — aggregate rating must match individual review count",
+            "Back navigation must return to result page with previous scroll position and filters preserved",
+            "Claimed vs unclaimed listing — UI must visually differentiate; claimed shows enhanced data fields",
+            "Multiple branches: each branch must have its own details page; selecting a branch must update all contact data",
         ],
         "profile page": [
             "Profile information display correctness",
@@ -325,6 +343,40 @@ def get_page_context(pages: list[str]) -> str:
             "Payment method option correctness",
             "Payment failure/retry behavior",
             "Final status display consistency"
+        ],
+        "web b2b prp page": [
+            "B2B PRP (Primary Result Page) = category search result for B2B context — all category-based test cases belong here",
+            "Vehicle type / vertical filter below city is a PRIMARY navigational element — test each type separately (@Car, @Bike, @Truck, @Commercial, @Heavy Vehicle)",
+            "Missing, broken, or misaligned vehicle type section is a CRITICAL defect — always verify it renders correctly",
+            "B2B listings display must show company name, category, location, rating, and contact CTA correctly",
+            "Filter combinations: location + category + vehicle type — must AND correctly and return non-empty or appropriate no-result state",
+            "Back from B2B PDP (details) must restore PRP with filters and scroll position intact",
+            "Sorting on B2B PRP: relevance, rating, distance — verify each reorders correctly for B2B listings",
+            "No-result state on B2B PRP: show message relevant to B2B context (not consumer messaging)",
+        ],
+        "touch b2b prp page": [
+            "B2B PRP on Touch: vehicle type section below city must render correctly on 5.4\", 6.1\", 6.7\" screens — no truncation or overflow",
+            "Vehicle type filter chips/tabs must be horizontally scrollable if they overflow viewport width",
+            "Tap target for vehicle type filters: minimum 44x44px — verify on smallest screen",
+            "Filter/sort drawer on touch must open, apply, and close correctly without UI breakage",
+            "Back navigation from B2B PDP restores PRP scroll position — no jump to top",
+        ],
+        "android b2b prp page": [
+            "B2B PRP on Android app: vehicle type section below city must render correctly on all target screen sizes and Android OS versions",
+            "Vehicle type filter selection must persist across background/foreground app lifecycle",
+            "Filter state must survive screen rotation (portrait ↔ landscape)",
+        ],
+        "ios b2b prp page": [
+            "B2B PRP on iOS app: vehicle type section must render correctly on iPhone SE, standard, Plus/Max sizes",
+            "Dynamic Island / notch must not overlap vehicle type filter section on iPhone 14 Pro / 15 Pro",
+            "Filter state must survive background/foreground app switch on iOS",
+        ],
+        "web b2b pdp page": [
+            "B2B PDP (Primary Detail Page) = direct company/business detail in B2B context",
+            "Do NOT generate category search or result page test cases here",
+            "B2B-specific fields: GST number, company type, year of establishment, employee count — verify display accuracy",
+            "Contact CTA on B2B PDP: VN/DVN/Actual number rules apply (paid/non-paid contract determines number type)",
+            "Back from B2B PDP must return to B2B PRP with correct filters intact",
         ],
         "vn an dvn calls": [
             "WEB: VN listings must show the number inline — no button, no click required",

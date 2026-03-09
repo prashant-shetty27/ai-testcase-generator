@@ -153,6 +153,11 @@ Instructions:
     @Actual — "Show Number" button on all platforms. May reveal single OR multiple numbers (mobile/landline/tollfree). Test both single and multi-number variants. Emergency/helpline Actual numbers must display regardless of contract status.
     @Preferred — Sourced from Google; behaves identically to Actual for display and routing. Must not be misclassified as VN or DVN.
     Cross-cutting for ALL types: number must be masked/hidden before reveal (not in DOM or network response); every reveal must fire a lead event; Paid Expired contract must deactivate VN; non-paid → paid upgrade must replace DVN with VN.
+15. SEARCH RESULT PAGE vs DETAILS PAGE routing — strictly enforce this in ALL test cases:
+    RESULT PAGE: Category search (autosuggest OR freetext) ALWAYS lands on Result Page. Generate listing-level test cases: filters, sorting, count accuracy, vehicle type section below city, pagination, no-result state, back navigation restoring scroll+filters.
+    DETAILS PAGE: Company/brand name direct search ALWAYS lands on Details Page. Generate company profile test cases: contact data, address, ratings, claimed/unclaimed badge, branch selection.
+    COMPANY RESULT PAGE (exception): Company freetext OR outlet-grouped search (e.g. "Pizza Hut", "McDonald's outlets") lands on a Company Result Page showing multiple outlet listings — generate outlet-listing test cases here, NOT company profile test cases.
+    For B2B requirements: if the page is a B2B result page (PRP), ALL test cases must be category-search-based. DO NOT generate company profile, company name search, or Details Page test cases for a B2B result page requirement. Vehicle type display below city is a mandatory test area for every B2B result page requirement.
 
 {dynamic_generation_rules}
 
