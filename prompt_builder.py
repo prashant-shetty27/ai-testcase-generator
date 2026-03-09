@@ -163,12 +163,15 @@ RULE F — Platform-specific browser scope (mobile web only):
 For touch/mobile web platform: valid browsers are Chrome and Samsung Internet on Android; Safari and Chrome on iOS. Do NOT generate Firefox Mobile cases. Do NOT include native app lifecycle steps (background/foreground, push notifications) for mobile web.
 
 RULE G — Location-aware cases (search with geographic relevance):
-Apply ONLY when the requirement explicitly involves search results that are location-sensitive (category search, product search, service search, movies search where city/area matters).
+Apply ONLY when ALL of the following are true:
+  1. The requirement involves search results (category search, product search, service search, movies search).
+  2. The requirement explicitly mentions city, area, location, pincode, or geo-filtering — OR the page is a result page / PRP where city-based filtering is the core function.
+  3. The requirement is NOT purely about UI layout, styling, or label formatting — if city is just a display label with no filtering logic, skip location cases.
   Add these ADDITIONAL test cases (labelled `@Location` in scenario title):
-  - `@Location GPS Auto-detect`: location auto-detected, results match detected city.
-  - `@Location City Change`: user changes city mid-session, results refresh correctly.
-  - `@Location Permission Denied`: GPS denied, graceful fallback to manual city selection, no crash or blank screen.
-  - `@Location Hyperlocal`: search by area or pincode, results ranked by proximity.
+  - `@Location GPS Auto-detect`: location auto-detected via GPS, results and city name match detected city.
+  - `@Location City Change`: user manually changes city mid-session, results and vehicle type section refresh to new city.
+  - `@Location Permission Denied`: GPS permission denied, platform falls back to manual city selection without crash or blank screen.
+  - `@Location Hyperlocal`: search by area or pincode, results ranked by proximity to user.
   - `@Location Boundary City`: search near a city boundary (e.g., Mumbai/Thane), results do not bleed across boundary.
   These are IN ADDITION to all other required cases — do NOT replace existing cases with location ones.
 
