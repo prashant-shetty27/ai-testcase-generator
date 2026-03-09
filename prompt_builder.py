@@ -294,6 +294,19 @@ Each test case must:
 - If the requirement has explicit conditions/rules, reference them exactly in the relevant step (e.g., "RC - Address Proof >2 years, Approved, live contract"). If no explicit condition exists, describe the scenario state clearly without fabricating conditions.
 - Be business-realistic and self-contained
 
+BEFORE RETURNING OUTPUT — RUN THIS SELF-CHECK ON EVERY SINGLE TEST CASE AND EVERY SINGLE STEP:
+  ✗ Does any step contain "directory", "B2B directory", "search directory"? → REMOVE IT. Use "search platform" or "search page".
+  ✗ Does any step contain inches ("6.1-inch", "6.7-inch") or pixel resolution ("1080x2400")? → REMOVE IT. Use "standard phone", "large phone", "compact phone", or no size at all.
+  ✗ Does any step say "B2B user", "B2C user", "authorized B2B user", "B2B credentials"? → REMOVE IT. A user is just a user.
+  ✗ Does any step add a login step for a search/result page/browsing flow? → REMOVE IT. Public flows start directly from the URL.
+  ✗ Does any step say "Observe the UI", "Check the page", "Verify the screen loads", "Ensure the app is open"? → REMOVE IT. Replace with a purposeful action + expected outcome.
+  ✗ Does any step use a city name, vehicle type example, company name, or price value NOT in the requirement? → REMOVE IT. Use the generic term only.
+  ✗ Does any step verify city name as the PRIMARY purpose? → WRONG. City is a reference anchor only — steps must verify the primary test subject.
+  ✗ Is the browser mentioned more than once, or mentioned for a non-layout functional test? → REMOVE extra mentions. One mention max at step 1 only when layout is tested.
+  ✗ Are ALL 4 @Lang cases present (Regional Script, Bilingual, Mixed Script, Input Search)? → If any are missing, ADD THEM. @Lang is mandatory for all frontend requirements.
+  ✗ Are @Location cases present for a requirement where city is only a positional reference? → REMOVE THEM. @Location fires only when city-switching is the core tested behaviour.
+  Only after all checks pass, return the JSON.
+
 Return STRICT JSON only:
 
 {{
