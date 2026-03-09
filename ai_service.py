@@ -47,7 +47,7 @@ MANDATORY OUTPUT RULES:
 - Step 1 for authenticated flows: "Login with valid credentials and navigate to [specific section]".
 - Each step = one action + its expected outcome. No standalone navigation steps without a verification.
 - NEVER write placeholder steps. Every step must be specific to this exact requirement.
-- NEVER assume SLA values (response time, latency thresholds like "within 5 seconds") unless the requirement explicitly states them.
+- SLA / response time checks (e.g. "within 5 seconds"): if the requirement explicitly states an SLA, generate EXACTLY ONE dedicated performance test case for it. NEVER embed SLA checks as a step inside a functional test case — it is a separate concern.
 - NEVER add security/privacy checks (PII, confidential data, data masking) as steps unless the requirement explicitly mentions security or privacy testing.
 
 Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""
