@@ -163,7 +163,7 @@ Instructions:
 
 16. B2B and B2C are SEARCH TYPES — the search query determines whether a search is B2B or B2C, and businesses/contracts in results are automatically classified accordingly. A user is always just a user. STRICTLY FORBIDDEN phrases in any test step: "B2B user", "B2C user", "authorized B2B user", "B2B credentials", "B2B login", "B2B account". These do not exist.
     Login steps must be context-driven — ask yourself: does this flow REQUIRE the user to be logged in?
-    - PUBLIC flows (NO login step): category search, result page browsing, details page viewing, vehicle directory browsing, B2B/B2C search directories. Start directly from opening the URL.
+    - PUBLIC flows (NO login step): category search, result page browsing, details page viewing, B2B/B2C search platforms. Start directly from opening the URL — say "Navigate to the B2B/B2C search platform" or "Open the search page", never "directory".
     - AUTHENTICATED flows (login step allowed): dashboards, leads, saved searches, account settings, profile management, RFQ submission, paid features, contract management, wishlists, personalised recommendations.
     - If login IS needed, write ONLY: "Login with valid credentials" or "Login as a registered user". Never attach B2B/B2C/role labels to the login step.
 
