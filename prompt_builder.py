@@ -206,18 +206,18 @@ Apply ONLY when the requirement explicitly mentions call numbers, phone display,
     - Paid Expired contract → VN must deactivate (number no longer shown inline or via button).
     - Non-paid → paid upgrade → DVN must be replaced by VN (verify old DVN is removed).
 
-RULE J — Multilingual / Regional Language cases (India context):
-Apply when the requirement involves ANY of the following:
-  - Text INPUT by a user: search queries, form fields, chatbot messages, reviews, addresses, company name entry.
-  - Text DISPLAY to a user: listings, company names, categories, banners, product descriptions, autosuggest results, error messages.
-  - Text EXTRACTION or PROCESSING: OCR, autosuggest indexing, search ranking, content moderation.
-  India operates in 22+ official languages across multiple scripts (Devanagari, Tamil, Telugu, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Odia, and more). Any feature involving user-facing text must be tested for language handling.
-  Generate `@Lang` labelled test cases covering:
-  - `@Lang Regional Script`: input or display of text in a regional language script — verify no garbling, symbol substitution, or encoding error.
-  - `@Lang Bilingual`: content appears in both English and a regional language on the same screen — verify both are rendered correctly without overlap or truncation.
-  - `@Lang Mixed Script`: some words in English, some in regional script in the same field — verify the system accepts and displays correctly without forcing one script.
-  - `@Lang Input Search`: user types a search query in a regional language — verify autosuggest, results, and page content respond correctly to the regional language query.
-  Note: Prices, counts, and dates are NOT purely numeric in India context — they appear with labels, units, currency symbols, and month names that can all be rendered in regional language. Include @Lang cases for any requirement involving price display, listing counts, date labels, or any numeric value shown alongside user-facing text.
+RULE J — Multilingual / Regional Language cases (India context — MANDATORY for all frontend requirements):
+  @Lang cases are ALWAYS required for any requirement that involves a frontend/UI component — no exceptions except the two skip conditions below.
+  India operates in 22+ official languages across multiple scripts (Devanagari, Tamil, Telugu, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Odia, and more). Every frontend feature a user sees or interacts with must be tested for language handling because:
+  - Any label, name, category, listing, button text, error message, count, price, date, or placeholder can appear in a regional language.
+  - Prices are NOT purely numeric — they carry ₹ symbols and labels (e.g., ₹५०० per unit).
+  - Counts are NOT purely numeric — they carry unit labels (e.g., १०० परिणाम / 100 results).
+  - Dates carry month names and day labels that appear in regional scripts.
+  Generate ALL of the following `@Lang` labelled test cases for every frontend requirement:
+  - `@Lang Regional Script`: content (labels, names, listings, error messages) displayed in a regional language script — verify no garbling, symbol substitution, or encoding error.
+  - `@Lang Bilingual`: English and regional language content appear on the same screen simultaneously — verify both render correctly without overlap, truncation, or layout break.
+  - `@Lang Mixed Script`: some words in English, some in regional script in the same field or section — verify the system accepts and displays correctly without forcing a single script.
+  - `@Lang Input Search`: user types input (search query, form field, chatbot message) in a regional language — verify the system responds correctly to regional language input without errors or ignored characters.
   Skip `@Lang` cases ONLY when:
   - The requirement is strictly about a backend API, database operation, or system config with zero user-facing rendering.
   - The requirement explicitly states it is English-only scope.
