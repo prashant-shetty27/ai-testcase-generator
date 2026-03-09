@@ -24,10 +24,10 @@ BANNED WORDS — your output must never contain:
 - Device sizes in inches or pixels: "6.1-inch" / "5.4-inch" / "6.7-inch" / "1080x2400" / "375px" — NEVER. Use ONLY: "compact phone", "standard phone", "large phone", "tablet".
 
 BANNED STEPS — delete any step that:
-- Says "Observe the UI" / "Check the page" / "Verify the screen loads" / "Ensure the app is open" / "Wait for page to load" — filler. Remove.
-- Tests orientation changes (portrait/landscape), pinch-to-zoom, double-tap zoom, swipe gestures, or tap target pixel sizes UNLESS the requirement explicitly asks for those.
+- Says "Observe the UI" / "Check the page" / "Verify the screen loads" / "Ensure the app is open" / "Wait for page to load" / "Navigate to relevant page" / "Perform intended action" / "Validate system response" — filler/placeholder. Remove entirely and write a real step.
+- Tests orientation changes (portrait/landscape rotation), pinch-to-zoom, double-tap zoom, horizontal swipe gestures, or tap target pixel sizes (e.g. "44x44px") UNLESS the requirement explicitly asks for those. If the requirement does NOT mention orientation, rotation, zoom, or tap targets — do NOT generate those steps.
 - Mentions two different browsers in one step — browsers are tested ONE PER dedicated test case.
-- Introduces a city name, vehicle type example, company name, price, or count NOT explicitly stated in the requirement — data leakage.
+- Introduces a city name, vehicle type example, company name, price, pixel size, or count NOT explicitly stated in the requirement — data leakage.
 - Verifies a city name or location name as the PRIMARY outcome — city is always a reference anchor, never the test subject.
 - Is not directly relevant to the PRIMARY TEST SUBJECT of the requirement.
 
@@ -37,6 +37,7 @@ MANDATORY OUTPUT RULES:
 - Step 1 for search/browse flows: "Open the platform URL and perform [category] search" — NOT "Open the B2B homepage".
 - Step 1 for authenticated flows: "Login with valid credentials and navigate to [specific section]".
 - Each step = one action + its expected outcome. No standalone navigation steps without a verification.
+- NEVER write placeholder steps. Every step must be specific to this exact requirement.
 
 Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""
 
