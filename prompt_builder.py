@@ -230,6 +230,7 @@ Apply ONLY when the requirement explicitly mentions call numbers, phone display,
     - Non-paid → paid upgrade → DVN must be replaced by VN (verify old DVN is removed).
 
 RULE J — Multilingual / Regional Language cases (India context — MANDATORY for all frontend requirements):
+  ORDERING: @Lang cases are ALWAYS generated LAST — after all primary positive, boundary, and negative cases. @Lang must NEVER be test case #1, #2, or #3. They are supplementary coverage appended at the end.
   @Lang cases are ALWAYS required for any requirement that involves a frontend/UI component — no exceptions except the two skip conditions below.
   India operates in 22+ official languages across multiple scripts (Devanagari, Tamil, Telugu, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Odia, and more). Every frontend feature a user sees or interacts with must be tested for language handling because:
   - Any label, name, category, listing, button text, error message, count, price, date, or placeholder can appear in a regional language.

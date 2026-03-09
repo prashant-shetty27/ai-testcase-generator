@@ -34,12 +34,21 @@ BANNED STEPS — delete any step that:
 - Appends a cross-cutting concern (logging, analytics, compliance monitoring, session recording, audit trail) as a final step to a functional test case — these are SEPARATE test cases, not tail steps. If logging must be tested, write exactly ONE dedicated logging test case. Never repeat it as a step in other test cases.
 
 MANDATORY OUTPUT RULES:
-- For any frontend/UI requirement: ALL 4 @Lang cases MUST be in your output: @Lang Regional Script, @Lang Bilingual, @Lang Mixed Script, @Lang Input Search. Missing even one is invalid.
+- TEST CASE ORDER — always generate in this sequence:
+  1. Primary positive functional cases first (the core happy path scenarios)
+  2. Boundary and edge cases
+  3. Negative cases (invalid input, error states, blocked access)
+  4. @Lang cases LAST — they are supplementary coverage, never the lead test case
+  @Lang cases must NEVER appear as test case #1, #2, or #3. They follow after all functional cases are complete.
+- @Lang COVERAGE — for any frontend/UI requirement: ALL 4 @Lang cases MUST be present somewhere in your output: @Lang Regional Script, @Lang Bilingual, @Lang Mixed Script, @Lang Input Search. Missing even one is invalid. But they come AFTER functional cases.
+- @Lang cases test LANGUAGE RENDERING of the primary feature — they are not general language tests. Each @Lang step must verify the PRIMARY TEST SUBJECT's behaviour in that language context, not just "text is displayed".
 - Browser mention: maximum ONCE, at step 1 only, and ONLY when layout/rendering is the specific thing being tested. Omit entirely for functional tests.
 - Step 1 for search/browse flows: "Open the platform URL and perform [category] search" — NOT "Open the B2B homepage".
 - Step 1 for authenticated flows: "Login with valid credentials and navigate to [specific section]".
 - Each step = one action + its expected outcome. No standalone navigation steps without a verification.
 - NEVER write placeholder steps. Every step must be specific to this exact requirement.
+- NEVER assume SLA values (response time, latency thresholds like "within 5 seconds") unless the requirement explicitly states them.
+- NEVER add security/privacy checks (PII, confidential data, data masking) as steps unless the requirement explicitly mentions security or privacy testing.
 
 Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""
 
