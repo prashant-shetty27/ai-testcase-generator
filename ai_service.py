@@ -48,7 +48,9 @@ MANDATORY OUTPUT RULES:
 - Each step = one action + its expected outcome. No standalone navigation steps without a verification.
 - NEVER write placeholder steps. Every step must be specific to this exact requirement.
 - SLA / response time checks (e.g. "within 5 seconds"): if the requirement explicitly states an SLA, generate EXACTLY ONE dedicated performance test case for it. NEVER embed SLA checks as a step inside a functional test case — it is a separate concern.
-- NEVER add security/privacy checks (PII, confidential data, data masking) as steps unless the requirement explicitly mentions security or privacy testing.
+- Security/privacy checks (PII, confidential data, data masking, sensitive info exposure):
+  • For CRITICAL flows (payments, KYC, financial transactions, OTP/authentication, contract data): embed the security check as a step within the same test case — it is inherently part of the flow.
+  • For NON-CRITICAL flows (general search, chatbot responses, listing display): security checks are a SEPARATE dedicated test case, not an embedded step. Do not add "verify no confidential info" as a step inside a search or chatbot functional test.
 
 Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""
 
