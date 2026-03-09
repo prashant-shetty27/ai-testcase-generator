@@ -139,6 +139,14 @@ Instructions:
 10. If delete actions are mentioned, test: delete confirmation, UI refresh after delete, undo/re-upload prevention, and impact on associated contract state.
 11. If the requirement mentions a "type" field (e.g., vehicle type, category type, listing type, document type, contract type), generate AT LEAST ONE dedicated test case per type variant. Label each variant scenario with `@TypeName` in the scenario title (e.g., `@Car`, `@Bike`, `@Truck`, `@Platinum`, `@PaidExpired`). Do NOT collapse all type variants into a single generic test case. Contract types include: Paid-Platinum, Paid-Diamond, Paid-Normal, Paid-NationalListing, Paid-Other, NonPaid, PaidExpired — each needs its own test case.
 12. For mobile web test cases: target browsers are Chrome + Samsung Internet on Android, and Safari + Chrome on iOS. Do NOT generate Firefox Mobile test cases for mobile web. This is a mobile touch website — do not include native app lifecycle steps (background/foreground, push notifications).
+13. If the requirement is related to any of the following search intents — category search, company search, product search, service search, business search, or movies search — ALWAYS include location-aware test cases:
+    a. One test case where user location is auto-detected via GPS and results are verified to match that city/area.
+    b. One test case where user manually changes location mid-session and results refresh to the new location.
+    c. One test case where location permission is DENIED — verify graceful fallback to manual city selection (no crash, no empty screen).
+    d. One test case for hyperlocal/proximity search (area or pincode level) — results ranked by proximity to user.
+    e. One test case for a boundary-city scenario (e.g., Mumbai/Thane, Delhi/Gurgaon, Bengaluru/Whitefield) — results must not bleed across city boundaries.
+    Label each location case with `@Location` in the scenario title (e.g., `@Location GPS auto-detect`, `@Location Permission Denied`, `@Location City Change`).
+    These location cases are IN ADDITION to all other required test cases — do NOT replace existing scenarios with location ones.
 
 {dynamic_generation_rules}
 

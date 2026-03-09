@@ -149,7 +149,18 @@ def get_module_context(modules: list[str]) -> str:
             "Result relevance and ranking consistency",
             "Pagination and infinite-scroll consistency",
             "Recent search persistence and recall",
-            "Performance with large dataset"
+            "Performance with large dataset",
+            # Location-aware search rules (applies to category/company/product/service/business/movies searches)
+            "LOCATION: GPS-detected city auto-fills search location — verify results match that city only",
+            "LOCATION: User manually changes location mid-session — results must refresh to new city/area immediately",
+            "LOCATION: Location permission DENIED — app must fall back to manual city selection, not crash or show empty results",
+            "LOCATION: Location permission GRANTED then revoked from settings — graceful degradation required",
+            "LOCATION: Hyperlocal search (area/pincode level) — results must be tighter than city-level and ranked by proximity",
+            "LOCATION: 'Near me' or proximity search — results must be sorted by distance from user's GPS coordinates",
+            "LOCATION: User in City A searches with location set to City B — results must reflect City B, not current GPS city",
+            "LOCATION: Boundary area (city limits / multi-city zones like Mumbai-Thane, Delhi-Gurgaon, Bengaluru-Whitefield) — results must not bleed across city boundaries unless explicitly requested",
+            "LOCATION: Low GPS accuracy (indoors, basement, rural) — system must show accuracy warning or fallback option",
+            "LOCATION: Movies search — city determines multiplex list; changing city must refresh cinema/showtime results instantly",
         ],
         "catalogue": [
             "Category hierarchy rendering accuracy",
