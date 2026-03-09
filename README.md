@@ -87,7 +87,31 @@ Optional env vars:
 - `RUN_LOG_MAX_ENTRIES` (default: `300`)
 - `RUN_LOG_TITLE_LIMIT` (default: `100`)
 
-## 7) Slack Login (SSO)
+## 7) Mandatory Name Popup
+
+Before using the tool, users must enter their name. This is enforced via a full-screen popup on first visit.
+
+- Name is submitted via POST `/set-requester-name` and stored in the session.
+- On subsequent visits the popup is skipped (name already in session).
+- Every generation run logs: **requester name**, **prompt text**, and **output file details** to `logs/run_logs.json`.
+
+To verify usage, check:
+- `GET /runs/latest` — most recent run
+- `GET /runs?limit=20` — recent runs list
+
+Each log entry includes:
+```json
+{
+  "requester_name": "...",
+  "requirement": "...",
+  "result": {
+    "file_name": "generated_YYYYMMDD_HHMMSS.xlsx",
+    "download_url": "/download/..."
+  }
+}
+```
+
+## 8) Slack Login (SSO)
 
 Slack OpenID Connect auth is now supported.
 

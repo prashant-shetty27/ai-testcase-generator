@@ -27,10 +27,19 @@ def generate_platform_checks(feature, platforms):
 
     if "mobile_web" in platforms:
         checks.extend([
-            create_test(f"{feature} works on mobile Safari"),
-            create_test(f"{feature} works on Android Chrome browser"),
-            create_test(f"{feature} works on low screen resolutions (320px–480px)"),
-            create_test(f"{feature} keyboard does not hide OTP fields"),
+            # iOS — primary browsers
+            create_test(f"{feature} works on iOS Safari (primary iPhone browser)"),
+            create_test(f"{feature} works on Chrome for iOS"),
+            # Android — primary browsers
+            create_test(f"{feature} works on Chrome for Android"),
+            create_test(f"{feature} works on Samsung Internet browser (Android default on Samsung devices)"),
+            # Screen size coverage — mobile touch site, not an app
+            create_test(f"{feature} layout correct on 5.4-inch screen (compact Android/iPhone mini)"),
+            create_test(f"{feature} layout correct on 6.1-inch screen (standard Android/iPhone)"),
+            create_test(f"{feature} layout correct on 6.7-inch screen (Samsung Plus/Max)"),
+            # Layout integrity
+            create_test(f"{feature} has no horizontal scroll and stays within viewport on all screen sizes"),
+            create_test(f"{feature} virtual keyboard does not hide input fields on mobile touch"),
         ])
 
     if "android_app" in platforms:

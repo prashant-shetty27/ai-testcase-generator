@@ -34,12 +34,22 @@ ALL_LAYERS = [
 ]
 
 LAYER_KEYWORDS = {
-    "ui": ["ui", "ux", "design", "layout"],
+    "ui": ["ui", "ux", "design", "layout", "frontend", "front-end", "front end", "display", "popup", "alert", "warning", "pop up", "modal"],
     "api": ["api", "endpoint", "service"],
     "security": ["security", "auth", "authentication", "authorization", "encryption"],
     "performance": ["performance", "latency", "response time", "load", "throughput"],
-    "state": ["state", "state management", "session"],
+    "state": [
+        "state",
+        "state management",
+        "session",
+        "resume",
+        "relaunch",
+        "last searched",
+        "last visited",
+        "restore",
+    ],
     "cross_browser": ["cross browser", "browser compatibility", "all browsers"],
+    "validation": ["validation", "validate", "function", "functional", "verify", "check", "business rule", "business logic"],
 }
 
 STRICT_PATTERN = re.compile(

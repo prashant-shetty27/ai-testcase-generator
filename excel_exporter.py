@@ -67,12 +67,21 @@ def normalize_existing_testcases(raw_cases):
     normalized = []
 
     for row in raw_cases:
+        raw_steps = row.get("Steps")
+        if isinstance(raw_steps, str):
+            steps = [s.strip() for s in raw_steps.splitlines() if s and s.strip()]
+        elif raw_steps is None:
+            steps = []
+        else:
+            steps = [str(raw_steps).strip()] if str(raw_steps).strip() else []
+
         normalized.append({
             "testcase_id": row.get("Testcase ID"),
-            "priority": row.get("Priority", "P1"),
-            "scenario": row.get("Scenario"),
-            "steps": row.get("Steps", "").split("\n"),
-            "expected_result": row.get("Expected Result")
+            "priority": row.get("Priority") or "Medium",
+            "category": row.get("Category") or "existing_tests",
+            "scenario": row.get("Scenario") or "",
+            "steps": steps,
+            "expected_result": row.get("Expected Result") or ""
         })
 
     return normalized

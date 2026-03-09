@@ -674,6 +674,132 @@ async def generate_simple(request: Request, requirement: str = Form(...)):
         raise
 
 
+# -------------------------
+# GENERATE FROM IMAGE
+# -------------------------
+@app.post("/generate-from-image")
+async def generate_from_image(
+    request: Request,
+    image: UploadFile = File(...),
+    platforms: list[str] = Form([]),
+    extra_context: str = Form(""),
+    output_filename: str = Form(None),
+):
+    """
+    Image-based test case generation.
+
+    Upload a UI screenshot or mockup (PNG / JPG / JPEG / WEBP).
+    The image is analysed by GPT-4o vision to extract the feature,
+    UI elements, and business rules, then fed into the standard
+    test case generation pipeline. Returns an Excel file.
+    """
+    from image_analyzer import analyze_image_for_testcases
+    from ai_service import ALLOWED_IMAGE_TYPES
+
+    _require_authenticated_user(request)
+    started_at = perf_counter()
+
+    # --- validate file type ---
+    suffix = Path(image.filename).suffix.lower()
+    if suffix not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type '{suffix}'. Allowed: {sorted(ALLOWED_IMAGE_TYPES)}"
+        )
+
+    # --- save image to uploads dir ---
+    safe_name = Path(image.filename).name
+    image_path = UPLOAD_DIR / f"img_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{safe_name}"
+    with open(image_path, "wb") as buf:
+        shutil.copyfileobj(image.file, buf)
+
+    requester_name = _resolve_requester_name(request)
+    run_request_payload = {
+        "endpoint": "/generate-from-image",
+        "image_filename": image.filename,
+        "platforms": [str(p) for p in (platforms or [])],
+        "extra_context": extra_context or "",
+        "requester_name": requester_name,
+    }
+
+    try:
+        # STEP 1 — vision: extract feature + requirement from image
+        selected_platforms = [p for p in platforms if p] or None
+        image_analysis = analyze_image_for_testcases(
+            image_path=str(image_path),
+            extra_context=extra_context or "",
+            platforms_hint=selected_platforms,
+        )
+
+        # STEP 2 — build a TestGenerationRequest from the vision output
+        from models.test_request import TestGenerationRequest
+        request_obj = TestGenerationRequest(
+            requirement=image_analysis["requirement"],
+            platforms=image_analysis["platforms"],
+            modules=image_analysis.get("modules", []),
+            pages=image_analysis.get("pages", []),
+            test_types=image_analysis.get("test_types", ["functional", "ui"]),
+            template="manual",
+        )
+        # Attach extra fields that the generator pipeline reads
+        request_obj_dict = request_obj.dict() if hasattr(request_obj, "dict") else vars(request_obj)
+
+        # Inject vision-extracted business rules and constraints via analysis fields
+        # (generate_full_test_suite reads these from the request when present)
+        setattr(request_obj, "_image_analysis", image_analysis)
+
+        tests = generate_full_test_suite(request_obj)
+
+        # STEP 3 — export to Excel
+        if output_filename:
+            filename = f"{output_filename}.xlsx"
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"image_generated_{timestamp}.xlsx"
+
+        file_path = UPLOAD_DIR / filename
+        export_to_excel(tests, template_type="manual", output_path=file_path)
+
+        log_generation_run(
+            endpoint="/generate-from-image",
+            status="success",
+            request_payload=run_request_payload,
+            result_payload={
+                "image_summary": image_analysis.get("image_summary", ""),
+                "extracted_feature": image_analysis.get("feature", ""),
+                "extracted_requirement": image_analysis.get("requirement", "")[:300],
+                "file_name": filename,
+                "download_url": f"/download/{filename}",
+                "generated_summary": summarize_tests(tests),
+            },
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+
+        return FileResponse(
+            file_path,
+            filename=filename,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        log_generation_run(
+            endpoint="/generate-from-image",
+            status="failed",
+            request_payload=run_request_payload,
+            error=str(exc),
+            duration_ms=int((perf_counter() - started_at) * 1000),
+        )
+        raise HTTPException(status_code=500, detail=f"Image generation failed: {exc}")
+    finally:
+        # Clean up the temp image after processing
+        try:
+            image_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+
+
 if __name__ == "__main__":
     import uvicorn
     import os

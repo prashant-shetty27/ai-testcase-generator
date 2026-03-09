@@ -352,16 +352,18 @@ PLATFORM_MANDATORY_SCENARIOS = {
     },
     "touch": {
         "label": "Mobile Web (Touch)",
-        "browsers": ["Chrome for Android", "Safari for iOS", "Samsung Internet", "Firefox Mobile"],
+        "browsers": ["Chrome for Android", "Samsung Internet", "Safari for iOS", "Chrome for iOS"],
         "resolutions": ["5.4-inch", "6.1-inch", "6.7-inch"],
         "mandatory": [
-            "Test on Android Chrome AND iOS Safari — rendering differs significantly",
-            "Test on Samsung Internet (Samsung devices have it as default)",
-            "Test portrait AND landscape orientation — layout must reflow",
-            "Test with virtual keyboard open — form inputs must not be hidden",
+            "Test on Chrome for Android AND Samsung Internet — both are primary Android browsers",
+            "Test on Safari for iOS AND Chrome for iOS — both are primary iPhone browsers",
+            "NOTE: Firefox Mobile is NOT a target browser — do NOT generate Firefox test cases",
+            "Test portrait AND landscape orientation — layout must reflow on all screen sizes",
+            "Test with virtual keyboard open — form inputs must not be hidden behind keyboard",
             "Test on 3G/slow network — graceful degradation required",
-            "Test pinch-to-zoom and double-tap behavior",
-            "Test iOS Safari bounce scroll — must not cause UI breakage",
+            "Test on 5.4-inch, 6.1-inch, 6.7-inch screens — layout must not break at any size",
+            "No horizontal scroll — content must stay within viewport on all screen sizes",
+            "This is a mobile touch WEBSITE — do not add native app steps (background/foreground, push notifications)",
         ],
     },
     "hybrid_app": {
@@ -1203,9 +1205,16 @@ def _enforce_testcase_integrity(testcases: dict) -> dict:
                 sequential_counter += 1
 
             # 2️⃣ Mandatory Scenario
-            scenario_value = case.get("scenario") or case.get("title")
-            if scenario_value and str(scenario_value).strip():
-                case["scenario"] = str(scenario_value).strip()
+            # Priority: use "scenario" if it is non-empty AND not a generic placeholder;
+            # otherwise fall back to "title"; only use the hardcoded default as last resort.
+            scenario_raw = str(case.get("scenario") or "").strip()
+            title_raw = str(case.get("title") or "").strip()
+            scenario_norm = _normalize_text(scenario_raw)
+
+            if scenario_raw and scenario_norm not in GENERIC_SCENARIO_MARKERS:
+                case["scenario"] = scenario_raw
+            elif title_raw:
+                case["scenario"] = title_raw
             else:
                 case["scenario"] = "Validate system behavior"
 

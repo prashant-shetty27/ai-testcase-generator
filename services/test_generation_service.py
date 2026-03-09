@@ -248,6 +248,25 @@ def generate_full_test_suite(
     analysis["self_learning"] = request.enable_self_learning
     analysis["third_party_learning"] = request.learn_from_third_party
 
+    # If this request originated from image analysis, merge the vision-extracted
+    # business rules and constraints into the analysis so the generator uses them.
+    image_analysis = getattr(request, "_image_analysis", None)
+    if image_analysis and isinstance(image_analysis, dict):
+        existing_rules = analysis.get("business_rules") or []
+        vision_rules = image_analysis.get("business_rules") or []
+        # Merge without duplicates, vision rules take priority
+        merged_rules = vision_rules + [r for r in existing_rules if r not in vision_rules]
+        analysis["business_rules"] = merged_rules
+
+        existing_constraints = analysis.get("constraints") or []
+        vision_constraints = image_analysis.get("constraints") or []
+        merged_constraints = vision_constraints + [c for c in existing_constraints if c not in vision_constraints]
+        analysis["constraints"] = merged_constraints
+
+        # Use vision-extracted feature name if the AI analysis produced a generic one
+        if image_analysis.get("feature") and not analysis.get("feature"):
+            analysis["feature"] = image_analysis["feature"]
+
     return generate_testcases(
         analysis,
         existing_cases=existing_cases,

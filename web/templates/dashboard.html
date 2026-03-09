@@ -367,134 +367,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ── Mode toggle ── */
-        .mode-toggle {
-            display: flex;
-            gap: 0;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 18px;
-            width: fit-content;
-        }
-
-        .mode-btn {
-            padding: 9px 20px;
-            font-size: 13px;
-            font-weight: 600;
-            border: none;
-            border-radius: 0;
-            background: #fff;
-            color: var(--muted);
-            cursor: pointer;
-            transition: 0.14s ease;
-            gap: 6px;
-        }
-
-        .mode-btn.active {
-            background: var(--accent);
-            color: #fff;
-        }
-
-        .mode-btn:hover:not(.active) {
-            background: #edf5ff;
-            color: var(--accent);
-        }
-
-        /* ── Image drop zone ── */
-        .drop-zone {
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            padding: 32px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.16s ease;
-            background: #fafcff;
-            position: relative;
-        }
-
-        .drop-zone:hover, .drop-zone.dragover {
-            border-color: var(--accent);
-            background: #edf5ff;
-        }
-
-        .drop-zone input[type="file"] {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-        }
-
-        .drop-zone-icon {
-            font-size: 36px;
-            margin-bottom: 8px;
-            line-height: 1;
-        }
-
-        .drop-zone-text {
-            font-size: 14px;
-            color: var(--muted);
-            margin: 0;
-        }
-
-        .drop-zone-hint {
-            font-size: 11px;
-            color: #9aabb8;
-            margin: 4px 0 0;
-        }
-
-        /* ── Image preview ── */
-        .img-preview-wrap {
-            display: none;
-            margin-top: 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            max-height: 260px;
-            background: #f0f4f8;
-        }
-
-        .img-preview-wrap img {
-            width: 100%;
-            max-height: 260px;
-            object-fit: contain;
-            display: block;
-        }
-
-        .img-preview-remove {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(20,30,42,0.7);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 4px 9px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            min-width: unset;
-        }
-
-        .img-preview-remove:hover {
-            background: rgba(20,30,42,0.9);
-        }
-
-        .img-summary-box {
-            margin-top: 10px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            background: #edf5ff;
-            border: 1px solid #b8d4f0;
-            font-size: 12px;
-            color: #1a3d5c;
-            display: none;
-            line-height: 1.5;
-        }
-
         @media (max-width: 860px) {
             body { padding: 14px; }
             .container { padding: 14px; }
@@ -505,7 +377,7 @@
 </head>
 <body>
 
-<div id="nameGate" class="name-gate" {% if requester_name %}style="display: none;"{% endif %} role="dialog" aria-modal="true" aria-labelledby="nameGateTitle">
+<div id="nameGate" class="name-gate{% if requester_name %} hidden{% endif %}" role="dialog" aria-modal="true" aria-labelledby="nameGateTitle">
     <div class="name-gate-card">
         <h2 id="nameGateTitle">Enter your name to continue</h2>
         <p>Name is required before using the testcase generation tool.</p>
@@ -513,7 +385,7 @@
             <label class="label" for="requesterName">Name (required)</label>
             <input id="requesterName" name="requester_name" type="text" maxlength="100" placeholder="Your full name" value="{{ requester_name or '' }}" required>
             <p id="nameError" class="error hidden">Please enter your name.</p>
-            <button id="nameGateContinue" type="button">Continue</button>
+            <button id="nameGateContinue" type="submit">Continue</button>
         </form>
     </div>
 </div>
@@ -521,7 +393,7 @@
 <main class="container">
     <h1 class="title">AI Testcase Generator</h1>
     <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
-    <p class="build-tag">Build: 20260309-image-mode-v7</p>
+    <p class="build-tag">Build: 20260305-name-gate-v5</p>
     <p class="signature">Prepared by: Prashant Shetty</p>
     {% if user %}
     <div class="session-bar">
@@ -530,14 +402,6 @@
     </div>
     {% endif %}
 
-    <!-- Mode Toggle -->
-    <div class="mode-toggle" role="tablist" aria-label="Input mode">
-        <button type="button" class="mode-btn active" id="modeTextBtn" role="tab" aria-selected="true" aria-controls="textModePanel" onclick="switchMode('text')">&#128221; Text Requirement</button>
-        <button type="button" class="mode-btn" id="modeImageBtn" role="tab" aria-selected="false" aria-controls="imageModePanel" onclick="switchMode('image')">&#128247; Image / Screenshot</button>
-    </div>
-
-    <!-- TEXT MODE FORM -->
-    <div id="textModePanel" role="tabpanel">
     <form id="generateForm" action="/generate-form" method="post">
         <section class="section">
             <h2>Requirement</h2>
@@ -640,98 +504,12 @@
             <input id="requesterNameField" type="hidden" name="requester_name" value="{{ requester_name or '' }}">
         </section>
 
-        <div style="position:sticky;bottom:0;left:0;right:0;z-index:100;background:var(--panel);padding:16px 0 0 0;box-shadow:0 -2px 16px rgba(20,40,60,0.08);margin-top:24px;">
-            <button id="generateBtn" class="generate-btn" type="submit" style="width:100%;max-width:400px;margin:0 auto;display:block;">
-                <span id="btnText">Generate & Download</span>
-                <span id="btnLoader" class="loader hidden" aria-hidden="true"></span>
-            </button>
-            <p id="statusText" class="status" aria-live="polite" style="text-align:center;margin-top:8px;"></p>
-        </div>
+        <button id="generateBtn" class="generate-btn" type="submit">
+            <span id="btnText">Generate & Download</span>
+            <span id="btnLoader" class="loader hidden" aria-hidden="true"></span>
+        </button>
+        <p id="statusText" class="status" aria-live="polite"></p>
     </form>
-    </div><!-- /textModePanel -->
-
-    <!-- IMAGE MODE FORM -->
-    <div id="imageModePanel" role="tabpanel" style="display:none;">
-        <section class="section">
-            <h2>Upload Screenshot / Mockup</h2>
-            <p class="meta">Upload a UI screenshot or design mockup — the AI will extract the feature, business rules, and generate test cases automatically.</p>
-
-            <div id="imgDropZone" class="drop-zone" role="button" tabindex="0" aria-label="Upload screenshot">
-                <input type="file" id="imgFileInput" accept=".png,.jpg,.jpeg,.webp,.gif" aria-label="Select image file">
-                <div id="dropZoneContent">
-                    <div class="drop-zone-icon">&#128247;</div>
-                    <p class="drop-zone-text">Drop image here or click to browse</p>
-                    <p class="drop-zone-hint">Supported: PNG, JPG, JPEG, WEBP, GIF &nbsp;&bull;&nbsp; Max 10 MB</p>
-                </div>
-            </div>
-
-            <div class="img-preview-wrap" id="imgPreviewWrap">
-                <img id="imgPreview" src="" alt="Selected screenshot preview">
-                <button type="button" class="img-preview-remove" id="imgRemoveBtn" title="Remove image">&#10005; Remove</button>
-            </div>
-
-            <div class="img-summary-box" id="imgSummaryBox"></div>
-        </section>
-
-        <section class="section">
-            <div class="toolbar">
-                <h2 style="margin: 0;">Platforms (Mandatory)</h2>
-                <div class="tools">
-                    <button type="button" class="chip" id="imgSelectAll">Select All</button>
-                    <button type="button" class="chip" id="imgClearAll">Clear</button>
-                </div>
-            </div>
-            <div class="platform-grid">
-                <div class="platform-card">
-                    <input type="checkbox" id="ip_web" name="img_platforms" value="web">
-                    <label for="ip_web"><p class="platform-name">Web</p><p class="platform-note">Desktop browsers.</p></label>
-                </div>
-                <div class="platform-card">
-                    <input type="checkbox" id="ip_touch" name="img_platforms" value="touch" checked>
-                    <label for="ip_touch"><p class="platform-name">Mobile Web (Touch)</p><p class="platform-note">Android/iOS mobile browser.</p></label>
-                </div>
-                <div class="platform-card">
-                    <input type="checkbox" id="ip_android" name="img_platforms" value="android_app">
-                    <label for="ip_android"><p class="platform-name">Android App</p><p class="platform-note">Android lifecycle and coverage.</p></label>
-                </div>
-                <div class="platform-card">
-                    <input type="checkbox" id="ip_ios" name="img_platforms" value="ios_app">
-                    <label for="ip_ios"><p class="platform-name">iOS App</p><p class="platform-note">iOS lifecycle and variants.</p></label>
-                </div>
-                <div class="platform-card">
-                    <input type="checkbox" id="ip_api" name="img_platforms" value="api">
-                    <label for="ip_api"><p class="platform-name">API</p><p class="platform-note">Request/response scenarios.</p></label>
-                </div>
-                <div class="platform-card">
-                    <input type="checkbox" id="ip_hybrid" name="img_platforms" value="hybrid_app">
-                    <label for="ip_hybrid"><p class="platform-name">Hybrid App</p><p class="platform-note">WebView + native bridge.</p></label>
-                </div>
-            </div>
-            <p id="imgPlatformError" class="error hidden">Select at least one platform.</p>
-        </section>
-
-        <section class="section">
-            <h2>Optional Settings</h2>
-            <div class="row">
-                <div>
-                    <label class="label" for="imgOutputFilename">Output file name (without .xlsx)</label>
-                    <input id="imgOutputFilename" type="text" placeholder="image_generated_suite">
-                </div>
-                <div>
-                    <label class="label" for="imgExtraContext">Extra context for the AI (optional)</label>
-                    <input id="imgExtraContext" type="text" placeholder="e.g., This is a KYC upload screen for verified sellers">
-                </div>
-            </div>
-        </section>
-
-        <div style="position:sticky;bottom:0;left:0;right:0;z-index:100;background:var(--panel);padding:16px 0 0 0;box-shadow:0 -2px 16px rgba(20,40,60,0.08);margin-top:24px;">
-            <button id="imgGenerateBtn" class="generate-btn" type="button" onclick="submitImageForm()" style="width:100%;max-width:400px;margin:0 auto;display:block;">
-                <span id="imgBtnText">Analyse Image & Generate</span>
-                <span id="imgBtnLoader" class="loader hidden" aria-hidden="true"></span>
-            </button>
-            <p id="imgStatusText" class="status" aria-live="polite" style="text-align:center;margin-top:8px;"></p>
-        </div>
-    </div><!-- /imageModePanel -->
 </main>
 
 <script>
@@ -783,24 +561,52 @@
     }
 
     requesterNameInput.addEventListener("input", function () {
-        if (normalizeName(requesterNameInput.value)) setNameError(false);
+        requesterNameField.value = normalizeName(requesterNameInput.value);
+        if (requesterNameField.value) {
+            setNameError(false);
+        }
     });
 
-    document.getElementById("nameGateContinue").addEventListener("click", function () {
-        const name = normalizeName(requesterNameInput.value);
-        if (!name) {
+    const NAME_KEY = "ai_tcgen_requester_name";
+
+    function hideNameGate() { nameGate.style.display = "none"; }
+    function storageSave(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
+    function storageGet(k) { try { return localStorage.getItem(k) || ""; } catch (_) { return ""; } }
+
+    // On load: if localStorage has a name, pre-fill and hide popup
+    (function () {
+        const saved = normalizeName(storageGet(NAME_KEY));
+        if (saved) {
+            requesterNameInput.value = saved;
+            requesterNameField.value = saved;
+            hideNameGate();
+        }
+    })();
+
+    nameGateForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const normalizedRequesterName = normalizeName(requesterNameInput.value);
+        if (!normalizedRequesterName) {
             setNameError(true);
             requesterNameInput.focus();
             return;
         }
-        setNameError(false);
-        requesterNameField.value = name;
-        nameGate.style.display = "none";
-        // Background server save for logging
+        storageSave(NAME_KEY, normalizedRequesterName);
+        requesterNameField.value = normalizedRequesterName;
+        hideNameGate();
         const fd = new FormData();
-        fd.append("requester_name", name);
-        fetch("/set-requester-name", { method: "POST", headers: { "Accept": "application/json" }, body: fd }).catch(() => {});
+        fd.append("requester_name", normalizedRequesterName);
+        fetch("/set-requester-name", {
+            method: "POST",
+            headers: { "Accept": "application/json" },
+            body: fd,
+        }).catch(() => {});
     });
+
+    if (!normalizeName(requesterNameField.value)) {
+        const saved = normalizeName(storageGet(NAME_KEY));
+        if (saved) { requesterNameField.value = saved; }
+    }
 
     function selectedPlatformCount() {
         return platformInputs.filter(input => input.checked).length;
@@ -937,215 +743,6 @@
             setLoadingState(false);
         }
     });
-</script>
-
-<script>
-// ── Mode switching ──────────────────────────────────────────
-function switchMode(mode) {
-    const textPanel = document.getElementById("textModePanel");
-    const imagePanel = document.getElementById("imageModePanel");
-    const textBtn = document.getElementById("modeTextBtn");
-    const imageBtn = document.getElementById("modeImageBtn");
-
-    if (mode === "image") {
-        textPanel.style.display = "none";
-        imagePanel.style.display = "block";
-        textBtn.classList.remove("active");
-        textBtn.setAttribute("aria-selected", "false");
-        imageBtn.classList.add("active");
-        imageBtn.setAttribute("aria-selected", "true");
-    } else {
-        textPanel.style.display = "block";
-        imagePanel.style.display = "none";
-        imageBtn.classList.remove("active");
-        imageBtn.setAttribute("aria-selected", "false");
-        textBtn.classList.add("active");
-        textBtn.setAttribute("aria-selected", "true");
-    }
-}
-
-// ── Image file handling ─────────────────────────────────────
-const imgFileInput = document.getElementById("imgFileInput");
-const imgPreviewWrap = document.getElementById("imgPreviewWrap");
-const imgPreview = document.getElementById("imgPreview");
-const imgRemoveBtn = document.getElementById("imgRemoveBtn");
-const imgDropZone = document.getElementById("imgDropZone");
-const imgSummaryBox = document.getElementById("imgSummaryBox");
-
-function showImagePreview(file) {
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    imgPreview.src = url;
-    imgPreviewWrap.style.display = "block";
-    imgSummaryBox.style.display = "none";
-    imgSummaryBox.textContent = "";
-    document.getElementById("dropZoneContent").style.display = "none";
-}
-
-function clearImageSelection() {
-    imgFileInput.value = "";
-    imgPreview.src = "";
-    imgPreviewWrap.style.display = "none";
-    imgSummaryBox.style.display = "none";
-    imgSummaryBox.textContent = "";
-    document.getElementById("dropZoneContent").style.display = "block";
-}
-
-imgFileInput.addEventListener("change", function () {
-    if (imgFileInput.files && imgFileInput.files[0]) {
-        showImagePreview(imgFileInput.files[0]);
-    }
-});
-
-imgRemoveBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    clearImageSelection();
-});
-
-// Drag and drop
-imgDropZone.addEventListener("dragover", function (e) {
-    e.preventDefault();
-    imgDropZone.classList.add("dragover");
-});
-imgDropZone.addEventListener("dragleave", function () {
-    imgDropZone.classList.remove("dragover");
-});
-imgDropZone.addEventListener("drop", function (e) {
-    e.preventDefault();
-    imgDropZone.classList.remove("dragover");
-    const file = e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file) {
-        // Transfer to file input (for FormData)
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        imgFileInput.files = dt.files;
-        showImagePreview(file);
-    }
-});
-
-// Keyboard accessibility for drop zone
-imgDropZone.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        imgFileInput.click();
-    }
-});
-
-// ── Platform select/clear for image mode ───────────────────
-const imgPlatformInputs = Array.from(document.querySelectorAll('input[name="img_platforms"]'));
-document.getElementById("imgSelectAll").addEventListener("click", function () {
-    imgPlatformInputs.forEach(i => { i.checked = true; });
-    document.getElementById("imgPlatformError").classList.add("hidden");
-});
-document.getElementById("imgClearAll").addEventListener("click", function () {
-    imgPlatformInputs.forEach(i => { i.checked = false; });
-});
-
-// ── Image form submission ───────────────────────────────────
-async function submitImageForm() {
-    const file = imgFileInput.files && imgFileInput.files[0];
-    const imgGenerateBtn = document.getElementById("imgGenerateBtn");
-    const imgBtnText = document.getElementById("imgBtnText");
-    const imgBtnLoader = document.getElementById("imgBtnLoader");
-    const imgStatusText = document.getElementById("imgStatusText");
-    const imgPlatformError = document.getElementById("imgPlatformError");
-
-    // Validate name
-    const name = (document.getElementById("requesterNameField") || {}).value || "";
-    if (!name.trim()) {
-        document.getElementById("nameGate").style.display = "flex";
-        document.getElementById("requesterName").focus();
-        imgStatusText.textContent = "Enter your name before generating.";
-        return;
-    }
-
-    if (!file) {
-        imgStatusText.textContent = "Please select an image first.";
-        return;
-    }
-
-    const selectedPlatforms = imgPlatformInputs.filter(i => i.checked).map(i => i.value);
-    if (selectedPlatforms.length === 0) {
-        imgPlatformError.classList.remove("hidden");
-        imgStatusText.textContent = "Select at least one platform.";
-        return;
-    }
-    imgPlatformError.classList.add("hidden");
-
-    // Build FormData
-    const fd = new FormData();
-    fd.append("image", file);
-    selectedPlatforms.forEach(p => fd.append("platforms", p));
-    const extraCtx = document.getElementById("imgExtraContext").value.trim();
-    if (extraCtx) fd.append("extra_context", extraCtx);
-    const outFile = document.getElementById("imgOutputFilename").value.trim();
-    if (outFile) fd.append("output_filename", outFile);
-    fd.append("requester_name", name);
-
-    // Loading state
-    imgGenerateBtn.disabled = true;
-    imgBtnLoader.classList.remove("hidden");
-
-    let dots = 1;
-    imgBtnText.textContent = "Analysing image.";
-    const loadingTimer = setInterval(function () {
-        dots = (dots % 3) + 1;
-        imgBtnText.textContent = "Analysing image" + ".".repeat(dots);
-    }, 380);
-    const startTime = Date.now();
-    imgStatusText.textContent = "Uploading image and generating test cases — this may take 30–60 seconds.";
-    imgSummaryBox.style.display = "none";
-    imgSummaryBox.textContent = "";
-
-    try {
-        const response = await fetch("/generate-from-image", {
-            method: "POST",
-            body: fd
-        });
-
-        clearInterval(loadingTimer);
-
-        if (!response.ok) {
-            let msg = "Generation failed. Please retry.";
-            try { const j = await response.json(); msg = j.detail || msg; } catch (_) {}
-            imgStatusText.textContent = msg;
-            return;
-        }
-
-        // Check if response is JSON (contains summary) or binary (xlsx)
-        const contentType = response.headers.get("content-type") || "";
-        if (contentType.includes("application/json")) {
-            const data = await response.json();
-            if (data.image_summary) {
-                imgSummaryBox.textContent = "AI summary: " + data.image_summary;
-                imgSummaryBox.style.display = "block";
-            }
-            imgStatusText.textContent = data.message || "Done.";
-        } else {
-            // It's a file download
-            const blob = await response.blob();
-            const cd = response.headers.get("content-disposition") || "";
-            const match = cd.match(/filename=\"?([^\";]+)\"?/i);
-            const filename = (match && match[1]) ? match[1] : "image_testcases.xlsx";
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url; a.download = filename;
-            document.body.appendChild(a); a.click(); a.remove();
-            URL.revokeObjectURL(url);
-            imgStatusText.textContent = "File generated and download started.";
-        }
-    } catch (_) {
-        clearInterval(loadingTimer);
-        imgStatusText.textContent = "Network error. Please retry.";
-    } finally {
-        clearInterval(loadingTimer);
-        const elapsed = Date.now() - startTime;
-        if (elapsed < 600) await new Promise(r => setTimeout(r, 600 - elapsed));
-        imgBtnText.textContent = "Analyse Image & Generate";
-        imgBtnLoader.classList.add("hidden");
-        imgGenerateBtn.disabled = false;
-    }
-}
 </script>
 
 </body>

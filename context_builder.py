@@ -33,19 +33,24 @@ def get_platform_context(platforms: list[str]) -> str:
             "Browser back/forward button behavior — state must not break on navigation",
             "Cookie and cache: test with cleared cache, expired session, third-party cookie restrictions",
             "Session persistence across tabs — same session, different tab should not cause conflict",
-            "Accessibility: ARIA labels, WCAG contrast ratios, screen reader compatibility",
+            "Accessibility (WCAG 2.1 AA): minimum 4.5:1 contrast ratio for normal text, 3:1 for large text and UI components; all interactive elements (buttons, inputs, links) must be keyboard-reachable via Tab/Enter; every button, input field, and image must have a descriptive label readable by screen readers (VoiceOver, NVDA); error messages must be programmatically associated with their input field",
             "Incognito / private browsing mode behavior"
         ],
 
         "touch": [
-            "Mobile browsers: Chrome for Android, Safari for iOS, Samsung Internet, Firefox Mobile, UC Browser",
-            "Screen sizes: 4-inch (SE), 5.4-inch, 6.1-inch, 6.7-inch (Plus/Max) — test each layout breakpoint",
+            "Android browsers (primary): Chrome for Android, Samsung Internet (default browser on Samsung devices) — test both separately",
+            "iOS browsers (primary): Safari for iOS, Chrome for iOS — test both separately",
+            "NOTE: Firefox Mobile is NOT a target browser for mobile web; do not generate Firefox test cases for touch platform",
+            "Screen sizes: 5.4-inch (compact), 6.1-inch (standard), 6.7-inch (Plus/Max/Samsung S/A series) — test each layout breakpoint",
+            "Samsung devices (6.7-inch): validate city and vehicle-type sections do not wrap or overflow in Samsung Internet",
             "Gestures: tap, long-press, swipe, pinch-to-zoom, double-tap — must all be validated",
-            "Orientation: portrait and landscape — UI must reflow correctly",
+            "Orientation: portrait and landscape — UI must reflow correctly on all target screen sizes",
             "Virtual keyboard: input fields must scroll above keyboard; no content hidden behind it",
             "Network conditions: 4G, 3G, 2G, offline — test graceful degradation",
-            "Viewport meta tag behavior — no horizontal scroll on mobile",
-            "iOS Safari vs Android Chrome rendering differences — test separately"
+            "Viewport meta tag behavior — no horizontal scroll on any screen size",
+            "iOS Safari vs Android Chrome rendering differences — test separately",
+            "Touch target sizes: minimum 44x44px tap targets — verify on smallest supported screen",
+            "No app-specific lifecycle (background/foreground) tests — this is a mobile touch website, not a native app"
         ],
 
         "android app": [
@@ -124,12 +129,17 @@ def get_platform_context(platforms: list[str]) -> str:
 def get_module_context(modules: list[str]) -> str:
     module_map = {
         "login": [
-            "Valid and invalid credential validation",
-            "Account lock after failed attempts",
-            "Password policy enforcement",
-            "CAPTCHA validation",
-            "Session timeout behavior",
-            "Concurrent login handling"
+            "User types must always be tested separately: NEW/Unregistered user vs EXISTING/Registered user — behaviors differ and must NOT be collapsed into one test case",
+            "New/Unregistered user: registration flow, mobile OTP delivery and validation, first-time profile setup, duplicate mobile number prevention",
+            "Existing/Registered user: valid login with correct credentials, login after session expiry, remembered credentials/auto-fill behavior",
+            "Valid and invalid credential validation — for both user types",
+            "Account lock after N consecutive failed attempts — verify lock message and unlock flow",
+            "Password policy enforcement: minimum length, special characters, common password rejection",
+            "CAPTCHA validation: appears after threshold attempts, refresh works, wrong CAPTCHA blocked",
+            "Session timeout behavior: redirect to login, session data cleared, no ghost session",
+            "Concurrent login handling: same account on two devices — older session must be invalidated or warned",
+            "Social/OTP login: OTP expiry, resend OTP cooldown, wrong OTP rejection",
+            "Forgot password: link expiry, one-time use, redirect after reset"
         ],
         "search": [
             "Empty search behavior",
@@ -186,6 +196,38 @@ def get_module_context(modules: list[str]) -> str:
             "Paid and Non-Paid contracts both in scope for document age checks",
             "JdPay KYC and JdPay Omni contracts require separate verification pass",
             "Inactive contract: delete even Unverified/Unapproved documents if >2 years"
+        ],
+
+        "contract": [
+            "Contract types must ALWAYS be tested separately — do NOT merge types into a single test case",
+            "Paid - Platinum: highest tier, all premium features unlocked, validate Platinum-exclusive benefits",
+            "Paid - Diamond: second tier, validate Diamond-specific features differ from Platinum",
+            "Paid - Normal: standard paid tier, validate basic paid features, no Platinum/Diamond extras",
+            "Paid - National Listing: pan-India visibility, validate national-level display rules",
+            "Paid - Other: any non-standard paid category, validate feature access matches tier definition",
+            "Non-Paid: free listing, premium features must be blocked with upgrade prompt visible",
+            "Paid Expired: previously paid, now expired — premium features must be revoked, downgrade UI shown",
+            "Contract renewal: Paid Expired → Paid transition must restore all features immediately without page reload",
+            "Status transitions must not bleed across types: Platinum rules must never apply to Diamond or Normal",
+            "Contract status change must reflect in UI immediately — no stale state after plan upgrade/downgrade",
+            "Revenue-critical: Paid Expired must not display as Active Paid anywhere in the UI or API response"
+        ],
+
+        "movies": [
+            "City selection must filter multiplex listings correctly — results must match selected city only",
+            "Genre, language, and format filters (2D, 3D, IMAX, 4DX, Dolby) must work independently and in combination",
+            "Showtime accuracy: verify seat availability is real-time and synced before and after booking",
+            "Booking flow: seat selection → payment → confirmation ticket — validate each step transition",
+            "Sold-out seats must be visually disabled and non-selectable; booking attempt on sold-out must be blocked",
+            "Show cancellation and refund: validate refund eligibility window, refund amount accuracy, and status update",
+            "Duplicate booking prevention: same user booking same seat for same show must be blocked",
+            "Midnight shows and back-to-back same-day shows: date boundary handling must be correct",
+            "Language filter: regional vs English — results must match filter exactly, no cross-language bleed",
+            "Certificate rating display: U, UA, A — age-restricted content must display rating prominently",
+            "Show expired / no longer screening: must show appropriate 'no longer available' message, not a broken page or 500 error",
+            "Deep link to movie detail page: back navigation must return to correct listing, not home",
+            "Movie thumbnail, title, and rating data must match across result page and detail page",
+            "Ticket PDF/QR code: valid format, barcode scannable, correct show details on ticket"
         ]
     }
 

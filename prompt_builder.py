@@ -133,6 +133,12 @@ Instructions:
 4. Identify boundary values.
 5. Identify negative paths.
 6. Identify data consistency risks.
+7. If the requirement lists CATEGORY-WISE rules or numbered conditions, generate AT LEAST ONE dedicated test case per category and per condition combination. Do NOT collapse multiple rules into a single generic test case.
+8. If the requirement mentions specific statuses (e.g., Approved, Unverified, Unapproved, Active, Inactive), generate separate test cases for EACH status variant.
+9. If alert/warning popups are mentioned, include tests for: popup display, popup content accuracy (vintage date shown), popup dismiss, and post-action state.
+10. If delete actions are mentioned, test: delete confirmation, UI refresh after delete, undo/re-upload prevention, and impact on associated contract state.
+11. If the requirement mentions a "type" field (e.g., vehicle type, category type, listing type, document type, contract type), generate AT LEAST ONE dedicated test case per type variant. Label each variant scenario with `@TypeName` in the scenario title (e.g., `@Car`, `@Bike`, `@Truck`, `@Platinum`, `@PaidExpired`). Do NOT collapse all type variants into a single generic test case. Contract types include: Paid-Platinum, Paid-Diamond, Paid-Normal, Paid-NationalListing, Paid-Other, NonPaid, PaidExpired — each needs its own test case.
+12. For mobile web test cases: target browsers are Chrome + Samsung Internet on Android, and Safari + Chrome on iOS. Do NOT generate Firefox Mobile test cases for mobile web. This is a mobile touch website — do not include native app lifecycle steps (background/foreground, push notifications).
 
 {dynamic_generation_rules}
 
@@ -141,6 +147,7 @@ Each test case must:
 - Include validation logic
 - Be business realistic
 - Avoid generic statements
+- Reference the EXACT category/rule/condition from the requirement (e.g., "RC - Address Proof >2 years, Approved, live contract")
 
 Return STRICT JSON only:
 
