@@ -972,8 +972,12 @@ const imgRemoveBtn = document.getElementById("imgRemoveBtn");
 const imgDropZone = document.getElementById("imgDropZone");
 const imgSummaryBox = document.getElementById("imgSummaryBox");
 
+// Single source of truth for selected file
+let _selectedImageFile = null;
+
 function showImagePreview(file) {
     if (!file) return;
+    _selectedImageFile = file;
     const url = URL.createObjectURL(file);
     imgPreview.src = url;
     imgPreviewWrap.style.display = "block";
@@ -983,6 +987,7 @@ function showImagePreview(file) {
 }
 
 function clearImageSelection() {
+    _selectedImageFile = null;
     imgFileInput.value = "";
     imgPreview.src = "";
     imgPreviewWrap.style.display = "none";
@@ -992,9 +997,8 @@ function clearImageSelection() {
 }
 
 imgFileInput.addEventListener("change", function () {
-    if (imgFileInput.files && imgFileInput.files[0]) {
-        showImagePreview(imgFileInput.files[0]);
-    }
+    const file = imgFileInput.files && imgFileInput.files[0];
+    if (file) showImagePreview(file);
 });
 
 imgRemoveBtn.addEventListener("click", function (e) {
@@ -1014,13 +1018,7 @@ imgDropZone.addEventListener("drop", function (e) {
     e.preventDefault();
     imgDropZone.classList.remove("dragover");
     const file = e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file) {
-        // Transfer to file input (for FormData)
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        imgFileInput.files = dt.files;
-        showImagePreview(file);
-    }
+    if (file) showImagePreview(file);
 });
 
 // Keyboard accessibility for drop zone
@@ -1043,7 +1041,7 @@ document.getElementById("imgClearAll").addEventListener("click", function () {
 
 // ── Image form submission ───────────────────────────────────
 async function submitImageForm() {
-    const file = imgFileInput.files && imgFileInput.files[0];
+    const file = _selectedImageFile;
     const imgGenerateBtn = document.getElementById("imgGenerateBtn");
     const imgBtnText = document.getElementById("imgBtnText");
     const imgBtnLoader = document.getElementById("imgBtnLoader");
@@ -1074,7 +1072,7 @@ async function submitImageForm() {
 
     // Build FormData
     const fd = new FormData();
-    fd.append("image", file);
+    fd.append("image", file, file.name);
     selectedPlatforms.forEach(p => fd.append("platforms", p));
     const extraCtx = document.getElementById("imgExtraContext").value.trim();
     if (extraCtx) fd.append("extra_context", extraCtx);
