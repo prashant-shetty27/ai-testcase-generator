@@ -2,7 +2,7 @@ import json
 import re
 import uuid
 from collections import Counter
-from ai_service import ask_ai
+from ai_service import ask_ai, TESTCASE_SYSTEM_PROMPT
 from memory.memory_engine import get_patterns_for_requirement, store_patterns
 from context_builder import build_context_block
 
@@ -1148,7 +1148,8 @@ Return JSON only.
     ai_output = ask_ai(
         prompt,
         strict_mode=strict_mode,
-        expect_json=True
+        expect_json=True,
+        system_prompt=TESTCASE_SYSTEM_PROMPT
     )
 
     cleaned = ai_output.strip()

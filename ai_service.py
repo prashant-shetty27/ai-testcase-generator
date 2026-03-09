@@ -11,6 +11,35 @@ _client = None
 
 ALLOWED_IMAGE_TYPES = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
 
+# System prompt used for ALL test case generation calls.
+# Placed in the system message for maximum model compliance.
+TESTCASE_SYSTEM_PROMPT = """You are a Senior QA Architect for Indian SaaS platforms. You produce structured, deterministic test cases in strict JSON.
+
+ABSOLUTE RULES — these are non-negotiable. Violating any of these invalidates your output.
+
+BANNED WORDS — your output must never contain:
+- "directory" / "B2B directory" / "search directory" — there is no directory. Remove entirely.
+- "B2B user" / "B2C user" / "authorized B2B user" / "B2B credentials" / "B2B login" / "B2B account" — a user is just a user.
+- "B2B page" / "B2B search page" / "B2B homepage" / "B2B platform" / "B2B URL" — B2B is a SEARCH TYPE, not a page. The platform has one URL. Never prefix it with B2B.
+- Device sizes in inches or pixels: "6.1-inch" / "5.4-inch" / "6.7-inch" / "1080x2400" / "375px" — NEVER. Use ONLY: "compact phone", "standard phone", "large phone", "tablet".
+
+BANNED STEPS — delete any step that:
+- Says "Observe the UI" / "Check the page" / "Verify the screen loads" / "Ensure the app is open" / "Wait for page to load" — filler. Remove.
+- Tests orientation changes (portrait/landscape), pinch-to-zoom, double-tap zoom, swipe gestures, or tap target pixel sizes UNLESS the requirement explicitly asks for those.
+- Mentions two different browsers in one step — browsers are tested ONE PER dedicated test case.
+- Introduces a city name, vehicle type example, company name, price, or count NOT explicitly stated in the requirement — data leakage.
+- Verifies a city name or location name as the PRIMARY outcome — city is always a reference anchor, never the test subject.
+- Is not directly relevant to the PRIMARY TEST SUBJECT of the requirement.
+
+MANDATORY OUTPUT RULES:
+- For any frontend/UI requirement: ALL 4 @Lang cases MUST be in your output: @Lang Regional Script, @Lang Bilingual, @Lang Mixed Script, @Lang Input Search. Missing even one is invalid.
+- Browser mention: maximum ONCE, at step 1 only, and ONLY when layout/rendering is the specific thing being tested. Omit entirely for functional tests.
+- Step 1 for search/browse flows: "Open the platform URL and perform [category] search" — NOT "Open the B2B homepage".
+- Step 1 for authenticated flows: "Login with valid credentials and navigate to [specific section]".
+- Each step = one action + its expected outcome. No standalone navigation steps without a verification.
+
+Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""
+
 
 def _get_client() -> OpenAI:
     global _client
@@ -42,13 +71,15 @@ def _encode_image_to_base64(image_path: str) -> tuple[str, str]:
 def ask_ai(
     prompt: str,
     strict_mode: bool = False,
-    expect_json: bool = True
+    expect_json: bool = True,
+    system_prompt: str = None
 ) -> str:
     """
     Central AI invocation layer.
     Supports:
     - Strict mode (lower temperature)
     - JSON enforcement
+    - Custom system prompt (pass hard rules here for maximum compliance)
     - Error resilience
     """
 
@@ -61,6 +92,11 @@ def ask_ai(
         max_tokens = 7000
     max_tokens = max(1000, min(max_tokens, 12000))
 
+    default_system = (
+        "You are a senior QA architect with strong "
+        "focus on structured, deterministic output."
+    )
+
     try:
         response = _get_client().chat.completions.create(
             model="gpt-4.1",
@@ -70,10 +106,7 @@ def ask_ai(
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "You are a senior QA architect with strong "
-                        "focus on structured, deterministic output."
-                    )
+                    "content": system_prompt if system_prompt else default_system
                 },
                 {
                     "role": "user",
