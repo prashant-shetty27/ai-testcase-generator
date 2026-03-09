@@ -61,6 +61,18 @@ _HTML_ENTITIES = {
     "&nbsp;": " ", "&quot;": '"', "&apos;": "'",
 }
 
+def _sanitize_filename(name: str) -> str:
+    """Replace spaces and special characters in user-provided filenames with underscores."""
+    if not name:
+        return name
+    name = name.strip()
+    # Replace spaces and any chars that cause Content-Disposition issues
+    name = re.sub(r'[^\w\-.]', '_', name)
+    # Collapse multiple underscores
+    name = re.sub(r'_+', '_', name).strip('_')
+    return name
+
+
 def _clean_requirement(text: str) -> str:
     """Strip HTML tags, HTML entities, and Jira wiki markup so the AI receives clean plain text."""
     if not text:
@@ -238,7 +250,7 @@ def generate(request: TestGenerationRequest, http_request: Request):
         tests = generate_full_test_suite(request)
 
         if request.output_filename:
-            filename = f"{request.output_filename}.xlsx"
+            filename = f"{_sanitize_filename(request.output_filename)}.xlsx"
         else:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"generated_{request.template}_{timestamp}.xlsx"
@@ -552,7 +564,7 @@ async def generate_form(
 
         # Filename logic
         if output_filename:
-            filename = f"{output_filename}.xlsx"
+            filename = f"{_sanitize_filename(output_filename)}.xlsx"
         else:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"generated_{timestamp}.xlsx"
@@ -752,7 +764,7 @@ async def generate_from_image(
 
         # STEP 3 — export to Excel
         if output_filename:
-            filename = f"{output_filename}.xlsx"
+            filename = f"{_sanitize_filename(output_filename)}.xlsx"
         else:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"image_generated_{timestamp}.xlsx"
