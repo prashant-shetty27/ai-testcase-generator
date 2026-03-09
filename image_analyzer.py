@@ -26,15 +26,67 @@ KNOWN_MODULES = {
     "contract", "movies",
 }
 
-KNOWN_PAGES = {
-    "result page", "details page", "profile page", "user profile page",
-    "reviews ratings", "edit listings page", "payment gateway page", "kyc",
+# Full set of valid page enum values accepted by TestGenerationRequest
+VALID_PAGE_ENUMS = {
+    "login_page", "home_page", "result_page", "details_page", "prp_page",
+    "pdp_page", "catalogue_page", "leads_dashboard", "analytics_dashboard",
+    "leads_page", "edit_listings_page", "free_listings_page",
+    "payment_gateway_page", "user_profile_page", "settings_page",
+    "reports_page", "search_page", "notification", "reviews_ratings",
+    "ubl_android_app", "ubl_ios_app", "vn_an_dvn_calls",
+    "leads_dashboard_page", "analytics_dashboard_page",
+    "web_b2b_rfq_page", "web_b2b_home_page", "web_b2b_prp_page",
+    "web_b2b_pdp_page", "web_b2b_catalogue_page",
+    "touch_b2b_rfq_page", "touch_b2b_home_page", "touch_b2b_prp_page",
+    "touch_b2b_pdp_page", "touch_b2b_catalogue_page",
+    "android_b2b_rfq_page", "android_b2b_home_page", "android_b2b_prp_page",
+    "android_b2b_pdp_page", "android_b2b_catalogue_page",
+    "ios_b2b_rfq_page", "ios_b2b_home_page", "ios_b2b_prp_page",
+    "ios_b2b_pdp_page", "ios_b2b_catalogue_page",
+    "autosuggest", "chatbot", "voice_assistant", "api_authentication",
+    "genio", "cs", "dc", "kyc", "de_cs", "sales", "finance", "data",
+    "performance", "security", "others",
+}
+
+# Human-readable aliases → enum value
+PAGE_ALIAS_MAP = {
+    "result page": "result_page",
+    "details page": "details_page",
+    "profile page": "user_profile_page",
+    "user profile page": "user_profile_page",
+    "edit listings page": "edit_listings_page",
+    "payment gateway page": "payment_gateway_page",
+    "reviews ratings": "reviews_ratings",
+    "login page": "login_page",
+    "home page": "home_page",
+    "search page": "search_page",
+    "catalogue page": "catalogue_page",
+    "settings page": "settings_page",
+    "leads page": "leads_page",
+    "reports page": "reports_page",
+    "free listings page": "free_listings_page",
 }
 
 KNOWN_PLATFORMS = {
     "web", "touch", "mobile web", "android app", "ios app",
     "hybrid app", "api",
 }
+
+
+def _normalise_page(raw: str) -> str | None:
+    """Map a raw page string to a valid enum value, or return None if unknown."""
+    cleaned = raw.strip().lower()
+    # Direct alias match
+    if cleaned in PAGE_ALIAS_MAP:
+        return PAGE_ALIAS_MAP[cleaned]
+    # Try replacing spaces with underscores
+    underscored = cleaned.replace(" ", "_")
+    if underscored in VALID_PAGE_ENUMS:
+        return underscored
+    # Already a valid enum value
+    if cleaned in VALID_PAGE_ENUMS:
+        return cleaned
+    return None
 
 
 def _extract_json(text: str) -> dict:
@@ -109,7 +161,7 @@ Return STRICT JSON only:
 
 Platform values must be from: web, touch, android app, ios app, hybrid app, api.
 Module values must be from: login, search, catalogue, verticals, profile, payment gateway, reviews ratings, chatbot, kyc, contract, movies.
-Page values must be from: result page, details page, profile page, user profile page, reviews ratings, edit listings page, payment gateway page, kyc.
+Page values must be from (use exact underscore format): result_page, details_page, home_page, login_page, search_page, user_profile_page, catalogue_page, edit_listings_page, payment_gateway_page, reviews_ratings, kyc, others.
 If unsure about module/page, omit them — do NOT invent values.
 """
 
@@ -152,15 +204,18 @@ If unsure about module/page, omit them — do NOT invent values.
             normalised.append("web")
     parsed["platforms"] = normalised if normalised else (platforms_hint or ["touch"])
 
-    # Normalise modules and pages to known values
+    # Normalise modules to known values
     parsed["modules"] = [
         m for m in (parsed.get("modules") or [])
         if m.strip().lower() in KNOWN_MODULES
     ]
-    parsed["pages"] = [
-        p for p in (parsed.get("pages") or [])
-        if p.strip().lower() in KNOWN_PAGES
-    ]
+    # Normalise pages to valid enum values — drop any that can't be mapped
+    normalised_pages = []
+    for p in (parsed.get("pages") or []):
+        mapped = _normalise_page(p)
+        if mapped:
+            normalised_pages.append(mapped)
+    parsed["pages"] = normalised_pages
 
     # Ensure required keys exist
     parsed.setdefault("test_types", ["functional", "ui"])
