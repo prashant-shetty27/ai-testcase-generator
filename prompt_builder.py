@@ -139,11 +139,13 @@ F. Data consistency risks (state changes, concurrent actions, rollback).
 G. PRIMARY TEST SUBJECT vs REFERENCE TERMS — this is critical:
    - PRIMARY TEST SUBJECT: the feature, behaviour, or element the requirement is actually asking you to test.
    - REFERENCE TERM: a word or element used to describe position, condition, or context — NOT the thing being tested.
+   - A requirement can have MULTIPLE reference terms simultaneously — identify ALL of them before writing steps.
    Examples:
      "vehicle type section BELOW CITY" → PRIMARY = vehicle type section behaviour | REFERENCE = city (positional anchor only)
      "listing WITH APPROVED CONTRACT" → PRIMARY = listing behaviour | REFERENCE = Approved contract (condition/filter)
      "search results FOR MUMBAI" → PRIMARY = search result behaviour | REFERENCE = Mumbai (geographic filter)
-   Rule: Reference terms set up the scenario context. They must NOT become the focus of test steps. Do NOT write steps that primarily validate the reference term — only validate the primary test subject, using the reference term as setup context.
+     "Show VN FOR PAID CLIENT on RESULT PAGE in MUMBAI" → PRIMARY = VN display behaviour | REFERENCES = paid client (eligibility condition), result page (context), Mumbai (location filter) — none of these three are the test subject
+   Rule: Reference terms set up the scenario context. They must NOT become the focus of test steps. Use ALL reference terms as setup/condition context only — validate the primary test subject in every verification step.
 Only after this analysis, proceed to generate test cases.
 
 ═══════════════════════════════════════════
@@ -167,14 +169,17 @@ RULE E — Type fields:
 If the requirement explicitly names type variants (e.g., vehicle type, document type, contract type), generate AT LEAST ONE dedicated test case per named type. Label each with `@TypeName` in the scenario title. Do NOT collapse variants. Do NOT generate type-variant test cases if the requirement does not name specific types — use the generic term only.
   Contract types (use ONLY if the requirement mentions contracts): Paid-Platinum, Paid-Diamond, Paid-Normal, Paid-NationalListing, Paid-Other, NonPaid, PaidExpired.
 
-RULE F — Platform-specific browser scope (mobile web only):
-For touch/mobile web platform: valid browsers are Chrome and Samsung Internet on Android; Safari and Chrome on iOS. Do NOT generate Firefox Mobile cases. Do NOT include native app lifecycle steps (background/foreground, push notifications) for mobile web.
+RULE F — Platform-specific browser scope:
+  Web (desktop): test on Chrome and Safari. Do NOT assume Firefox or Edge unless the requirement explicitly names them.
+  Touch/mobile web: valid browsers are Chrome and Samsung Internet on Android; Safari and Chrome on iOS. Do NOT generate Firefox Mobile cases.
+  Android app / iOS app: native app — no browser mentioned in steps unless the requirement is about in-app browser behaviour.
+  Do NOT include native app lifecycle steps (background/foreground, push notifications) for mobile web touch platform.
 
 RULE G — Location-aware cases (search with geographic relevance):
 Apply ONLY when ALL of the following are true:
   1. The requirement involves search results (category search, product search, service search, movies search).
-  2. The requirement explicitly mentions city, area, location, pincode, or geo-filtering — OR the page is a result page / PRP where city-based filtering is the core function.
-  3. The requirement is NOT purely about UI layout, styling, or label formatting — if city is just a display label with no filtering logic, skip location cases.
+  2. The requirement explicitly mentions city, area, location, pincode, geo-filtering, or city-switching as part of the CORE TESTED BEHAVIOUR — not just as a display label or positional anchor.
+  3. The requirement is NOT purely about UI layout, styling, label formatting, or element positioning — if city only appears as a reference anchor (e.g., "below city name"), skip location cases.
   Add these ADDITIONAL test cases (labelled `@Location` in scenario title):
   - `@Location GPS Auto-detect`: location auto-detected via GPS, results and city name match detected city.
   - `@Location City Change`: user manually changes city mid-session, results and vehicle type section refresh to new city.
@@ -190,9 +195,12 @@ Apply ONLY when the requirement explicitly mentions call numbers, phone display,
   @DVN: Number rotates after (a) cache clear, (b) session expiry, (c) ~1-minute TTL — one test case per trigger. DVN is for non-paid only — verify blocked for paid clients.
   @Actual: "Show Number" button on all platforms. Test single-number and multi-number (mobile/landline/tollfree) variants. Helpline/emergency numbers display regardless of contract status.
   @Preferred: Google-sourced number. Display and routing identical to Actual. Must not be misclassified as VN or DVN.
-  Cross-cutting (ALL types): number hidden before reveal (not in DOM or network); every reveal fires a lead event; Paid Expired contract deactivates VN; non-paid → paid upgrade replaces DVN with VN.
+  Cross-cutting (ALL types): number hidden before reveal (not in DOM or network); every reveal fires a lead event.
+  Generate SEPARATE test cases for these state transitions:
+    - Paid Expired contract → VN must deactivate (number no longer shown inline or via button).
+    - Non-paid → paid upgrade → DVN must be replaced by VN (verify old DVN is removed).
 
-RULE I — Search routing (strictly enforced in ALL test cases):
+RULE I — Search routing (enforced in all search-related test cases only — skip for non-search requirements like KYC, payments, profile):
   Category search (autosuggest OR freetext) → ALWAYS lands on Result Page.
     Result Page test areas: filters, sorting, listing count, vehicle type section below city, pagination, no-result state, back navigation restoring scroll and filters.
   Company/brand name direct search → ALWAYS lands on Details Page.
@@ -220,6 +228,13 @@ DOMAIN TERMS — never invent or assume examples unless the requirement explicit
 ═══════════════════════════════════════════
 PHASE 4 — STEP WRITING RULES
 ═══════════════════════════════════════════
+Test case TITLE — must be scenario-specific, never generic:
+  - Title must include: WHAT is being tested + the KEY CONDITION + direction (pass/fail/boundary).
+    BAD: "Positive test for vehicle type" | "Test case 1" | "Verify listing page"
+    GOOD: "Vehicle type section renders and filters correctly after category search on B2B result page — positive"
+    GOOD: "Vehicle type section absent for city with no associated types — empty state handling"
+  - Do NOT reuse the same title structure across multiple test cases. Each title must be unique and self-describing.
+
 Every step must earn its place:
   - Each step = one purposeful action + its expected outcome in the same sentence.
     BAD: "Navigate to the results page."
@@ -250,9 +265,10 @@ No data leakage or assumption:
 {dynamic_generation_rules}
 
 Each test case must:
-- Have 6–8 steps — every step has a clear action AND a verifiable expected outcome
+- Have 5–8 steps — scale to the scenario complexity. Simple validations need 5 focused steps. Complex flows may use up to 8. NEVER pad steps to reach a count — every step must add value.
+- Have a unique, self-describing title (see Phase 4 title rule above)
 - Cover the exact scenario described — no filler, no assumed data, no invented role labels
-- Reference the EXACT condition from the requirement (e.g., "RC - Address Proof >2 years, Approved, live contract")
+- If the requirement has explicit conditions/rules, reference them exactly in the relevant step (e.g., "RC - Address Proof >2 years, Approved, live contract"). If no explicit condition exists, describe the scenario state clearly without fabricating conditions.
 - Be business-realistic and self-contained
 
 Return STRICT JSON only:
