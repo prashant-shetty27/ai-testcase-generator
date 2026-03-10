@@ -1090,9 +1090,26 @@ Generate complete business workflow validation including:
         constraints_text = "\n".join(f"- {c}" for c in constraints)
         analysis_block += f"\nExtracted Constraints:\n{constraints_text}\n"
 
+    # Build image context block — takes priority over text-only assumptions
+    image_context_block = ""
+    image_summary = analysis_json.get("_image_summary", "")
+    image_requirement = analysis_json.get("_image_requirement", "")
+    if image_summary or image_requirement:
+        image_context_block = "═══════════════════════════════════════════\nIMAGE CONTEXT (PRIORITY — overrides text-only assumptions)\n═══════════════════════════════════════════\n"
+        if image_summary:
+            image_context_block += f"What the uploaded screen shows:\n{image_summary}\n\n"
+        if image_requirement:
+            image_context_block += (
+                f"Synthesised requirement from the image:\n{image_requirement}\n\n"
+                "Use the above image-derived requirement as the PRIMARY source of truth for test case generation.\n"
+                "The text requirement supplements it. Any conflict — the image wins.\n"
+                "Generate ALL the same test cases you would for a text requirement PLUS additional visual verification steps specific to what is visible in the image.\n"
+            )
+
     # Build the extended context block: combines platform context with
     # all dynamic blocks built above (e2e, kyc, domain, update, classification)
     extended_context = "\n".join(filter(None, [
+        image_context_block,
         context_block,
         classification_guidance,
         analysis_block,

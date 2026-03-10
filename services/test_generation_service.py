@@ -249,15 +249,16 @@ def generate_full_test_suite(
     analysis["third_party_learning"] = request.learn_from_third_party
 
     # If this request originated from image analysis, merge the vision-extracted
-    # business rules and constraints into the analysis so the generator uses them.
+    # data into the analysis so the generator uses them. Image data takes priority.
     image_analysis = getattr(request, "_image_analysis", None)
     if image_analysis and isinstance(image_analysis, dict):
+        # Business rules — vision rules take priority
         existing_rules = analysis.get("business_rules") or []
         vision_rules = image_analysis.get("business_rules") or []
-        # Merge without duplicates, vision rules take priority
         merged_rules = vision_rules + [r for r in existing_rules if r not in vision_rules]
         analysis["business_rules"] = merged_rules
 
+        # Constraints — vision constraints take priority
         existing_constraints = analysis.get("constraints") or []
         vision_constraints = image_analysis.get("constraints") or []
         merged_constraints = vision_constraints + [c for c in existing_constraints if c not in vision_constraints]
@@ -266,6 +267,14 @@ def generate_full_test_suite(
         # Use vision-extracted feature name if the AI analysis produced a generic one
         if image_analysis.get("feature") and not analysis.get("feature"):
             analysis["feature"] = image_analysis["feature"]
+
+        # Pass image summary and synthesized requirement into the generator —
+        # these give the model a direct visual description of the screen to base
+        # test cases on, taking priority over text-only assumptions.
+        if image_analysis.get("image_summary"):
+            analysis["_image_summary"] = image_analysis["image_summary"]
+        if image_analysis.get("requirement"):
+            analysis["_image_requirement"] = image_analysis["requirement"]
 
     return generate_testcases(
         analysis,
