@@ -16,8 +16,8 @@ def export_to_excel(tests, template_type="manual", output_path=None):
         "Category",
         "Scenario",
         "Steps",
-        "Expected Result",
-        "Example Data"
+        "Example Data",
+        "Expected Result"
     ])
 
     template = AutomationTemplate if template_type == "automation" else ManualTemplate

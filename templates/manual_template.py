@@ -18,6 +18,6 @@ class ManualTemplate:
             category,
             tc.get("scenario") or tc.get("title") or "N/A",
             steps_text,
-            tc.get("expected_result", ""),
-            tc.get("examples", "")
+            tc.get("examples", ""),
+            tc.get("expected_result", "")
         ]
