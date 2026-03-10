@@ -299,152 +299,152 @@ def get_module_context(modules: list[str]) -> str:
         ],
 
         "restaurants": [
-            "Cuisine filter: multi-select (e.g. North Indian + Chinese) must AND filters correctly and return only matching listings",
-            "Veg / Non-Veg / Vegan filter: results must honour selection strictly — no cross-contamination in results",
-            "Open Now filter: only restaurants with current operating hours within range must appear",
-            "Rating filter: minimum rating threshold must exclude all listings below it",
-            "Home delivery / Dine-in / Takeaway toggle: must switch listing set correctly without page reload",
-            "City + locality drill-down: area-level search (e.g. Bandra, Koramangala) must narrow results within that zone",
-            "No results for cuisine + city combo: must show empty state with suggestion to broaden search",
-            "Restaurant detail page: menu, timings, address, contact, photos — all must be accurate and actionable",
-            "User reviews: sort by latest, highest, lowest — ordering must be accurate",
-            "Booking / reservation CTA: if available, must open correct booking flow with pre-filled restaurant details"
+            "Cuisine type filter: multi-select must AND correctly — only listings matching ALL selected cuisines must appear; use cuisine types stated in the requirement",
+            "Dietary preference filter (veg/non-veg/vegan): results must honour selection strictly with no cross-contamination",
+            "Open Now filter: only listings with current operating hours within window must appear; closed listings must be excluded or clearly marked",
+            "Minimum rating filter: all listings below the threshold must be excluded",
+            "Service mode toggle (delivery / dine-in / takeaway): switching mode must refresh listing set without page reload",
+            "City + area drill-down: area-level search must narrow results within that zone only — no bleed from adjacent areas",
+            "No-results state: when no listing matches the selected filters + city, show empty state with a suggestion to broaden criteria",
+            "Detail page completeness: menu, timings, address, contact, photos — all fields must be accurate and actionable",
+            "Review sort: latest / highest / lowest rating sort must reorder correctly",
+            "Reservation CTA: if present, must open booking flow with pre-filled restaurant context"
         ],
 
         "real estate": [
-            "Property type filter: Flat, Villa, Plot, PG, Co-living — each must return distinct listing sets",
-            "Transaction type: Sale vs Rent vs Lease — must never bleed across; a sale listing must not appear in rent results",
-            "BHK filter: 1BHK, 2BHK, 3BHK, 4BHK+ — results must match exactly; combination filters must AND correctly",
-            "Budget / price range filter: min–max range must exclude all out-of-range listings",
-            "Locality filter: area-level results (e.g. Andheri, Whitefield) must not include listings from adjacent areas unless user selects them",
-            "Furnished / Semi-Furnished / Unfurnished: must filter correctly and match listing details",
-            "Verified listings badge: must only appear on verified listings — unverified must not show badge",
-            "PG-specific filters: single / double / triple sharing, male / female / co-ed — each must return correct set",
-            "Map view: listing pins must correspond to actual property locality — no geo-mismatch",
-            "Contact agent / Request callback CTA: must trigger correct lead flow with pre-filled property details"
+            "Property type filter: each type (flat, villa, plot, PG, co-living, etc.) must return a distinct listing set — no cross-type bleed",
+            "Transaction type: sale vs rent vs lease must never bleed — a listing of one type must not appear in another type's results",
+            "Configuration filter (BHK/room count): single and combined selections must AND correctly and match listing details exactly",
+            "Budget / price range filter: min–max must exclude all out-of-range listings; boundary values (exactly at min/max) must be included",
+            "Locality filter: area-level results must exclude listings from adjacent or unselected areas",
+            "Furnishing status filter: results must match the selected furnishing state and reflect it on the detail page",
+            "Verified listing badge: must appear only on verified listings — unverified listings must not carry it",
+            "Sharing type filter (for PG): single/double/triple and gender preference must filter independently and in combination",
+            "Map view accuracy: each listing pin must correspond to the correct locality — geo-mismatch is a defect",
+            "Lead CTA: contact/callback must open with property context pre-filled; submission must reach the correct agent"
         ],
 
         "healthcare": [
-            "Speciality filter: Cardiologist, Dermatologist, Dentist, ENT, Gynaecologist, Orthopaedic etc. — each must return only matching doctors/clinics",
-            "Consultation type: In-Clinic vs Online (Teleconsultation) — must filter correctly; online-only doctors must not appear in in-clinic results",
-            "Availability / Next slot: must reflect real-time slot data — expired slots must not be bookable",
-            "Hospital vs Individual Doctor search: must route to correct listing type and detail page",
-            "Multi-city clinic: doctor with multiple clinic locations — each location must have its own slot calendar",
-            "Emergency / 24x7 filter: only hospitals or clinics with round-the-clock service must appear",
-            "Insurance accepted filter: results must only show providers accepting the selected insurance",
-            "Appointment booking flow: select doctor → select slot → fill patient details → confirm — each step must be validated",
-            "Appointment cancellation and rescheduling: must update calendar in real-time, send confirmation notification",
-            "Rating and review for doctors: must be aggregated correctly and reflect only verified patient reviews"
+            "Speciality filter: each speciality must return only matching doctors or clinics — no cross-speciality bleed; use speciality names stated in the requirement",
+            "Consultation mode filter (in-clinic vs teleconsultation): must filter independently; an online-only provider must not appear in in-clinic results",
+            "Slot availability: next available slot must reflect real-time data — expired or fully booked slots must not be selectable",
+            "Provider type: hospital vs individual doctor search must route to the correct listing type and detail page",
+            "Multi-location provider: a doctor with multiple clinic locations must have a separate slot calendar per location",
+            "Emergency / 24x7 filter: only providers tagged as round-the-clock must appear in this filter",
+            "Insurance filter: results must include only providers accepting the selected insurance plan",
+            "Appointment booking flow: each step (provider → slot → patient details → confirm) must be validated independently",
+            "Cancellation and rescheduling: must update the slot calendar in real-time and trigger a confirmation notification",
+            "Review aggregation: star rating must match the count and average of individual reviews on the detail page"
         ],
 
         "home services": [
-            "Service category filter: Plumber, Electrician, Carpenter, Painter, AC Repair, Pest Control, Cleaning — each must return only relevant providers",
-            "Locality filter: service providers listed must operate in the selected area — out-of-area providers must not appear",
-            "Verified / Background-checked badge: must only appear on verified providers",
-            "Availability filter: available today / this week — must reflect provider's real-time slot availability",
-            "Request callback / Book now CTA: must pre-fill service category and user location in lead form",
-            "Provider rating and reviews: must be sorted and filtered correctly (highest first, most recent first)",
-            "No service available in area: must show empty state with 'No providers in this area' message and suggestion to expand radius",
-            "Provider detail page: service list, pricing (if shown), contact, area coverage — all must be accurate",
-            "Multiple service categories per provider: if a provider offers both plumbing and electrical, both must be discoverable via respective searches"
+            "Service category filter: each service type must return only relevant providers — no cross-category bleed; use service types stated in the requirement",
+            "Area coverage filter: providers must serve the selected locality — out-of-area providers must not appear",
+            "Trust / verification badge: must appear only on verified or background-checked providers",
+            "Availability filter: today / this week must reflect provider's real-time slot data — unavailable providers must be excluded or marked",
+            "Lead CTA: callback/book-now must pre-fill service category and user location; submission must reach the correct provider",
+            "Provider review sort: highest rated / most recent must reorder correctly",
+            "No-provider-in-area state: must show an empty state with 'No providers available in this area' message and a broader search suggestion",
+            "Detail page: service list, pricing (if shown), coverage area, contact — all fields must be accurate",
+            "Multi-service provider: a provider offering multiple service types must be discoverable via each relevant category search independently"
         ],
 
         "beauty": [
-            "Service type filter: Hair, Skin, Nail, Spa, Makeup, Waxing — each must return only matching salons",
-            "Gender filter: Male / Female / Unisex — must filter salon listings correctly",
-            "At-home service vs In-salon toggle: must switch listing set correctly",
-            "Locality filter: area-specific results must not include salons outside that area",
-            "Slot booking flow: select service → select slot → confirm — must validate each step",
-            "Cancellation policy: must be visible before booking confirmation",
-            "Package / combo offers: if listed, pricing must be accurate and applied correctly at checkout",
-            "Rating and reviews: verified reviews only; sort by latest and highest must work correctly"
+            "Service type filter: each treatment category must return only matching salons — no cross-type bleed; use service types stated in the requirement",
+            "Gender preference filter: male / female / unisex must filter listing set correctly",
+            "At-home vs in-salon toggle: switching mode must refresh listing set correctly",
+            "Area filter: results must not include providers outside the selected locality",
+            "Slot booking flow: each step (service → slot → confirm) must be independently validated",
+            "Cancellation policy: must be visible to the user before booking confirmation is submitted",
+            "Package / combo pricing: if listed, price must be accurate and correctly applied at checkout",
+            "Review sort: verified reviews only; latest and highest sort must reorder accurately"
         ],
 
         "education": [
-            "Course / class type filter: School Tuition, Competitive Exam Coaching, Skill Development, Language, Dance, Music — each must return correct institutes",
-            "Board / exam filter: CBSE, ICSE, State Board, IIT-JEE, NEET, UPSC, CAT — must narrow results correctly",
-            "Mode of learning: Online vs Offline vs Hybrid — must filter correctly; online-only institutes must not appear in offline results",
-            "Locality filter: area-level results for offline institutes must be accurate",
-            "Fee range filter: institutes outside the range must be excluded",
-            "Demo class / enquiry CTA: must open lead form with pre-filled course and institute details",
-            "Institute detail page: courses offered, batch timings, faculty, fees, contact — all must be accurate",
-            "No results for exam + city combo: must show empty state with broader search suggestion"
+            "Course / programme type filter: each category must return only matching institutes — use course types stated in the requirement",
+            "Exam / board filter: each exam or board must narrow results correctly with no cross-exam bleed",
+            "Learning mode filter (online / offline / hybrid): must filter independently; online-only institutes must not appear in offline results",
+            "Area filter: for offline institutes, locality must be accurate — out-of-area results must not appear",
+            "Fee range filter: institutes outside the min–max range must be excluded; boundary values must be included",
+            "Enquiry / demo CTA: must open lead form with course and institute context pre-filled",
+            "Institute detail page: courses, batch timings, faculty, fees, contact — all fields must be accurate",
+            "No-results state: when no institute matches the filters + city, show empty state with broader search suggestion"
         ],
 
         "hotels": [
-            "Check-in / Check-out date picker: must block past dates; check-out must always be after check-in",
-            "Guest count filter: adults + children — room results must match occupancy capacity",
-            "Budget filter: min–max price per night — out-of-range properties must not appear",
-            "Property type: Hotel, Homestay, Resort, Hostel, Service Apartment — each must return distinct listing sets",
-            "Amenity filter: WiFi, Pool, Gym, Breakfast Included, AC — multi-select must AND filters correctly",
-            "Locality / landmark search: 'hotels near airport', 'hotels in Bandra' — results must be proximity-accurate",
-            "Availability: if no rooms available for selected dates, must show 'Sold out' and not allow booking",
-            "Room type selection: Single, Double, Suite — must show correct pricing per room type",
-            "Booking flow: select room → enter guest details → payment → confirmation voucher — each step validated",
-            "Cancellation policy: must be clearly shown before payment; free vs paid cancellation must be accurate"
+            "Date picker: check-in must block past dates; check-out must always be after check-in; same-day booking must be handled correctly",
+            "Guest count filter: room results must match occupancy capacity — rooms below capacity must be excluded",
+            "Budget filter: min–max price per night must exclude out-of-range properties; boundary values must be included",
+            "Property type filter: each type must return a distinct listing set — no cross-type bleed; use property types stated in the requirement",
+            "Amenity filter: multi-select must AND correctly — only properties with ALL selected amenities must appear",
+            "Proximity search: 'near [landmark]' or area-specific search must return results sorted by proximity accuracy",
+            "No-availability state: if no rooms are available for selected dates, must show 'Sold out' and block booking attempt",
+            "Room type selection: each room type must display correct pricing independently",
+            "Booking flow: room selection → guest details → payment → confirmation voucher — each step must be validated",
+            "Cancellation policy: must be clearly visible before payment; free vs paid cancellation terms must be accurate and enforced"
         ],
 
         "jobs": [
-            "Job role / designation filter: must return only listings matching the searched role",
-            "Experience filter: Fresher, 1–3 yrs, 3–5 yrs, 5–10 yrs, 10+ yrs — must return correctly scoped results",
-            "Salary range filter: min–max CTC — out-of-range jobs must be excluded",
-            "Job type: Full-Time, Part-Time, Freelance, Internship, Work From Home — each must return distinct sets",
-            "Industry / sector filter: IT, Healthcare, Finance, Education, Manufacturing etc. — must narrow results accurately",
-            "City filter: remote jobs must appear regardless of city; non-remote must match selected city",
-            "Posted date filter: Last 24 hrs, Last 7 days, Last 30 days — must exclude older postings",
-            "Apply now CTA: must open correct application form with pre-filled job title and company",
-            "Job detail page: role, company, salary, location, skills required, JD — all must be accurate and complete",
-            "Saved / bookmarked jobs: must persist across sessions for logged-in users"
+            "Role / designation filter: must return only listings matching the searched role — no unrelated role bleed",
+            "Experience range filter: each bracket must return correctly scoped results; boundary values (e.g. exactly 3 yrs) must be included in both adjacent brackets if applicable",
+            "Salary range filter: min–max CTC must exclude out-of-range listings; boundary values must be included",
+            "Job type filter: full-time / part-time / freelance / internship / WFH must each return distinct listing sets",
+            "Industry filter: must narrow results accurately — use industry types stated in the requirement",
+            "Location filter: remote jobs must appear regardless of city selection; non-remote must match selected city only",
+            "Posting date filter: each time window must exclude older postings correctly",
+            "Apply CTA: must open correct application form with job title and company pre-filled",
+            "Job detail page: role, company, salary, location, skills, JD — all fields must be accurate and complete",
+            "Saved jobs: bookmarks must persist across sessions for logged-in users"
         ],
 
         "finance": [
-            "Service type filter: CA / Chartered Accountant, Tax Consultant, Insurance Agent, Loan Agent, Financial Advisor — each must return correct provider listings",
-            "Insurance sub-type: Life, Health, Motor, Travel — must filter independently",
-            "Locality filter: area-level results must be accurate for in-person service providers",
-            "Verified / IRDA-registered badge: must only appear on verified insurance providers",
-            "Enquiry / callback CTA: must pre-fill service type and user location",
-            "Provider detail page: services offered, contact, registration number (if applicable) — all must be accurate",
-            "No provider in area: must show empty state with broader search or online service suggestion"
+            "Service type filter: each provider category must return only matching listings — no cross-type bleed; use service types stated in the requirement",
+            "Sub-type filter (e.g. insurance type, loan type): must filter independently from parent category",
+            "Area filter: in-person service providers must be scoped to the selected locality",
+            "Regulatory / verification badge: must appear only on certified or registered providers — unverified providers must not carry it",
+            "Enquiry CTA: must pre-fill service type and user location; submission must reach the correct provider",
+            "Provider detail page: services, credentials, contact — all fields must be accurate",
+            "No-provider state: must show empty state with broader search or online alternative suggestion"
         ],
 
         "legal": [
-            "Practice area filter: Property, Criminal, Family, Corporate, Consumer, Labour — each must return only matching advocates/firms",
-            "Locality filter: court-specific or area-specific searches must return accurate results",
-            "Experience filter: years of practice — must narrow results correctly",
-            "Consultation mode: In-Person vs Online — must filter correctly",
-            "Verified / Bar Council registered badge: must only appear on verified advocates",
-            "Enquiry CTA: must open lead form with pre-filled practice area and location",
-            "Advocate detail page: practice areas, experience, contact, bar council number — all must be accurate"
+            "Practice area filter: each area must return only matching advocates or firms — no cross-area bleed; use practice areas stated in the requirement",
+            "Area / court filter: results must be accurate for the selected locality or court jurisdiction",
+            "Experience filter: must narrow results correctly; boundary experience values must be handled accurately",
+            "Consultation mode (in-person vs online): must filter independently",
+            "Verification badge: must appear only on advocates with confirmed credentials",
+            "Enquiry CTA: must open lead form with practice area and location pre-filled",
+            "Advocate detail page: practice areas, experience, contact, registration details — all fields must be accurate"
         ],
 
         "matrimony": [
-            "Religion / community filter: Hindu, Muslim, Christian, Sikh, Jain, Buddhist, sub-community — must return only matching profiles or bureaus",
-            "City / state filter: must return bureaus or profiles operating in that location",
-            "Service type: Matrimonial Bureau vs Online Profile Listing — must filter correctly",
-            "Contact bureau CTA: must open lead form with pre-filled religion and city",
-            "Bureau detail page: services offered, membership plans, contact — all must be accurate",
-            "No bureau in city: must show empty state with nearest city suggestion"
+            "Religion / community filter: each selection must return only matching bureaus or profiles — no cross-community bleed; use communities stated in the requirement",
+            "City / state filter: must return only bureaus or profiles operating in that location",
+            "Service type filter (bureau vs online listing): must return distinct results per type",
+            "Enquiry CTA: must open lead form with religion and city pre-filled",
+            "Bureau detail page: services, membership plans, contact — all fields must be accurate",
+            "No-bureau state: must show empty state with nearest available location suggestion"
         ],
 
         "pets": [
-            "Service type filter: Veterinary Clinic, Pet Shop, Dog Grooming, Pet Boarding, Pet Training — each must return correct listings",
-            "Pet type filter: Dog, Cat, Bird, Fish, Reptile — must narrow results to providers supporting that pet type",
-            "Locality filter: area-specific results must be accurate",
-            "Emergency vet filter: 24x7 / emergency clinics must only appear if tagged correctly",
-            "Appointment booking: must open correct booking flow for vet clinics",
-            "Provider detail page: services, timings, contact, pet types supported — all must be accurate"
+            "Service type filter: each service category must return only relevant providers — no cross-type bleed; use service types stated in the requirement",
+            "Pet type filter: must narrow results to providers that support the selected pet type only",
+            "Area filter: results must be scoped to the selected locality — out-of-area providers must not appear",
+            "Emergency / 24x7 filter: must include only providers explicitly tagged as round-the-clock",
+            "Appointment booking: must open correct booking flow with provider and service context pre-filled",
+            "Provider detail page: services offered, timings, contact, supported pet types — all must be accurate"
         ],
 
         "events": [
-            "Event type filter: Wedding, Corporate, Birthday, Concert, Exhibition, Sports — each must return correct vendors",
-            "Service category: Event Planner, Decorator, Caterer, Photographer, Videographer, DJ, Venue — each must be independently searchable",
-            "City filter: event vendors must be scoped to selected city",
-            "Budget range filter: out-of-range vendors must be excluded",
-            "Availability / date-specific search: vendor must show as unavailable if booked for the requested date",
-            "Portfolio / gallery: must display correctly on detail page without broken images",
-            "Enquiry CTA: must pre-fill event type, date, and city in lead form",
-            "Vendor detail page: services, past events portfolio, pricing range, contact — all must be accurate",
-            "No vendor for event type + city combo: must show empty state with suggestion"
+            "Event type filter: each event category must return only relevant vendors — no cross-type bleed; use event types stated in the requirement",
+            "Service category filter: each vendor type (planner, caterer, photographer, venue, etc.) must be independently searchable and return the correct listing set",
+            "City filter: vendor results must be scoped to the selected city only",
+            "Budget range filter: out-of-range vendors must be excluded; boundary values must be included",
+            "Date availability: vendors booked on the requested date must appear as unavailable — booking must be blocked",
+            "Portfolio / gallery: must display correctly on detail page with no broken images or missing entries",
+            "Enquiry CTA: must pre-fill event type, requested date, and city in the lead form",
+            "Vendor detail page: services, portfolio, pricing range, contact — all fields must be accurate",
+            "No-vendor state: must show empty state with a broader search or adjacent category suggestion"
         ]
     }
 
