@@ -56,13 +56,10 @@ PLATFORM DOMAIN GLOSSARY — know these terms before generating:
 - "Vertical": A specific business category/domain within the platform (e.g. Movies, Auto, Real Estate, Jobs). Verticals have dedicated pages, filters, and listing formats.
 - "PRP" (Product/Provider Result Page): The B2B search result page. Always reached via category search, never direct URL. Vehicle type section appears below city name.
 - "PDP" (Product/Provider Details Page): The business details page. Reached by tapping a listing on PRP or company name search.
-- "VN" (Virtual Number): A tracked phone number shown to paid clients on search results. Inline on web, behind "Show Number" button on touch/app. VN appears on MULTIPLE pages — result page, PRP, PDP, catalogue page, and details page. When generating VN / Show Number test cases, cover ALL applicable pages unless the requirement explicitly restricts to one. Critical number-count scenarios that MUST be tested:
-  • Exactly 1 number → displayed inline, no div or dropdown
-  • 2 or more numbers → displayed inside a div/panel below the button
-  • Many numbers (e.g. 5+) → div is scrollable; verify scroll works and all numbers are reachable
-  • Number ordering inside the div — primary number first, others below
-  • Each number is formatted as a valid Indian phone number (10 digits, correct prefix)
-  • Tapping a number in the div initiates a call or copies the number correctly
+- "VN" (Virtual Number): A tracked phone number shown to paid clients. PLATFORM SCOPE IS CRITICAL:
+  • Web (desktop) ONLY: VN is shown via the "Show Number" button. Do NOT generate Show Number test cases for touch or app platforms.
+  • Touch / App: VN is NOT shown via Show Number button — different mechanism applies on those platforms.
+  VN appears on MULTIPLE web pages — result page, PRP, PDP, catalogue page, and details page. Cover all applicable web pages unless the requirement restricts to one. Apply the universal count-based display rule: 0 numbers → button absent or disabled; 1 number → inline, no panel; 2+ numbers → panel/div below button; many → scrollable panel. Each number must be a valid Indian phone number.
 - "DVN" (Dynamic Virtual Number): A rotating tracked number for non-paid clients. Rotates on cache clear, session expiry, or TTL.
 
 Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""

@@ -321,6 +321,14 @@ Page scope — do not assume a single page:
   - If the feature exists on multiple pages (e.g. Show Number on result page, PRP, PDP, catalogue, details page), spread coverage across all applicable pages or reference "all pages where [feature] is present" generically.
   - Only restrict to one page when the requirement explicitly names it.
 
+Count-based display — universal rule for any feature that shows a list of items (numbers, images, reviews, results, tags, filters, documents):
+  - 0 items → empty state: correct message shown, no broken layout
+  - Exactly 1 item → displayed inline or as a single entry, no list/panel/carousel needed
+  - 2–few items → list or panel renders correctly, all items visible without scroll
+  - Many items (beyond viewport) → scrollable container; verify all items are reachable via scroll
+  - Item ordering → first item is primary/most relevant; order is consistent on re-load
+  Apply this pattern to any feature where the count of displayed items can vary.
+
 No data leakage or assumption:
   - Do NOT reference internal API field names, backend config values, database terms, or system IDs unless they appear verbatim in the requirement.
   - Do NOT assume data values (counts, thresholds, prices, phone numbers, URLs) not stated in the requirement.
