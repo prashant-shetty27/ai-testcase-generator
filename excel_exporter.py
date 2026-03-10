@@ -16,7 +16,8 @@ def export_to_excel(tests, template_type="manual", output_path=None):
         "Category",
         "Scenario",
         "Steps",
-        "Expected Result"
+        "Expected Result",
+        "Example Data"
     ])
 
     template = AutomationTemplate if template_type == "automation" else ManualTemplate
@@ -81,7 +82,8 @@ def normalize_existing_testcases(raw_cases):
             "category": row.get("Category") or "existing_tests",
             "scenario": row.get("Scenario") or "",
             "steps": steps,
-            "expected_result": row.get("Expected Result") or ""
+            "expected_result": row.get("Expected Result") or "",
+            "examples": row.get("Example Data") or ""
         })
 
     return normalized

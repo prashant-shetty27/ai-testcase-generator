@@ -293,9 +293,12 @@ Step 1 — Navigation (how to write the starting step correctly):
   - NEVER say "Open the B2B directory", "Open the B2B homepage", "Open the B2B search platform" — there is no B2B-specific page.
 
 Every step must earn its place:
-  - Each step = one purposeful action + its expected outcome in the same sentence.
+  - Each step = one purposeful action + its expected outcome in the same sentence. Keep it short and direct — ideally under 20 words. No filler preamble.
     BAD: "Navigate to the results page."
-    GOOD: "Navigate to the results page and verify listings load with correct filters applied."
+    GOOD: "Search for the vehicle category and verify listings load with correct filters applied."
+  - Write in active voice. Cut any word that doesn't add meaning.
+    BAD: "It should be verified that the results are displayed correctly on the screen."
+    GOOD: "Verify results display correctly with title, price, and rating visible."
   - Steps must build on each other — each step advances the scenario forward.
   - Every step must be DIRECTLY relevant to the PRIMARY TEST SUBJECT. If a step tests something outside the requirement scope (unrelated UI, keyboard navigation not asked for, unrelated autosuggest behaviour), DELETE IT.
   - FORBIDDEN step patterns (these add zero value, remove them):
@@ -424,10 +427,40 @@ PASS 2 — FILL COVERAGE GAPS
 
   Only after BOTH passes are complete, return the JSON.
 
+EXAMPLE DATA FIELD — each test case must include an "examples" field:
+  - Generate 3–5 realistic, contextually relevant data combinations a tester would actually use.
+  - Cover multiple dimensions that apply to the feature: city, category, brand, type, range, language, etc.
+  - Format as short label: value pairs on separate lines.
+  - Use real Indian cities, real brand/category names relevant to the vertical, realistic price/count ranges.
+  - Vary the combinations — don't repeat the same city or brand across all examples.
+  - e.g. for a vehicle search feature:
+      City: Mumbai | Category: SUV | Brand: Maruti Suzuki | Budget: ₹8L–₹15L
+      City: Pune | Category: Sedan | Brand: Hyundai | Budget: ₹6L–₹10L
+      City: Bengaluru | Category: Hatchback | Brand: Tata | Budget: ₹4L–₹7L
+  - e.g. for a movie hotkey feature:
+      City: Delhi | Genre: Action | Language: Hindi | Show: Evening
+      City: Mumbai | Genre: Comedy | Language: English | Show: Morning
+      City: Chennai | Genre: Drama | Language: Tamil | Show: Matinee
+  - e.g. for a job listing feature:
+      City: Hyderabad | Role: Software Engineer | Experience: 2–5 yrs | Salary: ₹8L–₹15L
+      City: Bengaluru | Role: Product Manager | Experience: 5–8 yrs | Salary: ₹20L–₹35L
+
 Return STRICT JSON only:
 
 {{
-  "positive_tests": [],
-  "negative_tests": []
+  "positive_tests": [
+    {{
+      "title": "...",
+      "steps": ["...", "..."],
+      "examples": "City: Mumbai | Category: SUV | Brand: Maruti\nCity: Pune | Category: Sedan | Brand: Hyundai"
+    }}
+  ],
+  "negative_tests": [
+    {{
+      "title": "...",
+      "steps": ["...", "..."],
+      "examples": "City: Delhi | Input: empty search\nCity: Bengaluru | Input: special characters only"
+    }}
+  ]
 }}
 """

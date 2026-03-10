@@ -63,7 +63,9 @@ PLATFORM DOMAIN GLOSSARY — know these terms before generating:
   VN appears on MULTIPLE web pages — result page, PRP, PDP, catalogue page, and details page. Cover all applicable web pages unless the requirement restricts to one. Apply the universal count-based display rule: 0 numbers → button absent or disabled; 1 number → inline, no panel; 2+ numbers → panel/div below button; many → scrollable panel. Each number must be a valid Indian phone number.
 - "DVN" (Dynamic Virtual Number): A rotating tracked number for non-paid clients. Rotates on cache clear, session expiry, or TTL.
 
-Return STRICT JSON only: {"positive_tests": [], "negative_tests": []}"""
+Each test case must include an "examples" field with 3–5 realistic data combinations (city, category, brand, type, range, language — whichever apply). Use real Indian cities and real brand/category names. Format: "City: Mumbai | Category: SUV | Brand: Maruti\nCity: Pune | Category: Sedan | Brand: Hyundai"
+Steps must be short and direct — active voice, under 20 words each, no filler preamble.
+Return STRICT JSON only: {"positive_tests": [{"title": "", "steps": [], "examples": ""}], "negative_tests": [{"title": "", "steps": [], "examples": ""}]}"""
 
 
 def _get_client() -> OpenAI:

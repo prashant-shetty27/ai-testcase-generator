@@ -20,5 +20,6 @@ class AutomationTemplate:
             category,
             tc.get("scenario"),
             steps_text,
-            tc.get("expected_result")
+            tc.get("expected_result"),
+            tc.get("examples", "")
         ]
