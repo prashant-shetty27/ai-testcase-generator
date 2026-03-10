@@ -304,6 +304,12 @@ Step structure — reference terms vs primary test subject:
     RIGHT: "Scroll to the section below the city name and verify the vehicle type section is present, correctly positioned, and fully rendered with no overlap."
       (city used as positional anchor; vehicle type section is what is actually verified)
 
+  EXCEPTION — city IS a valid primary test subject when the feature is location-aware or city-context-driven:
+    - "Verify that results/listings displayed are relevant to the selected city" → VALID (city filtering is the feature)
+    - "Change the city and verify results update to reflect the new city" → VALID (city switching is the feature)
+    - "Verify movie hotkey listings are city-specific" → VALID (location context drives results)
+    - "Verify city name text appears at the top" alone → INVALID (display check only, not functional)
+
 Browser and device — mention only when it directly affects the test outcome:
   - Mention ONCE at step 1 when testing: screen layout, touch behaviour, browser-specific rendering, platform-specific gestures (Safari swipe, Android back button).
   - If the test logic is platform-agnostic, do NOT mention any device or browser.

@@ -28,7 +28,8 @@ BANNED STEPS — delete any step that:
 - Mentions two different browsers in one step — browsers are tested ONE PER dedicated test case.
 - Introduces a city name, vehicle type example, company name, price, pixel size, or count NOT explicitly stated in the requirement — data leakage.
 - Uses pixel measurements for tap targets (e.g. "44x44px", "48dp") — NEVER use pixel sizes. If tap accessibility must be verified, use qualitative terms only: "clearly tappable", "easily selectable", "visually distinct", "not cramped", "comfortably tappable without mis-taps".
-- Verifies a city name or location name as the PRIMARY outcome — city is always a reference anchor, never the test subject.
+- Verifies that a city name TEXT is DISPLAYED as the sole purpose of the step — e.g. "verify city name appears at the top of the page" with no functional outcome. City name display alone is never a test subject.
+  IMPORTANT DISTINCTION — city IS a valid test subject when the feature under test is city-based filtering or location-aware results: e.g. "verify that results/listings shown are relevant to the selected city", "verify city change updates the results", "verify movie listings are city-specific". These are functional city-context tests and must be included when the feature is location-aware.
 - Is not directly relevant to the PRIMARY TEST SUBJECT of the requirement.
 - Appends a cross-cutting concern (logging, analytics, compliance monitoring, session recording, audit trail) as a final step to a functional test case — these are SEPARATE test cases, not tail steps. If logging must be tested, write exactly ONE dedicated logging test case. Never repeat it as a step in other test cases.
 
