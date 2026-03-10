@@ -28,6 +28,7 @@ from excel_exporter import (
 )
 
 app = FastAPI(title="AI Testcase Generator", version="1.0")
+from motivational_quotes import get_daily_quote
 
 SESSION_SECRET = os.getenv("SESSION_SECRET", "change-me-in-production")
 ENABLE_SLACK_AUTH = os.getenv("ENABLE_SLACK_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"}
@@ -92,6 +93,21 @@ UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", str(BASE_DIR / "uploads")))
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=BASE_DIR / "web/templates")
+
+@app.get("/")
+def index(request: Request):
+    requester_name = request.session.get("requester_name") or None
+    user = _get_current_user(request)
+    quote = get_daily_quote()
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "requester_name": requester_name,
+            "user": user,
+            "motivational_quote": quote,
+        }
+    )
 
 
 def _slack_is_configured() -> bool:

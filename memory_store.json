@@ -1,0 +1,1466 @@
+{
+  "Justdial logo visibility on all web pages": {
+    "created_at": "2026-02-27T10:58:02.207903",
+    "last_updated": "2026-02-27T10:58:02.207996",
+    "scenarios": [
+      {
+        "id": "UI-JD-LOGO-001",
+        "title": "Verify Justdial logo visibility on homepage",
+        "priority": "High",
+        "steps": [
+          "Navigate to the Justdial homepage URL.",
+          "Wait for the page to fully load.",
+          "Locate the Justdial logo element in the header section.",
+          "Check that the logo is visible and not hidden behind any overlays or banners.",
+          "Validate that the logo image is loaded correctly (no broken image icon).",
+          "Verify that the logo is displayed in the correct position as per the UI design."
+        ],
+        "expected_result": "Justdial logo is clearly visible, loaded correctly, and positioned as per design on the homepage.",
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.88,
+      "high_priority_ratio": 0.12,
+      "negative_ratio": 0.0,
+      "score": 0.29
+    }
+  },
+  "End-to-End Flight Booking on Justdial": {
+    "created_at": "2026-02-27T11:14:47.995885",
+    "last_updated": "2026-02-27T11:14:47.996016",
+    "scenarios": [
+      {
+        "id": "E2E-FB-001",
+        "title": "Book a one-way domestic flight successfully (INR, GST applied)",
+        "priority": "High",
+        "steps": [
+          "Navigate to Justdial flight booking section.",
+          "Search for a one-way flight from Mumbai (BOM) to Delhi (DEL) for a future date.",
+          "Validate search results are displayed with flight details, prices in INR (\u20b9), and GST breakdown.",
+          "Apply filters: non-stop flights, early morning departure.",
+          "Sort results by lowest price.",
+          "Select a flight and proceed to the details page.",
+          "Validate flight, pricing (including GST), and cancellation policy per Indian norms.",
+          "Enter valid passenger and contact details.",
+          "Choose a payment method and complete the payment.",
+          "Validate booking confirmation page, PNR, and correct details in email/SMS."
+        ],
+        "validation": [
+          "Search results match criteria.",
+          "Filters and sorting applied correctly.",
+          "Pricing breakdown includes GST as per Indian law.",
+          "Booking confirmation displays accurate, consistent data."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 10.0,
+      "duplicate_ratio": 0.9,
+      "high_priority_ratio": 0.1,
+      "negative_ratio": 0.0,
+      "score": 0.42
+    }
+  },
+  "End-to-End verification of KYC OCR functionality": {
+    "created_at": "2026-02-27T11:18:10.843634",
+    "last_updated": "2026-02-27T11:18:10.843720",
+    "scenarios": [
+      {
+        "id": "KYC-OCR-E2E-001",
+        "title": "Successful KYC OCR Submission and Verification",
+        "priority": "High",
+        "steps": [
+          "Navigate to the KYC submission page.",
+          "Upload a valid, clear image of an Aadhaar card (front and back).",
+          "Fill remaining mandatory fields (e.g., PAN number, mobile number).",
+          "Submit the KYC form.",
+          "Verify that the OCR engine accurately extracts all relevant details (name, DOB, address, Aadhaar number) and auto-fills them in the form fields.",
+          "Check GST field is auto-populated (if applicable) and GSTIN is validated.",
+          "Review extracted data for accuracy and make manual corrections if needed.",
+          "Click 'Confirm' to submit the KYC request.",
+          "Validate that a success message is displayed, and the user is redirected to the KYC status page.",
+          "Check that the KYC status is marked as 'Under Review' and the extracted data is visible in the user profile."
+        ],
+        "validation": [
+          "OCR extraction matches uploaded document details.",
+          "GST field is correctly validated using Indian GST rules.",
+          "Success message and KYC status update."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 10.0,
+      "duplicate_ratio": 0.9,
+      "high_priority_ratio": 0.1,
+      "negative_ratio": 0.0,
+      "score": 0.42
+    }
+  },
+  "KYC OCR verification via API": {
+    "created_at": "2026-02-27T11:24:52.423745",
+    "last_updated": "2026-02-27T11:24:52.423793",
+    "scenarios": [
+      {
+        "id": "KYC_OCR_API_POS_01",
+        "title": "Successful KYC OCR Verification with Valid Aadhaar Card Image",
+        "priority": "High",
+        "steps": [
+          "Prepare a valid Aadhaar card image (front side, clear and unaltered).",
+          "Send a POST request to the /kyc/ocr/verify endpoint with the image as multipart/form-data.",
+          "Include required headers: Authorization (valid token), Content-Type (multipart/form-data), Accept (application/json), and API version.",
+          "Validate the response HTTP status code is 200.",
+          "Verify the response body contains extracted fields: name, DOB, gender, Aadhaar number, and address.",
+          "Check that the extracted data matches the details present in the submitted image.",
+          "Validate contract compliance: response schema matches API documentation."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 7.0,
+      "duplicate_ratio": 0.89,
+      "high_priority_ratio": 0.11,
+      "negative_ratio": 0.0,
+      "score": 0.32
+    }
+  },
+  "End-to-end search functionality via WhatsApp chatbot for Justdial categories, companies, movies, and products": {
+    "created_at": "2026-02-27T11:28:55.294688",
+    "last_updated": "2026-02-27T11:28:55.294788",
+    "scenarios": [
+      {
+        "id": "E2E_POS_001",
+        "title": "End-to-End Search for a Justdial Category via WhatsApp Chatbot",
+        "priority": "High",
+        "steps": [
+          "Open WhatsApp on a mobile device and initiate a chat with the Justdial chatbot.",
+          "Send a search query for a broad category (e.g., 'Restaurants in Mumbai').",
+          "Wait for the chatbot to respond with a list of restaurant results.",
+          "Apply a price filter (e.g., 'Show restaurants under \u20b9500').",
+          "Sort the filtered results by rating (descending).",
+          "Select a restaurant to view its details page."
+        ],
+        "validation": [
+          "Search results returned must be relevant to the category and location.",
+          "Applied price filter should exclude all restaurants above \u20b9500.",
+          "Sorting by rating should arrange entries in descending order.",
+          "Restaurant details page should display accurate and consistent information (address, contact, GST inclusive prices).",
+          "Back navigation returns to the filtered and sorted results without loss of context.",
+          "Session persists after navigating back and forth."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.89,
+      "high_priority_ratio": 0.11,
+      "negative_ratio": 0.0,
+      "score": 0.28
+    }
+  },
+  "Display of Justdial logo on the user interface": {
+    "created_at": "2026-02-27T11:37:13.872460",
+    "last_updated": "2026-02-27T11:37:13.872530",
+    "scenarios": [
+      {
+        "id": "UI-JDL-001",
+        "title": "Verify Justdial logo is displayed on the main landing page",
+        "priority": "High",
+        "steps": [
+          "Navigate to the main landing page of the application.",
+          "Wait for the page to fully load.",
+          "Locate the header section of the page.",
+          "Check for the presence of the Justdial logo in the header.",
+          "Validate that the logo is clearly visible and not distorted.",
+          "Confirm that the logo image source matches the expected Justdial branding asset."
+        ],
+        "validation": [
+          "Justdial logo is present in the header section.",
+          "Logo is not broken, blurred, or pixelated.",
+          "Logo source URL matches the official asset location."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.86,
+      "high_priority_ratio": 0.14,
+      "negative_ratio": 0.0,
+      "score": 0.3
+    }
+  },
+  "Justdial leads generation and best deal flow via website (call and deal acquisition)": {
+    "created_at": "2026-02-27T11:55:56.701018",
+    "last_updated": "2026-02-27T11:55:56.701187",
+    "scenarios": [
+      {
+        "id": "PT-001",
+        "title": "End-to-End Lead Generation and Best Deal Acquisition Flow",
+        "priority": "High",
+        "steps": [
+          "Navigate to the Justdial homepage.",
+          "Enter 'AC Repair' in the search bar and select location as 'Mumbai'.",
+          "Apply filters: price range \u20b9500-\u20b92000, rating 4 stars & above, and location 'Andheri'.",
+          "Sort the results by 'Best Deals' and verify the order changes accordingly.",
+          "Click on the first listing to view the details page.",
+          "Click 'Get Best Deal' and fill in lead details (name, mobile, email), then submit.",
+          "Verify that a confirmation message is shown and the lead is recorded in the backend.",
+          "Check that the best deal price includes GST (if applicable) and is in INR (\u20b9).",
+          "Navigate back to the search results and ensure filters and sorting persist.",
+          "Log out and log in again, ensuring the session persists and recent activity is visible."
+        ],
+        "validation": [
+          "Search results match filter and sorting criteria.",
+          "Deal price is in INR (\u20b9) and GST is displayed if applicable.",
+          "Lead is captured and confirmation is shown.",
+          "Back navigation retains filters/sorting.",
+          "Session persistence is validated post re-login."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 10.0,
+      "duplicate_ratio": 0.88,
+      "high_priority_ratio": 0.12,
+      "negative_ratio": 0.0,
+      "score": 0.44
+    }
+  },
+  "WhatsApp Communication Engine for JD\u2013LG Google Listing Sync": {
+    "created_at": "2026-03-02T11:13:47.501628",
+    "last_updated": "2026-03-02T11:13:47.501792",
+    "scenarios": [
+      {
+        "id": "E2E_001",
+        "title": "End-to-End Sync and Discovery: JD\u2013LG Google Listing via WhatsApp Engine",
+        "priority": "High",
+        "steps": [
+          "Login as an authorized business user on JD platform.",
+          "Initiate Google Listing sync request for an LG product.",
+          "Confirm WhatsApp number association and opt-in for notifications.",
+          "Receive WhatsApp notification with Google listing details and a direct link.",
+          "Open the WhatsApp link; verify redirection to Google Listing details page.",
+          "Use search to find the LG product on Google Listing sync portal.",
+          "Apply filters: price (\u20b920,000\u2013\u20b950,000), rating (4+), location (Delhi).",
+          "Sort filtered results by price (low to high).",
+          "Paginate to next page and verify listing continuity.",
+          "Click on a product to open its details page; validate product info, price (in \u20b9), GST details, and stock.",
+          "Navigate back to the results list; ensure filters and sorting persist.",
+          "Verify session persistence by reloading the page.",
+          "Test mobile responsiveness by resizing browser window.",
+          "Check that all listing data matches between JD, Google Listing, and WhatsApp notification."
+        ],
+        "validation": [
+          "Google Listing sync occurs within SLA.",
+          "WhatsApp notification is received and contains correct product and link.",
+          "Search, filters, and sorting yield accurate and expected results.",
+          "Pagination works and does not duplicate/miss listings.",
+          "Product details (price in \u20b9, GST breakdown, cancellation policy) consistent across all platforms.",
+          "Filters/sorting remain after navigation.",
+          "Session persists after reload.",
+          "UI adjusts correctly for mobile screens."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 14.0,
+      "duplicate_ratio": 0.88,
+      "high_priority_ratio": 0.12,
+      "negative_ratio": 0.0,
+      "score": 0.59
+    }
+  },
+  "WhatsApp Communication Engine for JD\u2013LG Google Listing Sync Journey": {
+    "created_at": "2026-03-02T11:33:27.333889",
+    "last_updated": "2026-03-02T11:33:27.333969",
+    "scenarios": [
+      {
+        "id": "TC_POS_001",
+        "title": "Successful WhatsApp Message Sync for Google Listing Confirmation",
+        "priority": "High",
+        "steps": [
+          "Login as a verified business admin on the JD platform.",
+          "Navigate to the LG Google Listing Sync Journey module.",
+          "Initiate a new Google Listing sync request for an eligible business.",
+          "System triggers WhatsApp communication to the registered business number.",
+          "Check that the WhatsApp message is delivered within 30 seconds.",
+          "Validate that the message content includes Google listing details, sync status, and a support contact.",
+          "Verify the message contains correct INR (\u20b9) pricing information and GST breakdown if applicable.",
+          "Confirm that the business admin receives a success notification on the JD platform."
+        ],
+        "validation": [
+          "WhatsApp message is received by the correct recipient.",
+          "Message content matches the latest Google listing sync data.",
+          "GST and total price in INR are displayed accurately.",
+          "JD platform shows a successful sync status."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 8.0,
+      "duplicate_ratio": 0.89,
+      "high_priority_ratio": 0.11,
+      "negative_ratio": 0.0,
+      "score": 0.36
+    }
+  },
+  "JD\u2013LG WhatsApp Communication Engine \u2013 Proactive User Nudges for Google Listing Sync": {
+    "created_at": "2026-03-02T11:34:15.571863",
+    "last_updated": "2026-03-02T11:34:15.571925",
+    "scenarios": [
+      {
+        "id": "PTC-001",
+        "title": "Sync Google Listing and Trigger WhatsApp Proactive Nudge",
+        "priority": "High",
+        "steps": [
+          "Login as a verified business user with Google Listing integration enabled.",
+          "Navigate to the Google Listing Sync module within the dashboard.",
+          "Initiate a sync process for Google Listings.",
+          "Ensure the sync completes successfully and the listing data is updated.",
+          "Verify that a proactive WhatsApp nudge message is triggered to the business owner\u2019s registered WhatsApp number.",
+          "Check that the WhatsApp message contains relevant Google Listing sync status details, timestamp, and a CTA to view details."
+        ],
+        "validation": [
+          "Google Listing data is updated in the system.",
+          "WhatsApp message is delivered to the correct number within 2 minutes of sync.",
+          "Message content matches the expected template and includes sync status, timestamp, and CTA."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.89,
+      "high_priority_ratio": 0.11,
+      "negative_ratio": 0.0,
+      "score": 0.28
+    }
+  },
+  "Display GST Verified Tag on Product Details Page": {
+    "created_at": "2026-03-04T09:07:51.509539",
+    "last_updated": "2026-03-04T09:27:43.109353",
+    "scenarios": [
+      {
+        "id": "UI-GST-001",
+        "title": "GST Verified Tag is displayed for GST-verified products",
+        "priority": "High",
+        "steps": [
+          "Navigate to the Product Details Page of a product that is GST-verified.",
+          "Wait for the page to fully load.",
+          "Locate the product information section.",
+          "Check for the presence of the 'GST Verified' tag near the product title or price.",
+          "Validate that the tag is visually distinct (e.g., with a unique color or icon).",
+          "Verify that the tag text reads exactly 'GST Verified'.",
+          "Confirm that the tag is not overlapping with other UI elements."
+        ],
+        "validation": [
+          "The 'GST Verified' tag is visible and correctly positioned for GST-verified products.",
+          "The tag uses the correct text and visual style as per design specifications."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      },
+      {
+        "id": "UI-GST-002",
+        "title": "GST Verified Tag is not displayed for non-GST-verified products",
+        "priority": "High",
+        "steps": [
+          "Navigate to the Product Details Page of a product that is NOT GST-verified.",
+          "Wait for the page to fully load.",
+          "Locate the product information section.",
+          "Check for the absence of the 'GST Verified' tag near the product title or price.",
+          "Ensure that no placeholder or empty space is left where the tag would normally appear.",
+          "Validate that the UI layout remains consistent and visually balanced."
+        ],
+        "validation": [
+          "The 'GST Verified' tag is NOT visible for non-GST-verified products.",
+          "The product details section displays correctly without any UI distortion or misalignment."
+        ],
+        "testcase_id": "TC_0002",
+        "scenario": "Validate system behavior for non-GST-verified products",
+        "expected_result": "System should not display the 'GST Verified' tag for products that are not GST-verified."
+      },
+      {
+        "id": "UI-GST-003",
+        "title": "GST Verified Tag displays correctly with different product price points",
+        "priority": "Medium",
+        "steps": [
+          "Navigate to the Product Details Page for a low-priced GST-verified product (e.g., \u20b9100).",
+          "Verify the presence and correct positioning of the 'GST Verified' tag.",
+          "Repeat for a mid-range GST-verified product (e.g., \u20b95,000).",
+          "Repeat for a high-priced GST-verified product (e.g., \u20b91,00,000).",
+          "Check that the tag does not overlap with the price or other UI elements for each price point.",
+          "Validate that the tag's appearance remains consistent across all price ranges."
+        ],
+        "validation": [
+          "The 'GST Verified' tag is consistently displayed for GST-verified products regardless of price.",
+          "The tag does not interfere with the display of the INR (\u20b9) price or other UI elements."
+        ],
+        "testcase_id": "TC_0003",
+        "scenario": "Validate tag display across various price points",
+        "expected_result": "System should display the 'GST Verified' tag correctly for all GST-verified products, regardless of price."
+      },
+      {
+        "id": "UI-GST-004",
+        "title": "GST Verified Tag is accessible and screen reader compatible",
+        "priority": "Medium",
+        "steps": [
+          "Navigate to the Product Details Page of a GST-verified product.",
+          "Enable a screen reader on the test device.",
+          "Use the screen reader to navigate to the product information section.",
+          "Check if the 'GST Verified' tag is announced with appropriate alt text or aria-label.",
+          "Verify that the tag is distinguishable for visually impaired users.",
+          "Ensure that the tag does not disrupt keyboard navigation flow."
+        ],
+        "validation": [
+          "The 'GST Verified' tag is accessible and properly announced by the screen reader.",
+          "Accessibility attributes (alt text, aria-label) are implemented as per guidelines."
+        ],
+        "testcase_id": "TC_0004",
+        "scenario": "Validate accessibility of GST Verified Tag",
+        "expected_result": "System should provide accessible information about the 'GST Verified' tag for all users."
+      },
+      {
+        "id": "UI-GST-005",
+        "title": "GST Verified Tag does not appear on partially loaded or failed product details page",
+        "priority": "High",
+        "steps": [
+          "Simulate a slow network connection or interrupt the network during page load.",
+          "Navigate to the Product Details Page of a GST-verified product.",
+          "Observe the product information section as the page loads partially or fails to load completely.",
+          "Check if the 'GST Verified' tag appears before the product data is fully loaded.",
+          "Reload the page once the network is restored.",
+          "Verify that the tag only appears after the product data is successfully loaded."
+        ],
+        "validation": [
+          "The 'GST Verified' tag does NOT appear until the product information is fully loaded.",
+          "No placeholder or broken tag is displayed during partial load or failure."
+        ],
+        "testcase_id": "TC_0005",
+        "scenario": "Validate tag behavior on incomplete or failed page loads",
+        "expected_result": "System should not display the 'GST Verified' tag until all required product data is loaded."
+      },
+      {
+        "id": "UI-GST-006",
+        "title": "GST Verified Tag is not displayed for products with missing GST verification status",
+        "priority": "Medium",
+        "steps": [
+          "Navigate to the Product Details Page of a product with missing or null GST verification status in the backend.",
+          "Wait for the page to fully load.",
+          "Locate the product information section.",
+          "Check for the presence of the 'GST Verified' tag.",
+          "Verify that no tag is displayed if the GST verification status is unavailable.",
+          "Ensure the UI does not display any error or broken element in place of the tag."
+        ],
+        "validation": [
+          "The 'GST Verified' tag is NOT displayed when GST verification status is missing.",
+          "The product details section remains visually consistent and error-free."
+        ],
+        "testcase_id": "TC_0006",
+        "scenario": "Validate tag absence when GST status is missing",
+        "expected_result": "System should not display the 'GST Verified' tag for products with missing GST verification status."
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed",
+      "3e6bc53efbaefb390b14efec3684df143cc9152df79cc82df85f29adb41b48e8",
+      "d0f5a0e66261d546cc1cff402e3933ee97b441106d205fbddf1106c2db0aa9bc",
+      "879e2b70abb35872e4d114a1b6abab40159a95b0b9bd8b965fae99cd84b88634",
+      "1112e3f0de467dabb4e9ad70fb63b3f9364ee95476b25d10e06171909d7ae3d6",
+      "33e702e9baceedebbe14db82ed51fd5886d40aae101ca43d7fc1fcba478eb37c"
+    ],
+    "stats": {
+      "total_cases": 6,
+      "positive_cases": 4,
+      "negative_cases": 2,
+      "high_priority": 3
+    },
+    "reinforcement": {
+      "avg_steps": 0,
+      "duplicate_ratio": 1.0,
+      "high_priority_ratio": 0.0,
+      "negative_ratio": 0.0,
+      "score": 0.0
+    }
+  },
+  "Conversational AI chatbot for restaurant-related queries": {
+    "created_at": "2026-03-04T09:44:38.459703",
+    "last_updated": "2026-03-04T09:44:38.459977",
+    "scenarios": [
+      {
+        "id": "POS_TC_001",
+        "title": "Book a Table via Chatbot for a Family Dinner",
+        "priority": "High",
+        "steps": [
+          "Launch the restaurant chatbot interface.",
+          "Initiate a conversation with a request: 'I want to book a table for 5 people for dinner tonight.'",
+          "Provide requested details (date, time, contact number) as prompted by the chatbot.",
+          "Chatbot confirms availability and displays table options.",
+          "User selects preferred table and confirms booking.",
+          "Chatbot provides a booking summary including date, time, number of guests, and total estimated bill (including 5% GST)."
+        ],
+        "validation": [
+          "Verify chatbot correctly understands and responds to the booking request.",
+          "Check if available time slots and tables are shown accurately.",
+          "Ensure booking confirmation message is clear and contains all relevant details.",
+          "Validate that estimated bill includes GST and is displayed in INR (\u20b9).",
+          "Confirm booking is reflected in backend reservation system."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.89,
+      "high_priority_ratio": 0.11,
+      "negative_ratio": 0.0,
+      "score": 0.28
+    }
+  },
+  "Display GST Verified Status in Listing Cards on NCT Results Page and Core Details Page (Android, PS-ONLY)": {
+    "created_at": "2026-03-04T09:45:29.906622",
+    "last_updated": "2026-03-04T09:45:29.906636",
+    "scenarios": [],
+    "fingerprints": [],
+    "stats": {
+      "total_cases": 0,
+      "positive_cases": 0,
+      "negative_cases": 0,
+      "high_priority": 0
+    },
+    "reinforcement": {}
+  },
+  "Display of GST Verified Status for PS-ONLY Android in Listing Cards on NCT Results and Core Details Pages": {
+    "created_at": "2026-03-04T09:45:52.361482",
+    "last_updated": "2026-03-04T09:45:52.361503",
+    "scenarios": [],
+    "fingerprints": [],
+    "stats": {
+      "total_cases": 0,
+      "positive_cases": 0,
+      "negative_cases": 0,
+      "high_priority": 0
+    },
+    "reinforcement": {}
+  },
+  "Display of GST Verified Status in Listing Cards on NCT Results Page and Core Details Page": {
+    "created_at": "2026-03-04T09:51:48.068536",
+    "last_updated": "2026-03-04T09:51:48.068602",
+    "scenarios": [
+      {
+        "id": "UI-GST-001",
+        "title": "Verify GST Verified Badge Display on Listing Cards in NCT Results Page",
+        "priority": "High",
+        "steps": [
+          "Navigate to the NCT Results Page as an authenticated user.",
+          "Search for listings where some businesses have GST verified status.",
+          "Identify listing cards with GST Verified status.",
+          "Check that the GST Verified badge/icon is visible on relevant listing cards.",
+          "Validate the badge layout: alignment, size, and spacing as per design specifications.",
+          "Hover over the GST Verified badge to verify tooltip or information popup appears with correct text (e.g., 'GST Verified').",
+          "Verify that the badge does not appear on listings without GST verification."
+        ],
+        "validation": [
+          "GST Verified badge is present only on GST-verified listings.",
+          "Badge layout matches UI/UX design.",
+          "Tooltip or popup displays correct information.",
+          "No badge is shown for non-verified listings."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 7.0,
+      "duplicate_ratio": 0.88,
+      "high_priority_ratio": 0.12,
+      "negative_ratio": 0.0,
+      "score": 0.33
+    }
+  },
+  "GST Verified Status display in Listing Cards on NCT Results Page and Core Details Page (PS-ONLY)": {
+    "created_at": "2026-03-04T09:52:11.005141",
+    "last_updated": "2026-03-04T09:52:11.005208",
+    "scenarios": [
+      {
+        "id": "TC_UI_001",
+        "title": "GST Verified Badge Displayed on Listing Card - NCT Results Page",
+        "priority": "High",
+        "steps": [
+          "Navigate to the NCT Results Page as a logged-in user.",
+          "Search for a product/service that is GST verified.",
+          "Observe the listing cards displayed in the results.",
+          "Check for the presence of the 'GST Verified' badge/icon on applicable listings.",
+          "Validate that the badge is aligned properly and does not overlap with other UI elements.",
+          "Hover over the badge to check for tooltip or additional information (if applicable)."
+        ],
+        "validation": [
+          "GST Verified badge is visible only on eligible listings.",
+          "Badge layout follows UI guidelines (placement, spacing, font).",
+          "Tooltip appears with correct information when hovered (if applicable)."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.89,
+      "high_priority_ratio": 0.11,
+      "negative_ratio": 0.0,
+      "score": 0.28
+    }
+  },
+  "GST Verified Status Display in Listing Cards on NCT Results Page and Core Details Page (PS-ONLY Android Application)": {
+    "created_at": "2026-03-04T09:55:07.470040",
+    "last_updated": "2026-03-04T09:55:07.470107",
+    "scenarios": [
+      {
+        "id": "TC_POS_001",
+        "title": "Display GST Verified Status on Listing Card in NCT Results Page",
+        "priority": "High",
+        "steps": [
+          "Login to the PS-ONLY Android application using valid credentials.",
+          "Navigate to the NCT Results Page by performing a property search.",
+          "Observe the listing cards displayed on the results page.",
+          "Identify a listing that is GST verified.",
+          "Verify that a 'GST Verified' badge or label is visible on the listing card.",
+          "Tap on the listing card and navigate to the Core Details Page.",
+          "Ensure that the GST Verified status is also displayed prominently on the Core Details Page."
+        ],
+        "validation": [
+          "GST Verified badge is present on the listing card in the NCT Results Page.",
+          "GST Verified status is visible on the Core Details Page for the same listing."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 7.0,
+      "duplicate_ratio": 0.9,
+      "high_priority_ratio": 0.1,
+      "negative_ratio": 0.0,
+      "score": 0.31
+    }
+  },
+  "Display GST Verified Status on Listing Cards in NCT Results Page and Core Details Page": {
+    "created_at": "2026-03-04T09:56:18.577617",
+    "last_updated": "2026-03-04T09:56:18.577703",
+    "scenarios": [
+      {
+        "id": "TC_POS_001",
+        "title": "GST Verified Status Displayed on Listing Cards in NCT Results Page",
+        "priority": "High",
+        "steps": [
+          "Navigate to the NCT Results Page as a logged-in user.",
+          "Search for a business that is GST verified.",
+          "Observe the listing cards displayed in the search results.",
+          "Locate the GST Verified Status indicator on the relevant listing card.",
+          "Hover over or click the GST Verified Status (if interactive) to view additional details or tooltip.",
+          "Validate that the GST Verified Status is displayed clearly with correct icon and/or label as per design specifications."
+        ],
+        "validation": [
+          "GST Verified Status is visible only on GST-verified listings.",
+          "Status indicator matches the approved UI/UX design.",
+          "Tooltip or additional details (if any) are accurate and relevant."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.9,
+      "high_priority_ratio": 0.1,
+      "negative_ratio": 0.0,
+      "score": 0.27
+    }
+  },
+  "Conversational AI chatbot provides restaurant company-specific information (excluding booking or ordering)": {
+    "created_at": "2026-03-04T10:03:06.878305",
+    "last_updated": "2026-03-04T10:03:06.878371",
+    "scenarios": [
+      {
+        "id": "POS_TC_001",
+        "title": "Verify chatbot provides accurate restaurant location details",
+        "priority": "High",
+        "steps": [
+          "Launch the conversational AI chatbot on the official website.",
+          "Enter a query: 'What is the address of your Mumbai branch?'",
+          "Wait for the chatbot response.",
+          "Check if the chatbot responds with the full address, including street, area, city, and PIN code.",
+          "Verify that the address matches the official records for the Mumbai branch.",
+          "Validate if the chatbot provides additional information such as landmarks or directions."
+        ],
+        "validation": [
+          "Chatbot provides the full and correct Mumbai branch address.",
+          "Additional location context (landmarks/directions) is accurate (if provided)."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.89,
+      "high_priority_ratio": 0.11,
+      "negative_ratio": 0.0,
+      "score": 0.28
+    }
+  },
+  "End-to-end conversational interaction with AI chatbot for restaurant company information (excluding booking/ordering)": {
+    "created_at": "2026-03-04T10:10:15.013119",
+    "last_updated": "2026-03-04T10:10:15.013191",
+    "scenarios": [
+      {
+        "id": "POS_TC_001",
+        "title": "Retrieve restaurant opening hours",
+        "priority": "High",
+        "steps": [
+          "User initiates a chat with the AI chatbot.",
+          "User asks: 'What are your opening hours?'",
+          "Chatbot recognizes the intent as a request for business hours.",
+          "Chatbot fetches the current opening hours for the restaurant.",
+          "Chatbot responds with the detailed opening and closing times for each day of the week.",
+          "User validates the response matches the restaurant's actual operating hours."
+        ],
+        "validation": [
+          "Chatbot provides accurate opening and closing times.",
+          "Hours are presented in a clear, readable format.",
+          "Information is specific to the correct location (if multiple exist)."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Validate system behavior",
+        "expected_result": "System should successfully complete: Validate system behavior"
+      }
+    ],
+    "fingerprints": [
+      "8a860ed88e6e4959b45694aaeaa2eb00f705cb55f487a3cb1d027b086e71f9ed"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 1
+    },
+    "reinforcement": {
+      "avg_steps": 6.0,
+      "duplicate_ratio": 0.9,
+      "high_priority_ratio": 0.1,
+      "negative_ratio": 0.0,
+      "score": 0.27
+    }
+  },
+  "Persist and restore last session state on app relaunch": {
+    "created_at": "2026-03-04T13:59:08.339349",
+    "last_updated": "2026-03-04T13:59:08.339405",
+    "scenarios": [
+      {
+        "testcase_id": "TC_CA996C",
+        "priority": "Medium",
+        "scenario": "Validate Persist and restore last session state on app relaunch",
+        "steps": [
+          "Navigate to relevant page",
+          "Perform required action",
+          "Verify outcome"
+        ],
+        "expected_result": "Persist and restore last session state on app relaunch is completed successfully; validation evidence captured in step: Verify outcome; success state is visible to user and data remains consistent after refresh."
+      }
+    ],
+    "fingerprints": [
+      "bc38b7f4e059f893fd0e4f1a425fe4cb03cf586e2e516348e01fd320d40eb1dc"
+    ],
+    "stats": {
+      "total_cases": 1,
+      "positive_cases": 1,
+      "negative_cases": 0,
+      "high_priority": 0
+    },
+    "reinforcement": {
+      "avg_steps": 3.0,
+      "duplicate_ratio": 0.0,
+      "high_priority_ratio": 0.0,
+      "negative_ratio": 0.0,
+      "score": 0.41
+    }
+  },
+  "Persist and restore last session state upon app relaunch": {
+    "created_at": "2026-03-04T14:00:08.024234",
+    "last_updated": "2026-03-04T14:02:00.408858",
+    "scenarios": [
+      {
+        "id": "PS-STATE-001",
+        "priority": "High",
+        "title": "Restore last searched query and result page on app relaunch (cold start)",
+        "steps": [
+          "Launch the Justdial Android app (PS version).",
+          "Enter a search term (e.g., 'Plumbers in Mumbai') in the search bar and submit.",
+          "Wait for the result_page to load and verify listings are displayed.",
+          "Kill the app from recent apps (force close).",
+          "Relaunch the app.",
+          "Observe the landing page and search bar."
+        ],
+        "validation": [
+          "App should open directly on the result_page with the last searched query pre-filled.",
+          "Listings should match the previous search context.",
+          "No login prompt or session loss unless user was logged out before."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Restore last searched query and result page on app relaunch (cold start)",
+        "expected_result": "Restore last searched query and result page on app relaunch (cold start) is completed successfully; validation evidence captured in step: Observe the landing page and search bar; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "id": "PS-STATE-002",
+        "priority": "High",
+        "title": "Restore last visited details_page after app relaunch (cold start)",
+        "steps": [
+          "Launch the Justdial Android app.",
+          "Search for a business (e.g., 'Electricians in Delhi').",
+          "Tap on a listing to open its details_page.",
+          "Kill the app from recent apps.",
+          "Relaunch the app.",
+          "Observe the landing screen."
+        ],
+        "validation": [
+          "App should restore to the same details_page as before exit.",
+          "Business information should be consistent with previous session.",
+          "Back navigation should return to the correct result_page with the same search context."
+        ],
+        "testcase_id": "TC_0002",
+        "scenario": "Restore last visited details_page after app relaunch (cold start)",
+        "expected_result": "Restore last visited details_page after app relaunch (cold start) is completed successfully; validation evidence captured in step: Observe the landing screen; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "id": "PS-STATE-003",
+        "priority": "Medium",
+        "title": "Restore user_profile_page after app relaunch",
+        "steps": [
+          "Launch the Justdial app and log in (if not already logged in).",
+          "Navigate to the user_profile_page from the main menu.",
+          "Kill the app from recent apps.",
+          "Relaunch the app.",
+          "Observe the landing screen."
+        ],
+        "validation": [
+          "App should restore to the user_profile_page.",
+          "Profile data should be displayed accurately.",
+          "If session expired, user should be redirected to login page."
+        ],
+        "testcase_id": "TC_0003",
+        "scenario": "Restore user_profile_page after app relaunch",
+        "expected_result": "Restore user_profile_page after app relaunch is completed successfully; validation evidence captured in step: Observe the landing screen; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "id": "PS-STATE-004",
+        "priority": "High",
+        "title": "Session state restoration after background/foreground transition (warm start)",
+        "steps": [
+          "Launch the Justdial app and perform a search (e.g., 'Restaurants in Bangalore').",
+          "Open a business details_page.",
+          "Press the home button to send app to background.",
+          "Wait for 2 minutes.",
+          "Bring the app to foreground.",
+          "Observe the screen and data context."
+        ],
+        "validation": [
+          "App should restore to the same details_page as before backgrounding.",
+          "All data should be intact and up-to-date.",
+          "No loss of session or navigation context."
+        ],
+        "testcase_id": "TC_0004",
+        "scenario": "Session state restoration after background/foreground transition (warm start)",
+        "expected_result": "Session state restoration after background/foreground transition (warm start) is completed successfully; validation evidence captured in step: Observe the screen and data context; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "id": "PS-STATE-005",
+        "priority": "Medium",
+        "title": "Offline relaunch restores cached last session state",
+        "steps": [
+          "Launch the Justdial app and perform a search (e.g., 'Salons in Pune').",
+          "Open a listing's details_page.",
+          "Kill the app.",
+          "Disable device network (WiFi and mobile data).",
+          "Relaunch the app.",
+          "Observe the landing screen."
+        ],
+        "validation": [
+          "App should restore to the last visited details_page using cached data.",
+          "A message should indicate offline mode if applicable.",
+          "No crash or blank screen should occur."
+        ],
+        "testcase_id": "TC_0005",
+        "scenario": "Offline relaunch restores cached last session state",
+        "expected_result": "Offline relaunch restores cached last session state is completed successfully; validation evidence captured in step: Observe the landing screen; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "id": "PS-STATE-006",
+        "priority": "Medium",
+        "title": "Recent search query persists and is suggested on relaunch",
+        "steps": [
+          "Launch the Justdial app and search for 'Hospitals in Chennai'.",
+          "Kill the app.",
+          "Relaunch the app.",
+          "Tap on the search bar.",
+          "Observe the autosuggest dropdown."
+        ],
+        "validation": [
+          "The last searched query ('Hospitals in Chennai') appears in recent searches.",
+          "Selecting it re-populates the search bar and fetches correct results."
+        ],
+        "testcase_id": "TC_0006",
+        "scenario": "Recent search query persists and is suggested on relaunch",
+        "expected_result": "Recent search query persists and is suggested on relaunch is completed successfully; validation evidence captured in step: Observe the autosuggest dropdown; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "id": "PS-STATE-007",
+        "priority": "Low",
+        "title": "Back-stack navigation consistency after session restoration",
+        "steps": [
+          "Launch the Justdial app and search for 'Cafes in Hyderabad'.",
+          "Open a business details_page.",
+          "Press back to return to result_page.",
+          "Open another listing's details_page.",
+          "Kill and relaunch the app.",
+          "Press back after relaunch."
+        ],
+        "validation": [
+          "App restores to the last visited details_page.",
+          "Back navigation returns to the correct result_page with previous search context."
+        ],
+        "testcase_id": "TC_0007",
+        "scenario": "Back-stack navigation consistency after session restoration",
+        "expected_result": "Back-stack navigation consistency after session restoration is completed successfully; final execution check confirms: Press back after relaunch; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "id": "PS-STATE-NEG-001",
+        "priority": "High",
+        "title": "Session state not restored after explicit logout and relaunch",
+        "steps": [
+          "Launch the Justdial app and log in.",
+          "Navigate to user_profile_page.",
+          "Log out from the app.",
+          "Kill the app.",
+          "Relaunch the app.",
+          "Observe the landing screen."
+        ],
+        "validation": [
+          "App should not restore previous session state.",
+          "User should be presented with login/signup or home page.",
+          "No personal data or previous navigation context should be visible."
+        ],
+        "testcase_id": "TC_0008",
+        "scenario": "Session state not restored after explicit logout and relaunch",
+        "expected_result": "System blocks invalid/unauthorized action for Session state not restored after explicit logout and relaunch; validation evidence captured in step: Observe the landing screen; no unintended data/state change occurs."
+      },
+      {
+        "id": "PS-STATE-NEG-002",
+        "priority": "Medium",
+        "title": "Session state not restored after session timeout/invalidation",
+        "steps": [
+          "Launch the Justdial app and log in.",
+          "Navigate to user_profile_page.",
+          "Simulate session timeout by waiting for session expiry duration (as per app policy).",
+          "Kill and relaunch the app.",
+          "Observe the landing screen."
+        ],
+        "validation": [
+          "App should not restore user_profile_page.",
+          "User should be redirected to login page or home page.",
+          "No sensitive data should be visible."
+        ],
+        "testcase_id": "TC_0009",
+        "scenario": "Session state not restored after session timeout/invalidation",
+        "expected_result": "System blocks invalid/unauthorized action for Session state not restored after session timeout/invalidation; validation evidence captured in step: Observe the landing screen; no unintended data/state change occurs."
+      },
+      {
+        "id": "PS-STATE-NEG-003",
+        "priority": "Medium",
+        "title": "Corrupted session state does not crash app on relaunch",
+        "steps": [
+          "Launch the Justdial app and perform a search.",
+          "Manually corrupt the app's session state file (simulate via test framework or adb).",
+          "Kill and relaunch the app.",
+          "Observe app behavior."
+        ],
+        "validation": [
+          "App should handle corrupted state gracefully (reset to home or show error message).",
+          "No crash or unhandled exception should occur.",
+          "User should be able to perform new searches."
+        ],
+        "testcase_id": "TC_0010",
+        "scenario": "Corrupted session state does not crash app on relaunch",
+        "expected_result": "System blocks invalid/unauthorized action for Corrupted session state does not crash app on relaunch; validation evidence captured in step: Observe app behavior; no unintended data/state change occurs."
+      },
+      {
+        "id": "PS-STATE-NEG-004",
+        "priority": "Low",
+        "title": "No restoration of previous session state after app uninstall/reinstall",
+        "steps": [
+          "Launch the Justdial app and perform a search.",
+          "Kill the app.",
+          "Uninstall the app from device.",
+          "Reinstall the app from Play Store.",
+          "Launch the app.",
+          "Observe the landing screen."
+        ],
+        "validation": [
+          "App should not restore any previous session state.",
+          "No previous search or navigation context should be visible.",
+          "User should see the default home page."
+        ],
+        "testcase_id": "TC_0011",
+        "scenario": "No restoration of previous session state after app uninstall/reinstall",
+        "expected_result": "System blocks invalid/unauthorized action for No restoration of previous session state after app uninstall/reinstall; validation evidence captured in step: Observe the landing screen; no unintended data/state change occurs."
+      }
+    ],
+    "fingerprints": [
+      "54a4e8425db212847ba3b01e89b20b6214362dfcab131ca129a88c412296f221",
+      "1121d73a41114c79cf18466f0a420e7ffb9134576562b6cc5f630f91558e96fe",
+      "e27ca3a1e4d731a047bf79247bc05a13bfa199f6eaeeae68dda6e9876732fafc",
+      "13752f4ae2da80687688fa21b67f72d6ee7775f31956513229d626d832a34ef4",
+      "729010a22aa4d3cf24d9c2604f9bfd0b2b15e5f2e30e0f2127d9014e935f657f",
+      "66ee88ecd8d8969f1d7757f31fbd1509a9d4be45d17c3ebc0b5cd5c18108e70f",
+      "56a6eae819b5fff1eb5edf1ab7c9c6fe642fc3c65f7c1f8e7e29745c7c2839fb",
+      "bfd8ccef5f0a0b667cc9dcb9c7333c30699901b098c4e8486ae981c43acda54b",
+      "0863c7ef82142381ece831fdfc8a7631ff02f146f23a9d32d8e5df8a91205172",
+      "e5293d9d5de75bc3ecfffdd29965df45640983dbb2ddc3067f4d47e064da89d0",
+      "c82c2e22b4706c73fb2d397551c4c47ca11ac18027d74fb6d23f71148e06dbe8"
+    ],
+    "stats": {
+      "total_cases": 11,
+      "positive_cases": 7,
+      "negative_cases": 4,
+      "high_priority": 4
+    },
+    "reinforcement": {
+      "avg_steps": 0,
+      "duplicate_ratio": 1.0,
+      "high_priority_ratio": 0.0,
+      "negative_ratio": 0.0,
+      "score": 0.0
+    }
+  },
+  "B2B search displays vehicle type below city name": {
+    "created_at": "2026-03-09T21:53:48.804979",
+    "last_updated": "2026-03-09T21:53:48.805150",
+    "scenarios": [
+      {
+        "title": "Vehicle type section renders below city after B2B category search \u2014 standard phone \u2014 Chrome for Android",
+        "steps": [
+          "Open the platform URL on a standard phone using Chrome for Android and perform a B2B category search; verify the results page loads with the city name at the top.",
+          "Scroll to the section immediately below the city name and verify the vehicle type section is present.",
+          "Check that the vehicle type section is fully visible, not truncated, and does not overlap with other elements.",
+          "Tap each vehicle type filter chip and verify the results are filtered accordingly.",
+          "Verify the tap targets for the vehicle type filter chips are at least 44x44px for easy selection.",
+          "Switch device orientation to landscape and verify the vehicle type section remains directly below the city name and does not overflow the viewport."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Vehicle type section renders below city after B2B category search \u2014 standard phone \u2014 Chrome for Android",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section renders below city after B2B category search \u2014 standard phone \u2014 Chrome for Android is completed successfully; validation evidence captured in step: Switch device orientation to landscape and verify the vehicle type section remains directly below the city name and does not overflow the...; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section displays correctly below city on compact phone \u2014 Samsung Internet",
+        "steps": [
+          "Open the platform URL on a compact phone using Samsung Internet and perform a B2B category search; verify the results page loads with the city name at the top.",
+          "Scroll to the section below the city name and confirm that the vehicle type section is present and fully visible.",
+          "Verify that the vehicle type section does not wrap or overflow horizontally.",
+          "Tap each vehicle type filter and ensure results update as per the selected filter.",
+          "Check that the filter chips are horizontally scrollable if they exceed viewport width.",
+          "Verify no horizontal scroll appears for the overall page content."
+        ],
+        "testcase_id": "TC_0002",
+        "scenario": "Vehicle type section displays correctly below city on compact phone \u2014 Samsung Internet",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section displays correctly below city on compact phone \u2014 Samsung Internet is completed successfully; validation evidence captured in step: Verify no horizontal scroll appears for the overall page content; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section updates instantly when different category is searched \u2014 B2B",
+        "steps": [
+          "Open the platform URL and perform a B2B category search; verify the vehicle type section appears below the city name.",
+          "Enter a new category in the search bar and submit the search.",
+          "Confirm that the city name remains at the top and the vehicle type section updates to reflect the new category.",
+          "Tap a vehicle type filter and verify results update based on the selected type.",
+          "Check that the vehicle type section remains directly below the city name after the update."
+        ],
+        "testcase_id": "TC_0003",
+        "scenario": "Vehicle type section updates instantly when different category is searched \u2014 B2B",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section updates instantly when different category is searched \u2014 B2B is completed successfully; validation evidence captured in step: Check that the vehicle type section remains directly below the city name after the update; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section is rendered correctly in @Lang Regional Script",
+        "steps": [
+          "Open the platform URL and perform a B2B category search where the city name and vehicle type labels are displayed in a regional language script.",
+          "Verify that all regional language text in the vehicle type section is rendered correctly with no encoding or garbled characters.",
+          "Tap a vehicle type filter and ensure the filtered results and labels remain in the regional script.",
+          "Check that the vehicle type section remains correctly positioned below the city name."
+        ],
+        "testcase_id": "TC_0004",
+        "scenario": "Vehicle type section is rendered correctly in @Lang Regional Script",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section is rendered correctly in @Lang Regional Script is completed successfully; validation evidence captured in step: Check that the vehicle type section remains correctly positioned below the city name; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section supports @Lang Bilingual content without overlap",
+        "steps": [
+          "Open the platform URL and perform a B2B category search with mixed English and regional language labels for city and vehicle type.",
+          "Verify that both English and regional language text are displayed in the vehicle type section without overlap or truncation.",
+          "Tap a bilingual vehicle type filter and confirm the results reflect the selected filter, preserving both languages."
+        ],
+        "testcase_id": "TC_0005",
+        "scenario": "Vehicle type section supports @Lang Bilingual content without overlap",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section supports @Lang Bilingual content without overlap is completed successfully; validation evidence captured in step: Tap a bilingual vehicle type filter and confirm the results reflect the selected filter, preserving both languages; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section supports @Lang Mixed Script in vehicle type labels",
+        "steps": [
+          "Open the platform URL and perform a B2B category search where vehicle type labels contain both English and regional script in the same string.",
+          "Verify that the mixed script labels are rendered without layout breakage or symbol substitution.",
+          "Tap a mixed script vehicle type filter and confirm results update and the label remains correctly displayed."
+        ],
+        "testcase_id": "TC_0006",
+        "scenario": "Vehicle type section supports @Lang Mixed Script in vehicle type labels",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section supports @Lang Mixed Script in vehicle type labels is completed successfully; validation evidence captured in step: Tap a mixed script vehicle type filter and confirm results update and the label remains correctly displayed; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section handles @Lang Input Search in regional language",
+        "steps": [
+          "Open the platform URL and enter a B2B category search term in a regional script.",
+          "Confirm that autosuggest displays relevant categories in the same script.",
+          "Select a suggestion and verify the results page loads with the vehicle type section below the city name, all displayed in the regional script.",
+          "Tap a vehicle type filter and confirm results update and labels remain in the regional script."
+        ],
+        "testcase_id": "TC_0007",
+        "scenario": "Vehicle type section handles @Lang Input Search in regional language",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section handles @Lang Input Search in regional language is completed successfully; validation evidence captured in step: Tap a vehicle type filter and confirm results update and labels remain in the regional script; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section maintains correct position and layout on large phone \u2014 Safari for iOS",
+        "steps": [
+          "Open the platform URL on a large phone using Safari for iOS and perform a B2B category search.",
+          "Scroll to the section below the city name and verify the vehicle type section is present and fully rendered.",
+          "Switch between portrait and landscape orientations and confirm the vehicle type section remains directly below the city name with no overflow or truncation.",
+          "Tap each vehicle type filter and verify results update as expected."
+        ],
+        "testcase_id": "TC_0008",
+        "scenario": "Vehicle type section maintains correct position and layout on large phone \u2014 Safari for iOS",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section maintains correct position and layout on large phone \u2014 Safari for iOS is completed successfully; validation evidence captured in step: Tap each vehicle type filter and verify results update as expected; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section filters results and preserves scroll position after navigation",
+        "steps": [
+          "Open the platform URL and perform a B2B category search.",
+          "Tap a vehicle type filter and verify the results update accordingly.",
+          "Tap on a result to open its details page.",
+          "Use the browser back button to return to the results page and verify the scroll position and selected vehicle type filter are preserved.",
+          "Confirm that the vehicle type section is still correctly positioned below the city name."
+        ],
+        "testcase_id": "TC_0009",
+        "scenario": "Vehicle type section filters results and preserves scroll position after navigation",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section filters results and preserves scroll position after navigation is completed successfully; validation evidence captured in step: Confirm that the vehicle type section is still correctly positioned below the city name; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section displays correct empty state when no vehicle types are available",
+        "steps": [
+          "Navigate to relevant page",
+          "Perform intended action",
+          "Validate system response"
+        ],
+        "testcase_id": "TC_0010",
+        "scenario": "Vehicle type section displays correct empty state when no vehicle types are available",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section displays correct empty state when no vehicle types are available is completed successfully; API returns expected status code with valid response contract; validation evidence captured in step: Validate system response; data is retrievable in subsequent verification call."
+      },
+      {
+        "title": "Vehicle type section does not appear for non-B2B search type",
+        "steps": [
+          "Navigate to relevant page",
+          "Perform intended action",
+          "Validate system response"
+        ],
+        "testcase_id": "TC_0011",
+        "scenario": "Vehicle type section does not appear for non-B2B search type",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section does not appear for non-B2B search type; validation evidence captured in step: Validate system response; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section fails to load due to network error \u2014 fallback state",
+        "steps": [
+          "Open the platform URL and perform a B2B category search.",
+          "Simulate a slow or dropped 3G network during the loading of the vehicle type section.",
+          "Verify that the section displays a loading state or fallback error without breaking the layout below the city name."
+        ],
+        "testcase_id": "TC_0012",
+        "scenario": "Vehicle type section fails to load due to network error \u2014 fallback state",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section fails to load due to network error \u2014 fallback state; validation evidence captured in step: Verify that the section displays a loading state or fallback error without breaking the layout below the city name; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section not rendered when backend returns empty/invalid data",
+        "steps": [
+          "Navigate to relevant page",
+          "Perform intended action",
+          "Validate system response"
+        ],
+        "testcase_id": "TC_0013",
+        "scenario": "Vehicle type section not rendered when backend returns empty/invalid data",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section not rendered when backend returns empty/invalid data; validation evidence captured in step: Validate system response; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section overlaps with city name on compact phone \u2014 layout breakage",
+        "steps": [
+          "Open the platform URL on a compact phone and perform a B2B category search.",
+          "Resize or zoom the page to the minimum supported viewport.",
+          "Verify that the vehicle type section does not overlap with or obscure the city name. If overlap occurs, flag as a layout issue."
+        ],
+        "testcase_id": "TC_0014",
+        "scenario": "Vehicle type section overlaps with city name on compact phone \u2014 layout breakage",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section overlaps with city name on compact phone \u2014 layout breakage; validation evidence captured in step: Verify that the vehicle type section does not overlap with or obscure the city name. If overlap occurs, flag as a layout issue; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type filter tap target smaller than 44x44px on compact phone",
+        "steps": [
+          "Open the platform URL on a compact phone and perform a B2B category search.",
+          "Inspect the vehicle type filter chips and attempt to tap them.",
+          "Verify that any chip with a tap target smaller than 44x44px is flagged as a usability issue."
+        ],
+        "testcase_id": "TC_0015",
+        "scenario": "Vehicle type filter tap target smaller than 44x44px on compact phone",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type filter tap target smaller than 44x44px on compact phone; validation evidence captured in step: Verify that any chip with a tap target smaller than 44x44px is flagged as a usability issue; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section hidden behind virtual keyboard in filter input",
+        "steps": [
+          "Open the platform URL and perform a B2B category search.",
+          "Tap on a search or filter input to trigger the virtual keyboard.",
+          "Verify that the vehicle type section is not hidden behind the keyboard and remains accessible without scrolling."
+        ],
+        "testcase_id": "TC_0016",
+        "scenario": "Vehicle type section hidden behind virtual keyboard in filter input",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section hidden behind virtual keyboard in filter input; validation evidence captured in step: Verify that the vehicle type section is not hidden behind the keyboard and remains accessible without scrolling; no unintended data/state change occurs."
+      }
+    ],
+    "fingerprints": [
+      "5c0fb52727217105d9f1f5f8ec1fe487958eaae73f35880bc0fd12a135b9f631",
+      "0b48dd2ed767143a4279189877cb275074816447fc72127472e33253dc7a6483",
+      "b92356219c71e514655602592ccbd20f14b181d91880d0abe452838c933ebee3",
+      "ddd1ab9e1c4c70218384b864fc57ecd7210ce3079493aa3246546d4e74b7ccc5",
+      "d2627be0c9adc77fc86cff698483b8f2fce0627e301684d1775c869f344c9ba7",
+      "3fc5c9fb9362fe9929567f0c61eaf3d7e8977a161426e340cdd065148f50c6a5",
+      "93fabf38caa0c32cd22c16e108e949e550660216a8fbb44a06a8e5d5b4dfdbd3",
+      "63ca03d41bafd5f254e683116b25035f10dd38585d96513c80d6585fbe358dc0",
+      "c3091d926d9c774057ee696ec1a1d94f0878ed0b9d2d7378d09db2204f67284f",
+      "8a80845b1834b74ca68620d9adc8461fabba0d7f766dddb7d01c1d6235e4a316",
+      "2f8e700ddfe466906cee56922c2377c39a5a1acc2a9d0332616bfbf823a869d4",
+      "bfe993b9f992e48bf63bb4d6d48d43319362b3b5d8c1cb85b67eeb253dc14ba9",
+      "1574a4d7c762745da5990dd1dbcaae35ee08ca51d1814f3f005078200cf1dfd5",
+      "b08eff79d0ecb93b0d677077a4e8fa9f07eba45f0436206cf9217f73382a8a5c",
+      "d69ee709f78d7223354ba670465f4a1c4999a0fdbb05e91e365744c2dc891c5b",
+      "6dea62ae014e20f4cbf1be58dfa52faf0313dbfcb76ffd8603601960e20c5efb"
+    ],
+    "stats": {
+      "total_cases": 16,
+      "positive_cases": 10,
+      "negative_cases": 6,
+      "high_priority": 0
+    },
+    "reinforcement": {
+      "avg_steps": 3.81,
+      "duplicate_ratio": 0.0,
+      "high_priority_ratio": 0.0,
+      "negative_ratio": 0.12,
+      "score": 0.47
+    }
+  }
+}
