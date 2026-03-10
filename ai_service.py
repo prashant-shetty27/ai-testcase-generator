@@ -43,7 +43,7 @@ MANDATORY OUTPUT RULES:
 - @Lang COVERAGE — for any frontend/UI requirement: ALL 4 @Lang cases MUST be present somewhere in your output: @Lang Regional Script, @Lang Bilingual, @Lang Mixed Script, @Lang Input Search. Missing even one is invalid. But they come AFTER functional cases.
 - @Lang cases test LANGUAGE RENDERING of the primary feature — they are not general language tests. Each @Lang step must verify the PRIMARY TEST SUBJECT's behaviour in that language context, not just "text is displayed".
 - Browser mention: maximum ONCE, at step 1 only, and ONLY when layout/rendering is the specific thing being tested. Omit entirely for functional tests.
-- Step 1 for search/browse flows: "Open the platform URL and perform [category] search" — NOT "Open the B2B homepage".
+- Step 1 for search/browse flows: use the actual platform name when known — web → "Open the website", touch → "Open the mobile site", android app → "Open the Android app", ios app → "Open the iOS app". Say "Open the platform URL" ONLY when platform is unknown. NEVER say "Open the B2B homepage".
 - Step 1 for authenticated flows: "Login with valid credentials and navigate to [specific section]".
 - Each step = one action + its expected outcome. No standalone navigation steps without a verification.
 - NEVER write placeholder steps. Every step must be specific to this exact requirement.

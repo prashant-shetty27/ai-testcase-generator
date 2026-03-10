@@ -282,7 +282,13 @@ Test case TITLE — must be scenario-specific, never generic:
   - Do NOT reuse the same title structure across multiple test cases. Each title must be unique and self-describing.
 
 Step 1 — Navigation (how to write the starting step correctly):
-  - Search/browse flows (public access): Start with "Open the platform URL and perform [category] search" — NOT "Open the B2B homepage" or "Navigate to the B2B search page" (B2B is a search TYPE, not a page).
+  - Search/browse flows (no login needed): Use the platform name when it is known — do NOT say "platform URL" if the platform is clear from context.
+    • web → "Open the website and perform [category] search"
+    • touch → "Open the mobile site and perform [category] search"
+    • android app → "Open the Android app and perform [category] search"
+    • ios app → "Open the iOS app and perform [category] search"
+    • platform unknown → "Open the platform URL and perform [category] search"
+    NEVER say "Open the B2B homepage", "Navigate to the B2B search page", "Open the B2B platform" — B2B is a search TYPE, not a page.
   - Authenticated flows (dashboards, leads, contracts, profile): Start with "Login with valid credentials and navigate to [specific section]".
   - NEVER say "Open the B2B directory", "Open the B2B homepage", "Open the B2B search platform" — there is no B2B-specific page.
 
@@ -349,31 +355,74 @@ Each test case must:
 - If the requirement has explicit conditions/rules, reference them exactly in the relevant step (e.g., "RC - Address Proof >2 years, Approved, live contract"). If no explicit condition exists, describe the scenario state clearly without fabricating conditions.
 - Be business-realistic and self-contained
 
-BEFORE RETURNING OUTPUT — MANDATORY SELF-CHECK (fix violations before returning, do not skip):
+BEFORE RETURNING OUTPUT — MANDATORY SELF-CHECK (2-pass gate — run both before returning):
 
-  BANNED WORDS CHECK:
-  ✗ Does any output contain "directory" / "B2B directory" / "search directory"? → DELETE. No replacement needed — just remove the word. Do NOT substitute "B2B search page" or "B2B platform" (also banned).
-  ✗ Does any output contain "B2B user" / "B2C user" / "authorized B2B user" / "B2B credentials" / "B2B login"? → DELETE. Say "user" only.
-  ✗ Does any output contain "B2B page" / "B2B search page" / "B2B homepage" / "B2B platform" / "B2B URL"? → DELETE. B2B is a search TYPE, not a page. Navigate to the platform URL only.
-  ✗ Does any output contain inches ("6.1-inch", "6.7-inch") or pixel resolution ("1080x2400", "375px")? → DELETE. Replace with "compact phone", "standard phone", "large phone", or "tablet" — or omit size entirely if layout is not being tested.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASS 1 — REMOVE VIOLATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  STEP QUALITY CHECK:
-  ✗ Does any step say "Observe the UI", "Check the page", "Verify the screen loads", "Ensure the app is open", "Wait for page to load"? → DELETE. Replace with a specific action + expected outcome.
-  ✗ Does any step use a city name, vehicle type name, company name, price, or count NOT explicitly stated in the requirement? → DELETE. Use the generic term only.
-  ✗ Does any step verify city name / location name as the PRIMARY thing being checked? → WRONG. City is a reference anchor. Re-write to verify the primary test subject.
-  ✗ Are ALL steps in a test case directly relevant to the PRIMARY TEST SUBJECT identified in Phase 1G? If any step is about an unrelated UI element, navigation hint, or keyboard shortcut not asked for in the requirement, DELETE IT.
+  BANNED WORDS:
+  ✗ "directory" / "B2B directory" / "search directory" → DELETE. No substitute.
+  ✗ "B2B user" / "B2C user" / "B2B credentials" / "B2B login" → DELETE. Say "user" only.
+    e.g. ✗ "Verify B2B user sees PRP" → ✓ "Verify user sees PRP"
+  ✗ "B2B page" / "B2B homepage" / "B2B platform" / "B2B URL" → DELETE. B2B is a search TYPE, not a page.
+    e.g. ✗ "Open B2B homepage" → ✓ "Open the mobile site and perform B2B search" (touch) / "Open the website and perform B2B search" (web) / "Open the platform URL and perform B2B search" (platform unknown)
+  ✗ Inch/pixel sizes ("6.1-inch", "375px", "1080x2400") → DELETE. Use "compact phone", "standard phone", "large phone", "tablet" — or drop size if layout isn't being tested.
+  ✗ Pixel tap sizes ("44x44px", "48dp") → DELETE. Use qualitative language.
+    e.g. ✗ "tap targets are at least 44x44px" → ✓ "vehicle type options are clearly tappable without mis-taps"
 
-  AUTH / FLOW CHECK:
-  ✗ Does any step add a login step for a search/result page/browsing flow (public access)? → REMOVE. Public flows start directly from the URL.
+  STEP QUALITY:
+  ✗ Filler steps ("Observe the UI", "Check the page", "Verify screen loads", "Wait for page to load", "Navigate to relevant page", "Perform intended action") → DELETE. Rewrite as a specific action + expected outcome tied to this requirement.
+    e.g. ✗ "Verify the screen loads correctly" → ✓ "Verify the Movie listing page shows posters, title, rating, and showtime for the selected city"
+  ✗ Data invented from thin air — city names, vehicle types, company names, prices, counts not in the requirement → DELETE. Use generic terms.
+    e.g. ✗ "Search for 'Hyundai Creta' in Mumbai" (not stated) → ✓ "Search for the target vehicle category in the selected city"
+  ✗ City/location name as the SOLE purpose of a step (no functional outcome) → DELETE or rewrite.
+    e.g. ✗ "Verify city name appears at the top" → ✓ "Verify movie listings displayed are specific to the selected city"
+  ✗ Cross-cutting concern (logging, analytics, audit trail, compliance, session recording) as the last step of a functional test case → DELETE that step. Write it as its own standalone test case instead.
+    e.g. ✗ Last step: "Verify the search action is logged in analytics" inside a Search functional TC → ✓ Separate TC: "Verify search events are captured in analytics"
+  ✗ SLA/response-time assertion embedded inside a functional test case → REMOVE from the functional TC. It must be its own dedicated performance test case.
+    e.g. ✗ Step 6: "Verify results load within 5 seconds" inside a functional TC → ✓ Separate TC: "Verify search results load within the specified SLA"
 
-  BROWSER / DEVICE CHECK:
-  ✗ Is the browser mentioned more than once in a test case? → REMOVE extra mentions. One mention max at step 1, only when layout or rendering is being tested.
+  AUTH / FLOW:
+  ✗ Login step inside a search/browse/result flow that does not require login → REMOVE. These flows start directly from the platform.
+    e.g. ✗ Step 1: "Login with valid credentials" for a PRP → ✓ Step 1: "Open the mobile site and perform the relevant category search" (touch) / "Open the website and perform the relevant category search" (web)
 
-  COVERAGE CHECK:
-  ✗ Are ALL 4 @Lang cases present (Regional Script, Bilingual, Mixed Script, Input Search) for this frontend requirement? → If any are missing, ADD THEM before returning.
-  ✗ Are @Location cases present where city is only a positional reference (not the core tested behaviour)? → REMOVE THEM.
+  BROWSER:
+  ✗ Browser mentioned more than once in a test case → REMOVE extra mentions. One mention at step 1 only, exclusively for layout/rendering tests.
 
-  Only after ALL checks pass, return the JSON.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASS 2 — FILL COVERAGE GAPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Re-read your requirement. For each dimension below, ask: is it covered? If not — ADD it now.
+
+  LOCATION / CITY (for location-aware features — city filtering, geo-specific results, location-linked content):
+  ✓ Is there a test case verifying content/results update when the city is changed?
+    e.g. "Verify that changing city from the header updates the movie listings shown on the page"
+    → If MISSING → ADD it.
+  ✓ Is there a negative case for an unserviced or invalid city?
+    e.g. "Verify an appropriate message is shown when the selected city has no listings for the searched category"
+    → If MISSING → ADD it.
+
+  @LANG (frontend/UI requirements — mandatory):
+  ✓ Are ALL 4 @Lang cases present: Regional Script, Bilingual, Mixed Script, Input Search?
+    e.g. for a Movie Hotkey flow: "@Lang Regional Script — Verify movie listings and titles render correctly in the regional script for the selected language"
+    → Count them. ADD any missing ones, placed LAST after all functional cases.
+
+  COUNT / STATE BOUNDARIES (for features that display a list or count-driven content):
+  ✓ Zero items: e.g. "Verify an empty state message is shown when no virtual numbers are available for the listing"
+  ✓ Single item: e.g. "Verify a single virtual number is shown inline without a panel when exactly one number is available"
+  ✓ Multiple items: e.g. "Verify a scrollable panel appears when more than 2 virtual numbers are available"
+  → ADD whichever boundary states are missing.
+
+  NEGATIVE CASES:
+  ✓ Are there at least 2 negative test cases? If not → ADD: one invalid-input case + one error/blocked-access case.
+
+  SECURITY (critical flows only — payment, KYC, OTP/auth, contract data):
+  ✓ Is there a security/data-masking step embedded within the relevant critical-flow test case?
+    e.g. Step inside KYC TC: "Verify that uploaded document details are masked and not exposed in network responses or logs"
+    → If MISSING → ADD it as a step inside the critical-flow TC (not a separate TC).
+
+  Only after BOTH passes are complete, return the JSON.
 
 Return STRICT JSON only:
 
