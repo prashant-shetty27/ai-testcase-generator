@@ -189,9 +189,36 @@ def get_module_context(modules: list[str]) -> str:
             "Fraud/spam moderation visibility behavior"
         ],
         "chatbot": [
-            "Intent recognition accuracy for search-related prompts",
-            "Fallback response quality for unsupported queries",
-            "Conversation context continuity"
+            # ── Core behaviour ──
+            "Intent recognition: chatbot must correctly identify the vertical from the user's query — e.g. 'need a plumber' → Home Services, 'book a table' → Restaurants, 'find a dentist' → Healthcare",
+            "Fallback: when intent is ambiguous or unrecognised, chatbot must ask a clarifying question — NOT return a blank response or generic error",
+            "Conversation context continuity: follow-up messages must retain the context of prior turns — e.g. 'in Mumbai' after 'find a salon' must refine the previous result, not restart",
+            "Location context: chatbot must use the user's currently selected city as the default location unless the user explicitly names a different city in the query",
+            "Multi-turn correction: if user corrects a previous message ('I meant Pune, not Mumbai'), chatbot must update results accordingly in the same session",
+            "Empty / gibberish input: chatbot must NOT crash or return null — must respond with a helpful prompt to try again",
+            "Language input: chatbot must accept and correctly process queries in Hindi, English, and regional languages — do not ignore or error on regional script input",
+            # ── Vertical coverage — chatbot must handle queries for ALL of these ──
+            "Vertical — Restaurants & Food: queries like 'best biryani near me', 'pure veg restaurant in Pune', 'open now restaurants' — must return relevant listings with cuisine, rating, locality",
+            "Vertical — Auto / Vehicles: queries like 'used cars in Hyderabad', 'bike service centre near me', 'Maruti Swift price' — must map to Auto vertical and surface relevant listings or filters",
+            "Vertical — Real Estate / Property: queries like 'flats for rent in Bengaluru', '2BHK sale in Andheri', 'PG near Koramangala' — must distinguish sale vs rent vs PG correctly",
+            "Vertical — Healthcare / Doctors: queries like 'cardiologist near me', 'Apollo Hospital contact', 'eye specialist in Delhi' — must return clinic/doctor listings with speciality and location",
+            "Vertical — Home Services: queries like 'plumber in Mumbai', 'AC repair Noida', 'electrician near me' — must map to correct service sub-category",
+            "Vertical — Beauty & Wellness: queries like 'hair salon in Bandra', 'spa near me', 'unisex parlour in Chennai' — must return correct salon/spa listings",
+            "Vertical — Education: queries like 'MBA colleges in Pune', 'spoken English classes near me', 'NEET coaching in Delhi' — must map to Education vertical with course/institute filter",
+            "Vertical — Hotels & Travel: queries like 'hotels near airport Mumbai', 'budget stay in Goa', 'travel agent in Delhi' — must surface hotel or travel agent listings",
+            "Vertical — Jobs & Recruitment: queries like 'data analyst jobs in Bengaluru', 'freshers job openings', 'placement consultancy near me' — must route to Jobs vertical",
+            "Vertical — Movies & Entertainment: queries like 'movies playing today in Chennai', 'IMAX theatres in Mumbai', 'movie timings for [film name]' — must surface cinema listing for selected city",
+            "Vertical — Finance & Insurance: queries like 'car insurance in Hyderabad', 'CA near me', 'tax consultant in Pune' — must map to Finance vertical correctly",
+            "Vertical — Legal Services: queries like 'property lawyer in Delhi', 'notary near me', 'consumer court advocate' — must route to Legal vertical",
+            "Vertical — Matrimony: queries like 'matrimonial services in Mumbai', 'Hindu wedding bureau in Chennai' — must route to Matrimony vertical",
+            "Vertical — Pets: queries like 'vet near me', 'dog grooming in Bengaluru', 'pet shop in Delhi' — must route to Pets vertical",
+            "Vertical — Events & Photographers: queries like 'wedding photographer in Jaipur', 'event management company Mumbai' — must route to Events vertical",
+            # ── Cross-vertical and edge cases ──
+            "Cross-vertical ambiguity: query 'gym near me' could map to Fitness or Healthcare — chatbot must pick the most relevant vertical or ask a clarifying question, not drop the query",
+            "Vertical switch mid-session: user asks about restaurants then asks about plumbers — chatbot must switch context cleanly without mixing results",
+            "Multi-entity query: 'dentist and pharmacy near Koramangala' — chatbot must handle multi-intent queries by either returning both or asking which to address first",
+            "No results for vertical + city combo: chatbot must say 'No results found in [city] for [category]' and suggest nearby city or broader search — never return an empty silent response",
+            "Business name search: 'contact number of Hotel Taj Mumbai' — chatbot must surface the specific business PDP, not a generic category result",
         ],
         "kyc": [
             "Document age validation: >2 years from upload date triggers alert and delete",
