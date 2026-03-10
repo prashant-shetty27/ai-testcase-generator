@@ -316,6 +316,11 @@ Cross-cutting concerns (logging, compliance, analytics, audit):
   - Wrong: Step 7 of a search test = "Ensure all interactions are logged for compliance."
   - Right: A standalone test case titled "Chatbot interaction log recorded correctly for compliance — positive"
 
+Page scope — do not assume a single page:
+  - If the requirement does NOT name a specific page, do NOT lock all test cases to one page (e.g. "company details page only").
+  - If the feature exists on multiple pages (e.g. Show Number on result page, PRP, PDP, catalogue, details page), spread coverage across all applicable pages or reference "all pages where [feature] is present" generically.
+  - Only restrict to one page when the requirement explicitly names it.
+
 No data leakage or assumption:
   - Do NOT reference internal API field names, backend config values, database terms, or system IDs unless they appear verbatim in the requirement.
   - Do NOT assume data values (counts, thresholds, prices, phone numbers, URLs) not stated in the requirement.
