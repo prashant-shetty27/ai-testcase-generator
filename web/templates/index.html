@@ -519,9 +519,9 @@
 </div>
 
 <main class="container">
-    <div style="margin-bottom: 24px; padding: 18px 24px; background: #edf5ff; border-radius: 16px; border: 2px solid #b8d4f0; text-align: center; font-size: 22px; font-weight: 600; color: #145da0;">
-        Dear {{ requester_name or user.name or 'User' }},<br>
-        <span id="motivational-quote">{{ motivational_quote }}</span>
+    <div style="margin-bottom: 14px; padding: 10px 14px; background: #edf5ff; border-radius: 10px; border: 1.5px solid #b8d4f0; text-align: center; font-size: 13px; font-weight: 600; color: #145da0;">
+        Dear {{ requester_name or user.name or 'User' }},&nbsp;
+        <span id="motivational-quote" style="font-weight:400;">{{ motivational_quote }}</span>
     </div>
     <h1 class="title">AI Testcase Generator</h1>
     <p class="subtitle">Platform-smart testcase generation. Select exact platforms and generate strictly scoped cases.</p>
@@ -675,6 +675,18 @@
             </div>
 
             <div class="img-summary-box" id="imgSummaryBox"></div>
+
+            <div style="margin-top:14px;">
+                <label class="label" for="imgExtraContext" style="font-size:0.9em;">
+                    Additional requirement text <span style="font-weight:400;opacity:0.7;">(optional — combined with image. Image takes priority.)</span>
+                </label>
+                <textarea
+                    id="imgExtraContext"
+                    rows="2"
+                    placeholder="Add extra context the image alone doesn't show — e.g. 'B2B PRP page. Vehicle type below city name.'"
+                    style="width:100%;resize:vertical;font-size:0.93em;padding:8px 10px;border-radius:8px;border:1px solid var(--border, #ccc);background:var(--input-bg, #fff);color:inherit;box-sizing:border-box;"
+                ></textarea>
+            </div>
         </section>
 
         <section class="section">
@@ -712,17 +724,6 @@
                 </div>
             </div>
             <p id="imgPlatformError" class="error hidden">Select at least one platform.</p>
-        </section>
-
-        <section class="section">
-            <label class="label" for="imgExtraContext">
-                Additional requirement text <span style="font-weight:400;opacity:0.7;">(optional — if provided, combined with image analysis. Image always takes priority.)</span>
-            </label>
-            <textarea
-                id="imgExtraContext"
-                placeholder="Describe what to test, or add any extra context the image alone doesn't show — e.g. 'This is the B2B PRP page. Vehicle type must appear below city name. Test the search flow and language rendering.'"
-                style="width:100%;min-height:90px;resize:vertical;font-size:0.97em;padding:10px;border-radius:8px;border:1px solid var(--border, #ccc);background:var(--input-bg, #fff);color:inherit;box-sizing:border-box;"
-            ></textarea>
         </section>
 
         <section class="section">
