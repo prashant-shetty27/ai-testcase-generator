@@ -654,7 +654,7 @@
     <div id="imageModePanel" role="tabpanel" style="display:none;">
         <section class="section">
             <h2>Upload Screenshot / Mockup</h2>
-            <p class="meta">Upload a UI screenshot or design mockup — the AI will extract the feature, business rules, and generate test cases automatically.</p>
+            <p class="meta">Upload a UI screenshot or design mockup. The AI extracts the feature, visible UI elements, and business rules from the image and generates test cases automatically. You can also add a text requirement below — both are combined, with the image taking priority.</p>
 
             <div id="imgDropZone" class="drop-zone" role="button" tabindex="0" aria-label="Upload screenshot">
                 <input type="file" id="imgFileInput" accept=".png,.jpg,.jpeg,.webp,.gif" aria-label="Select image file">
@@ -711,16 +711,21 @@
         </section>
 
         <section class="section">
+            <label class="label" for="imgExtraContext">
+                Additional requirement text <span style="font-weight:400;opacity:0.7;">(optional — if provided, combined with image analysis. Image always takes priority.)</span>
+            </label>
+            <textarea
+                id="imgExtraContext"
+                placeholder="Describe what to test, or add any extra context the image alone doesn't show — e.g. 'This is the B2B PRP page. Vehicle type must appear below city name. Test the search flow and language rendering.'"
+                style="width:100%;min-height:90px;resize:vertical;font-size:0.97em;padding:10px;border-radius:8px;border:1px solid var(--border, #ccc);background:var(--input-bg, #fff);color:inherit;box-sizing:border-box;"
+            ></textarea>
+        </section>
+
+        <section class="section">
             <h2>Optional Settings</h2>
-            <div class="row">
-                <div>
-                    <label class="label" for="imgOutputFilename">Output file name (without .xlsx)</label>
-                    <input id="imgOutputFilename" type="text" placeholder="image_generated_suite">
-                </div>
-                <div>
-                    <label class="label" for="imgExtraContext">Extra context for the AI (optional)</label>
-                    <input id="imgExtraContext" type="text" placeholder="e.g., This is a KYC upload screen for verified sellers">
-                </div>
+            <div>
+                <label class="label" for="imgOutputFilename">Output file name (without .xlsx)</label>
+                <input id="imgOutputFilename" type="text" placeholder="image_generated_suite">
             </div>
         </section>
 
