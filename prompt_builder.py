@@ -427,62 +427,45 @@ PASS 2 — FILL COVERAGE GAPS
 
   Only after BOTH passes are complete, return the JSON.
 
-EXAMPLE DATA FIELD — each test case must include an "examples" field.
-  First, identify which type of feature this test case belongs to:
+EXAMPLE DATA FIELD — optional, context-driven. Leave "examples" as empty string "" whenever you are not confident it adds real value.
+  GOLDEN RULE: empty is always better than invented or irrelevant data.
+  Only populate "examples" when the requirement or user input gives you clear, concrete data dimensions to work with.
 
-  TYPE A — Data-driven features (search, filter, browse, booking, listing):
-    Generate 3–5 input combinations with real Indian cities, real brand/category/type names, and realistic ranges.
-    Vary city and key dimensions across rows — do not repeat the same city or value.
-    e.g. vehicle search:
+  WHEN TO POPULATE:
+
+  TYPE A — Search / filter / browse / booking features where input combinations matter:
+    Only if the requirement mentions specific categories, cities, brands, or ranges — use those exact values.
+    If requirement is generic (no specific data mentioned), leave empty.
+    Format: 3–5 varied rows of real input combinations.
+    e.g. (only if requirement mentions vehicle search with city/brand/budget):
       City: Mumbai | Category: SUV | Brand: Maruti Suzuki | Budget: ₹8L–₹15L
       City: Pune | Category: Sedan | Brand: Hyundai | Budget: ₹6L–₹10L
-      City: Bengaluru | Category: Hatchback | Brand: Tata | Budget: ₹4L–₹7L
-    e.g. movie search:
-      City: Delhi | Genre: Action | Language: Hindi | Show: Evening
-      City: Mumbai | Genre: Comedy | Language: English | Show: Morning
 
-  TYPE B — Condition/state-based tests (flows, permissions, contract types, KYC, session, platform behaviour, functional rules):
-    Do NOT invent city/brand combinations. Describe the key conditions that make each scenario distinct.
-    This covers a wide range — use it for ANY test where the variation is a state, role, contract type, document condition, platform action, or business rule — NOT an input value.
-    e.g. sync/auth flow:
-      Account: Professional | FB Page: Linked | Admin: Yes | Campaign: Active
-      Account: Personal | Campaign: Active → blocked at Q1
-    e.g. contract type:
-      Contract: Paid Platinum | Feature: enabled → premium badge visible
-      Contract: Non-Paid | Feature: gated → upgrade prompt shown
-      Contract: Paid Expired | Feature: revoked → downgraded UI shown
-    e.g. KYC document:
-      Document: ID Proof | Age: 3 years | Status: Approved | Contract: RC → alert + delete
-      Document: Shop Image | Age: 1 year | Status: Approved → no action
-    e.g. session/state:
-      Session: active → data pre-filled
-      Session: expired → redirect to login
-      Session: concurrent (2 devices) → older session invalidated
-    e.g. platform behaviour (Android/iOS/Touch):
-      Platform: Android | Action: back button from PRP → result page restored with filters
-      Platform: iOS | Action: app backgrounded then resumed → session intact
-      Platform: Touch | Orientation: landscape → layout reflows correctly
-    e.g. functional/business rule:
-      User: logged in | Wishlist: 0 items → empty state shown
-      User: logged in | Wishlist: 1 item → item visible, no panel
-      User: logged in | Wishlist: 5 items → scrollable panel
+  TYPE B — Condition/state-based tests (flows, contract types, KYC, session, platform behaviour, functional rules):
+    Only if the requirement explicitly defines distinct states, roles, or conditions.
+    Describe those conditions as short labels — do NOT invent states not in the requirement.
+    e.g. (only if requirement defines contract tiers):
+      Contract: Paid Platinum → premium badge visible
+      Contract: Non-Paid → upgrade prompt shown
+      Contract: Paid Expired → downgraded UI
+    e.g. (only if requirement defines campaign gating):
+      Campaign: Active → proceed to next step
+      Campaign: Inactive → redirect to self-signup
+    e.g. (only if requirement defines document rules):
+      Document: ID Proof | Age: 3 yrs | Status: Approved → alert + delete
+      Document: Shop Image | Age: 1 yr | Status: Approved → no action
 
-  TYPE C — Pure UI / rendering / language tests (@Lang, layout, visual):
-    Leave "examples" as an empty string "".
-
-  TYPE D — API / backend tests:
-    Describe the request variation — method, key payload fields, token/auth state, expected HTTP status.
+  TYPE D — API / backend tests where endpoint + payload + status are defined in the requirement:
+    Only if the requirement or context specifies the endpoint, fields, or expected status codes.
     e.g.:
       POST /sync/instagram | token: valid | account_type: professional → 200 OK
       POST /sync/instagram | token: expired → 401 Unauthorized
-      GET /search?q=plumber&city=Mumbai | page: 9999 → 200, empty array
-      GET /search?q= → 400 Bad Request
 
-  DECISION RULE — pick the FIRST match:
-    API endpoint / HTTP method / payload / status → TYPE D
-    @Lang or pure visual/layout rendering → TYPE C
-    Search / filter / booking with input value variations → TYPE A
-    Everything else (flow, state, contract, KYC, session, platform action, functional rule) → TYPE B
+  WHEN TO LEAVE EMPTY (always use "" in these cases):
+    - @Lang, layout, or pure visual/rendering tests
+    - Generic functional tests where no specific data is mentioned in the requirement
+    - Any test where you would have to invent data not grounded in the requirement
+    - When unsure — default to empty
 
 Return STRICT JSON only:
 
