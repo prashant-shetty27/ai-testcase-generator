@@ -441,37 +441,48 @@ EXAMPLE DATA FIELD — each test case must include an "examples" field.
       City: Delhi | Genre: Action | Language: Hindi | Show: Evening
       City: Mumbai | Genre: Comedy | Language: English | Show: Morning
 
-  TYPE B — Flow/workflow features (sync, auth, onboarding, permissions, settings, campaign-gated flows):
-    Do NOT invent city/brand combinations — they are irrelevant.
-    Instead, describe the key scenario conditions that make this test case distinct.
-    Format as short condition labels on separate lines.
-    e.g. Instagram sync flow:
-      Account: Professional | FB Page: Linked | Admin: Yes | Campaign 129: Active
-      Account: Personal (not professional) | Campaign 129: Active
-      Account: Professional | FB Page: Not linked | Campaign 129: Active
-    e.g. campaign gating:
-      Campaign: 120 Inactive → redirects to self-signup
-      Campaign: 120 Active → proceeds to Select Business page
+  TYPE B — Condition/state-based tests (flows, permissions, contract types, KYC, session, platform behaviour, functional rules):
+    Do NOT invent city/brand combinations. Describe the key conditions that make each scenario distinct.
+    This covers a wide range — use it for ANY test where the variation is a state, role, contract type, document condition, platform action, or business rule — NOT an input value.
+    e.g. sync/auth flow:
+      Account: Professional | FB Page: Linked | Admin: Yes | Campaign: Active
+      Account: Personal | Campaign: Active → blocked at Q1
+    e.g. contract type:
+      Contract: Paid Platinum | Feature: enabled → premium badge visible
+      Contract: Non-Paid | Feature: gated → upgrade prompt shown
+      Contract: Paid Expired | Feature: revoked → downgraded UI shown
+    e.g. KYC document:
+      Document: ID Proof | Age: 3 years | Status: Approved | Contract: RC → alert + delete
+      Document: Shop Image | Age: 1 year | Status: Approved → no action
+    e.g. session/state:
+      Session: active → data pre-filled
+      Session: expired → redirect to login
+      Session: concurrent (2 devices) → older session invalidated
+    e.g. platform behaviour (Android/iOS/Touch):
+      Platform: Android | Action: back button from PRP → result page restored with filters
+      Platform: iOS | Action: app backgrounded then resumed → session intact
+      Platform: Touch | Orientation: landscape → layout reflows correctly
+    e.g. functional/business rule:
+      User: logged in | Wishlist: 0 items → empty state shown
+      User: logged in | Wishlist: 1 item → item visible, no panel
+      User: logged in | Wishlist: 5 items → scrollable panel
 
   TYPE C — Pure UI / rendering / language tests (@Lang, layout, visual):
     Leave "examples" as an empty string "".
 
   TYPE D — API / backend tests:
-    Describe the request variation — method, key payload fields, token/auth state, and expected HTTP status.
-    e.g. sync API:
-      POST /sync/instagram | campaign_id: 129 | token: valid | account_type: professional → 200 OK
-      POST /sync/instagram | campaign_id: 129 | token: expired → 401 Unauthorized
-      POST /sync/instagram | campaign_id: 129 | account_type: personal → 400 Bad Request
-    e.g. search API:
-      GET /search?q=plumber&city=Mumbai | rating≥4 → 200, results > 0
-      GET /search?q=&city=Mumbai → 400 Bad Request
+    Describe the request variation — method, key payload fields, token/auth state, expected HTTP status.
+    e.g.:
+      POST /sync/instagram | token: valid | account_type: professional → 200 OK
+      POST /sync/instagram | token: expired → 401 Unauthorized
       GET /search?q=plumber&city=Mumbai | page: 9999 → 200, empty array
+      GET /search?q= → 400 Bad Request
 
-  DECISION RULE:
-    Search/filter/booking input variations → TYPE A
-    Flow/permission/campaign/account-state scenarios → TYPE B
-    @Lang or pure visual/layout → TYPE C
-    API endpoint / payload / status code variations → TYPE D
+  DECISION RULE — pick the FIRST match:
+    API endpoint / HTTP method / payload / status → TYPE D
+    @Lang or pure visual/layout rendering → TYPE C
+    Search / filter / booking with input value variations → TYPE A
+    Everything else (flow, state, contract, KYC, session, platform action, functional rule) → TYPE B
 
 Return STRICT JSON only:
 
