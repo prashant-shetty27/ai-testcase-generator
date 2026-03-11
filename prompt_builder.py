@@ -453,10 +453,25 @@ EXAMPLE DATA FIELD — each test case must include an "examples" field.
       Campaign: 120 Inactive → redirects to self-signup
       Campaign: 120 Active → proceeds to Select Business page
 
-  TYPE C — Pure UI / rendering / language tests:
+  TYPE C — Pure UI / rendering / language tests (@Lang, layout, visual):
     Leave "examples" as an empty string "".
 
-  DECISION RULE: If the test case involves user-entered search/filter data → TYPE A. If it involves a multi-step flow, permission check, account state, or campaign condition → TYPE B. If it is a @Lang or pure visual test → TYPE C.
+  TYPE D — API / backend tests:
+    Describe the request variation — method, key payload fields, token/auth state, and expected HTTP status.
+    e.g. sync API:
+      POST /sync/instagram | campaign_id: 129 | token: valid | account_type: professional → 200 OK
+      POST /sync/instagram | campaign_id: 129 | token: expired → 401 Unauthorized
+      POST /sync/instagram | campaign_id: 129 | account_type: personal → 400 Bad Request
+    e.g. search API:
+      GET /search?q=plumber&city=Mumbai | rating≥4 → 200, results > 0
+      GET /search?q=&city=Mumbai → 400 Bad Request
+      GET /search?q=plumber&city=Mumbai | page: 9999 → 200, empty array
+
+  DECISION RULE:
+    Search/filter/booking input variations → TYPE A
+    Flow/permission/campaign/account-state scenarios → TYPE B
+    @Lang or pure visual/layout → TYPE C
+    API endpoint / payload / status code variations → TYPE D
 
 Return STRICT JSON only:
 
