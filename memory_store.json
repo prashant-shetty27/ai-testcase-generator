@@ -1462,5 +1462,1014 @@
       "negative_ratio": 0.12,
       "score": 0.47
     }
+  },
+  "Display Number button on search results for paid clients": {
+    "created_at": "2026-03-10T08:41:55.006352",
+    "last_updated": "2026-03-10T08:41:55.006591",
+    "scenarios": [
+      {
+        "title": "Show Number button displays VN for paid clients after category search on touch PRP \u2014 positive",
+        "steps": [
+          "Open the platform URL and perform a category search that returns business listings with paid status.",
+          "Scroll to a paid listing and verify the 'Show Number' button is visible within the listing card.",
+          "Tap the 'Show Number' button and verify that a virtual number (VN) is revealed in place of the button.",
+          "Check that the VN is a valid Indian phone number format.",
+          "Tap the revealed VN and verify that the device's dialer is triggered or the number is copied as per platform behaviour.",
+          "Navigate back to the search results and confirm that the state of the listing with revealed VN is retained.",
+          "Repeat for multiple paid listings to ensure consistent VN reveal behaviour."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Show Number button displays VN for paid clients after category search on touch PRP \u2014 positive",
+        "priority": "Medium",
+        "expected_result": "Show Number button displays VN for paid clients after category search on touch PRP \u2014 positive is completed successfully; validation evidence captured in step: Repeat for multiple paid listings to ensure consistent VN reveal behaviour; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN display render correctly on compact, standard, and large phones \u2014 UI layout validation",
+        "steps": [
+          "Open the platform URL on a compact phone and perform a category search with paid listings.",
+          "Verify the 'Show Number' button is clearly tappable, visually distinct, and does not overlap with other listing elements.",
+          "Repeat the same validation steps on a standard phone.",
+          "Repeat the same validation steps on a large phone.",
+          "Tap the 'Show Number' button on each device size and ensure the revealed VN does not cause layout break, truncation, or horizontal scroll.",
+          "Ensure the listing card height adjusts smoothly when the VN is revealed on all device sizes."
+        ],
+        "testcase_id": "TC_0002",
+        "scenario": "Show Number button and VN display render correctly on compact, standard, and large phones \u2014 UI layout validation",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN display render correctly on compact, standard, and large phones \u2014 UI layout validation is completed successfully; validation evidence captured in step: Ensure the listing card height adjusts smoothly when the VN is revealed on all device sizes; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN display render correctly on Chrome for Android \u2014 browser-specific UI validation",
+        "steps": [
+          "Open the platform URL in Chrome for Android and perform a category search with paid listings.",
+          "Verify the 'Show Number' button is present and not visually distorted within each paid listing.",
+          "Tap the button and check that the VN appears without layout issues.",
+          "Scroll through the results to verify that the button and VN remain correctly positioned for all visible paid listings.",
+          "Switch between portrait and landscape orientation and confirm the button and VN adapt responsively without causing horizontal scroll."
+        ],
+        "testcase_id": "TC_0003",
+        "scenario": "Show Number button and VN display render correctly on Chrome for Android \u2014 browser-specific UI validation",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN display render correctly on Chrome for Android \u2014 browser-specific UI validation is completed successfully; validation evidence captured in step: Switch between portrait and landscape orientation and confirm the button and VN adapt responsively without causing horizontal scroll; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN display render correctly on Samsung Internet \u2014 browser-specific UI validation",
+        "steps": [
+          "Open the platform URL in Samsung Internet and perform a category search with paid listings.",
+          "Verify the 'Show Number' button is visible, not truncated, and easily tappable in each paid listing.",
+          "Tap the button and confirm the VN appears in a readable format and does not cause layout overflow.",
+          "Switch between portrait and landscape orientation and verify the vehicle type section below city does not wrap or overflow."
+        ],
+        "testcase_id": "TC_0004",
+        "scenario": "Show Number button and VN display render correctly on Samsung Internet \u2014 browser-specific UI validation",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN display render correctly on Samsung Internet \u2014 browser-specific UI validation is completed successfully; validation evidence captured in step: Switch between portrait and landscape orientation and verify the vehicle type section below city does not wrap or overflow; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN display render correctly on Safari for iOS \u2014 browser-specific UI validation",
+        "steps": [
+          "Open the platform URL in Safari for iOS and perform a category search with paid listings.",
+          "Check that the 'Show Number' button is present and visually distinct in each paid listing.",
+          "Tap the button and ensure the VN appears correctly, with no overlap or truncation.",
+          "Switch the device orientation and verify layout reflow for the button and VN."
+        ],
+        "testcase_id": "TC_0005",
+        "scenario": "Show Number button and VN display render correctly on Safari for iOS \u2014 browser-specific UI validation",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN display render correctly on Safari for iOS \u2014 browser-specific UI validation is completed successfully; validation evidence captured in step: Switch the device orientation and verify layout reflow for the button and VN; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN display render correctly on Chrome for iOS \u2014 browser-specific UI validation",
+        "steps": [
+          "Open the platform URL in Chrome for iOS and perform a category search with paid listings.",
+          "Verify the 'Show Number' button is visible and not overlapping other listing elements.",
+          "Tap the button and confirm the VN is revealed in the correct position.",
+          "Switch orientation and check for responsive layout of button and VN."
+        ],
+        "testcase_id": "TC_0006",
+        "scenario": "Show Number button and VN display render correctly on Chrome for iOS \u2014 browser-specific UI validation",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN display render correctly on Chrome for iOS \u2014 browser-specific UI validation is completed successfully; validation evidence captured in step: Switch orientation and check for responsive layout of button and VN; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN display remain accessible with virtual keyboard open \u2014 input field accessibility",
+        "steps": [
+          "Open the platform URL and perform a category search with paid listings.",
+          "Tap into a search filter input to trigger the virtual keyboard.",
+          "Scroll the result list and ensure the 'Show Number' button remains visible and not hidden behind the keyboard.",
+          "Tap the 'Show Number' button while the keyboard is open and verify the VN is revealed without layout issues."
+        ],
+        "testcase_id": "TC_0007",
+        "scenario": "Show Number button and VN display remain accessible with virtual keyboard open \u2014 input field accessibility",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN display remain accessible with virtual keyboard open \u2014 input field accessibility is completed successfully; validation evidence captured in step: Tap the 'Show Number' button while the keyboard is open and verify the VN is revealed without layout issues; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN reveal degrade gracefully on slow network (3G) \u2014 performance and fallback",
+        "steps": [
+          "Throttle the network to 3G speed.",
+          "Open the platform URL and perform a category search with paid listings.",
+          "Verify that the 'Show Number' button loads with the listing, even with increased network latency.",
+          "Tap the 'Show Number' button and ensure the VN is revealed within a reasonable delay (no indefinite spinner or error).",
+          "Check that the rest of the listing remains interactive while the VN is loading."
+        ],
+        "testcase_id": "TC_0008",
+        "scenario": "Show Number button and VN reveal degrade gracefully on slow network (3G) \u2014 performance and fallback",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN reveal degrade gracefully on slow network (3G) \u2014 performance and fallback is completed successfully; validation evidence captured in step: Check that the rest of the listing remains interactive while the VN is loading; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button and VN display do not cause horizontal scroll at any viewport size \u2014 responsive layout",
+        "steps": [
+          "Open the platform URL and perform a category search with paid listings.",
+          "Scroll horizontally on compact, standard, and large phones in both portrait and landscape orientation.",
+          "Verify that the 'Show Number' button and revealed VN do not cause any part of the result listing to overflow the viewport horizontally.",
+          "Check that all listing elements remain visible within the screen bounds."
+        ],
+        "testcase_id": "TC_0009",
+        "scenario": "Show Number button and VN display do not cause horizontal scroll at any viewport size \u2014 responsive layout",
+        "priority": "Medium",
+        "expected_result": "Show Number button and VN display do not cause horizontal scroll at any viewport size \u2014 responsive layout is completed successfully; validation evidence captured in step: Check that all listing elements remain visible within the screen bounds; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button panel displays all VNs in a scrollable container for listings with multiple numbers \u2014 count-based display",
+        "steps": [
+          "Open the platform URL and perform a category search where a paid listing has multiple associated VNs.",
+          "Tap the 'Show Number' button for such a listing.",
+          "Verify that a panel or div appears below the button, listing all available VNs.",
+          "If the number of VNs exceeds the visible panel area, confirm the panel is scrollable and all numbers can be reached via scroll.",
+          "Tap on each VN and verify the correct number is dialed or copied."
+        ],
+        "testcase_id": "TC_0010",
+        "scenario": "Show Number button panel displays all VNs in a scrollable container for listings with multiple numbers \u2014 count-based display",
+        "priority": "Medium",
+        "expected_result": "Show Number button panel displays all VNs in a scrollable container for listings with multiple numbers \u2014 count-based display is completed successfully; validation evidence captured in step: Tap on each VN and verify the correct number is dialed or copied; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button is not displayed for non-paid listings \u2014 access control enforcement",
+        "steps": [
+          "Open the platform URL and perform a category search that returns both paid and non-paid listings.",
+          "Verify that the 'Show Number' button is present only in paid listings and completely absent in non-paid listings.",
+          "Scroll through the result list and confirm this behaviour is consistent for all visible results."
+        ],
+        "testcase_id": "TC_0011",
+        "scenario": "Show Number button is not displayed for non-paid listings \u2014 access control enforcement",
+        "priority": "Medium",
+        "expected_result": "Show Number button is not displayed for non-paid listings \u2014 access control enforcement is completed successfully; validation evidence captured in step: Scroll through the result list and confirm this behaviour is consistent for all visible results; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Regional Script: Show Number button and VN display correctly when platform language is set to a regional script",
+        "steps": [
+          "Set the platform language to a regional script (e.g., Hindi, Tamil).",
+          "Open the platform URL and perform a category search with paid listings.",
+          "Verify that the 'Show Number' button label, revealed VN, and any associated text are displayed in the regional script without encoding errors or garbled characters.",
+          "Tap the 'Show Number' button and ensure the VN is revealed and readable in the regional script context."
+        ],
+        "testcase_id": "TC_0012",
+        "scenario": "@Lang Regional Script: Show Number button and VN display correctly when platform language is set to a regional script",
+        "priority": "Medium",
+        "expected_result": "@Lang Regional Script: Show Number button and VN display correctly when platform language is set to a regional script is completed successfully; validation evidence captured in step: Tap the 'Show Number' button and ensure the VN is revealed and readable in the regional script context; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Bilingual: Show Number button and VN display correctly with English and regional language content together",
+        "steps": [
+          "Configure the platform to display results with both English and a regional language (bilingual setting).",
+          "Open the platform URL and perform a category search with paid listings.",
+          "Verify that the 'Show Number' button, revealed VN, and listing content in both languages are rendered without overlap or truncation.",
+          "Tap the 'Show Number' button and ensure the VN appears correctly in the bilingual context."
+        ],
+        "testcase_id": "TC_0013",
+        "scenario": "@Lang Bilingual: Show Number button and VN display correctly with English and regional language content together",
+        "priority": "Medium",
+        "expected_result": "@Lang Bilingual: Show Number button and VN display correctly with English and regional language content together is completed successfully; validation evidence captured in step: Tap the 'Show Number' button and ensure the VN appears correctly in the bilingual context; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Mixed Script: Show Number button and VN display correctly when listing content mixes English and regional script",
+        "steps": [
+          "Open the platform URL and perform a category search with paid listings containing mixed English and regional script in listing details.",
+          "Verify that the 'Show Number' button and any associated text display correctly with mixed script content.",
+          "Tap the 'Show Number' button and ensure the VN is revealed and readable with mixed script present in the listing."
+        ],
+        "testcase_id": "TC_0014",
+        "scenario": "@Lang Mixed Script: Show Number button and VN display correctly when listing content mixes English and regional script",
+        "priority": "Medium",
+        "expected_result": "@Lang Mixed Script: Show Number button and VN display correctly when listing content mixes English and regional script is completed successfully; validation evidence captured in step: Tap the 'Show Number' button and ensure the VN is revealed and readable with mixed script present in the listing; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Input Search: User searches with regional script input and Show Number button/VN display correctly",
+        "steps": [
+          "Open the platform URL and type a category search query using a regional script input method.",
+          "Submit the search and verify that paid listings with the 'Show Number' button are returned.",
+          "Tap the 'Show Number' button and ensure the VN is revealed and readable, with no encoding or display errors caused by the regional script input."
+        ],
+        "testcase_id": "TC_0015",
+        "scenario": "@Lang Input Search: User searches with regional script input and Show Number button/VN display correctly",
+        "priority": "Medium",
+        "expected_result": "@Lang Input Search: User searches with regional script input and Show Number button/VN display correctly is completed successfully; validation evidence captured in step: Tap the 'Show Number' button and ensure the VN is revealed and readable, with no encoding or display errors caused by the regional script...; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Show Number button is not visible for non-paid clients on touch PRP \u2014 negative",
+        "steps": [
+          "Navigate to relevant page",
+          "Perform intended action",
+          "Validate system response"
+        ],
+        "testcase_id": "TC_0016",
+        "scenario": "Show Number button is not visible for non-paid clients on touch PRP \u2014 negative",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Show Number button is not visible for non-paid clients on touch PRP \u2014 negative; validation evidence captured in step: Validate system response; no unintended data/state change occurs."
+      },
+      {
+        "title": "Attempting to reveal VN on a non-paid listing does not show a number \u2014 access restriction enforcement",
+        "steps": [
+          "Open the platform URL and perform a category search with both paid and non-paid listings.",
+          "Attempt to locate and tap a 'Show Number' button in a non-paid listing (if present).",
+          "Verify that no VN is revealed and the button is either disabled or not rendered at all."
+        ],
+        "testcase_id": "TC_0017",
+        "scenario": "Attempting to reveal VN on a non-paid listing does not show a number \u2014 access restriction enforcement",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Attempting to reveal VN on a non-paid listing does not show a number \u2014 access restriction enforcement; validation evidence captured in step: Verify that no VN is revealed and the button is either disabled or not rendered at all; no unintended data/state change occurs."
+      },
+      {
+        "title": "Show Number button does not appear if there are no VNs associated with a paid listing \u2014 empty state handling",
+        "steps": [
+          "Open the platform URL and perform a category search with a paid listing that has no VN assigned.",
+          "Verify that the 'Show Number' button is absent or disabled for that listing.",
+          "Check for an appropriate message or UI state indicating no number is available."
+        ],
+        "testcase_id": "TC_0018",
+        "scenario": "Show Number button does not appear if there are no VNs associated with a paid listing \u2014 empty state handling",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Show Number button does not appear if there are no VNs associated with a paid listing \u2014 empty state handling; validation evidence captured in step: Check for an appropriate message or UI state indicating no number is available; no unintended data/state change occurs."
+      },
+      {
+        "title": "Show Number button does not reveal VN when backend fails to return a number \u2014 error state handling",
+        "steps": [
+          "Simulate a backend failure where the VN is not returned for a paid listing.",
+          "Open the platform URL and perform a category search with that paid listing.",
+          "Tap the 'Show Number' button and verify that no VN is revealed.",
+          "Check for an error message or fallback state in the UI."
+        ],
+        "testcase_id": "TC_0019",
+        "scenario": "Show Number button does not reveal VN when backend fails to return a number \u2014 error state handling",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Show Number button does not reveal VN when backend fails to return a number \u2014 error state handling; validation evidence captured in step: Check for an error message or fallback state in the UI; no unintended data/state change occurs."
+      },
+      {
+        "title": "Show Number button does not reveal VN when the session expires \u2014 session handling validation",
+        "steps": [
+          "Open the platform URL and perform a category search with paid listings.",
+          "Let the session expire (e.g., via timeout or manual session invalidation).",
+          "Tap the 'Show Number' button and verify that the VN is not revealed.",
+          "Check for a prompt to refresh session or re-authenticate if required."
+        ],
+        "testcase_id": "TC_0020",
+        "scenario": "Show Number button does not reveal VN when the session expires \u2014 session handling validation",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Show Number button does not reveal VN when the session expires \u2014 session handling validation; validation evidence captured in step: Check for a prompt to refresh session or re-authenticate if required; no unintended data/state change occurs."
+      },
+      {
+        "title": "Show Number button does not break layout or cause errors when touch gesture is interrupted \u2014 gesture interruption handling",
+        "steps": [
+          "Open the platform URL and perform a category search with paid listings.",
+          "Begin a tap on the 'Show Number' button but interrupt with a swipe or long-press gesture.",
+          "Verify that the VN is not partially revealed, the UI does not break, and no error state occurs."
+        ],
+        "testcase_id": "TC_0021",
+        "scenario": "Show Number button does not break layout or cause errors when touch gesture is interrupted \u2014 gesture interruption handling",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Show Number button does not break layout or cause errors when touch gesture is interrupted \u2014 gesture interruption handling; validation evidence captured in step: Verify that the VN is not partially revealed, the UI does not break, and no error state occurs; no unintended data/state change occurs."
+      }
+    ],
+    "fingerprints": [
+      "2ae985592821d113216b42948e441119ddfa15ceec8076975e114ff6a3513d2c",
+      "0830adbe4840b66a86982cacb30fab84a5b5b31822543d9e7f7fdf2049370aec",
+      "0e6a34999164f0a08bda6d2781f7b7b7dee2298c073659ea4a5838670afefb66",
+      "82f1742ebb14644420995005c472c02426cfad7450eb6caa1f0a47a93421777d",
+      "fefe24ad8bf98671291e9be1b93ad0cddbd925a1a7d0966819920c7832fc3040",
+      "49219e520ae0b9a20d4a98cfde4248e4b391487597b31b136316167ad5334d42",
+      "104ff74b538d7ba9213a1e79e667adc4e7d0caf0ae725361c5b8a92579c58455",
+      "6edd57e725400d1f125bee52139087dd0230be11949ae194928d15399b9d76f0",
+      "faf776cbd64b191a4a6c7815b87f96172000bfd755cea7fc56514dc2129b6162",
+      "384d99bfd445b61143f197f0aa0a603a6f75fbc8329824d9a83b08d71197b9e0",
+      "9ba045aea8c81c75c13c9c3c77f7f06cb1b6ab2b14c49cf74053b47d17dd929a",
+      "5c046db4c97c44ae297390c13c40cacef3cf9001815a62adc143135d16eea10c",
+      "fc2eae518e39f23e70c5b508b8f21567a5c1ac5532cfc55bc0aaeab01fab6efd",
+      "f117f3a9328c911342c4af20517a58629692d9c035b3ceedc2e407fdcfbfe34c",
+      "3145719fe558291c108121b8c51f6b50a997f399f78a226fbc387495bf2edcf3",
+      "c70fe8d47a174e0235f32f292fd98fb13b2524c15847d1beedef71409be60da6",
+      "2c96f59f12e0b31ccf2ab9b27433f7f837b3e9fc46bb4311b4247571e075d909",
+      "f6b1b125f8c3326076a48fc7c8bd66e533824bd3c9f9c4274a37b86c157dd9b0",
+      "56dd1587c07de05f2378d32480bfe64d0af21625928a8411c93b667473ae75b9",
+      "2870fa088ab1cef5d02bb277ceb34c3ba7cd627b0d2f069076e6ab2ad8abe30c",
+      "a4a258e31b98131c14e9b4061ef99ded95e36031bd0da008e36a9152b4611912"
+    ],
+    "stats": {
+      "total_cases": 21,
+      "positive_cases": 15,
+      "negative_cases": 6,
+      "high_priority": 0
+    },
+    "reinforcement": {
+      "avg_steps": 4.05,
+      "duplicate_ratio": 0.0,
+      "high_priority_ratio": 0.0,
+      "negative_ratio": 0.1,
+      "score": 0.47
+    }
+  },
+  "Display vehicle type below city name on B2B result page": {
+    "created_at": "2026-03-10T08:42:21.909094",
+    "last_updated": "2026-03-10T08:42:21.909335",
+    "scenarios": [
+      {
+        "title": "Vehicle type section displays directly below city name after category search on B2B result page \u2014 positive path",
+        "steps": [
+          "Open the platform URL and perform a category search resulting in a B2B result page.",
+          "Identify the city name displayed at the top of the result page.",
+          "Scroll to the section immediately below the city name and verify the vehicle type section is present.",
+          "Confirm the vehicle type section contains the expected vehicle type(s) associated with the results.",
+          "Verify the vehicle type section is fully rendered, not overlapping with the city name or other elements.",
+          "Interact with a vehicle type filter/chip and confirm the results update to reflect the selected vehicle type.",
+          "Ensure the layout remains consistent when navigating back to the result page after viewing a detail page."
+        ],
+        "priority": "high",
+        "testcase_id": "TC_0001",
+        "scenario": "Vehicle type section displays directly below city name after category search on B2B result page \u2014 positive path",
+        "expected_result": "Vehicle type section displays directly below city name after category search on B2B result page \u2014 positive path is completed successfully; validation evidence captured in step: Ensure the layout remains consistent when navigating back to the result page after viewing a detail page; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section layout renders correctly on compact phone in portrait and landscape \u2014 Chrome for Android",
+        "steps": [
+          "Open the platform URL in Chrome for Android on a compact phone and perform a category search.",
+          "Verify the vehicle type section appears directly below the city name in portrait orientation.",
+          "Rotate the device to landscape and confirm the vehicle type section remains below the city name without truncation or overflow.",
+          "Check that all vehicle types are visible or horizontally scrollable if they exceed the viewport width.",
+          "Tap a vehicle type chip and verify the results update accordingly.",
+          "Switch back to portrait and confirm the layout remains intact with no horizontal scroll introduced."
+        ],
+        "testcase_id": "TC_0002",
+        "scenario": "Vehicle type section layout renders correctly on compact phone in portrait and landscape \u2014 Chrome for Android",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section layout renders correctly on compact phone in portrait and landscape \u2014 Chrome for Android is completed successfully; validation evidence captured in step: Switch back to portrait and confirm the layout remains intact with no horizontal scroll introduced; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section layout renders correctly on large phone \u2014 Samsung Internet",
+        "steps": [
+          "Open the platform URL in Samsung Internet on a large phone and perform a category search.",
+          "Verify the city name is displayed at the top, and the vehicle type section is directly below it.",
+          "Confirm that the vehicle type section does not wrap, overflow, or cause any element misalignment.",
+          "Scroll horizontally if necessary to view all vehicle type chips and ensure all are accessible.",
+          "Tap on a vehicle type chip and check that the results update as per the selected filter.",
+          "Ensure there is no horizontal scroll in the viewport on this device."
+        ],
+        "testcase_id": "TC_0003",
+        "scenario": "Vehicle type section layout renders correctly on large phone \u2014 Samsung Internet",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section layout renders correctly on large phone \u2014 Samsung Internet is completed successfully; validation evidence captured in step: Ensure there is no horizontal scroll in the viewport on this device; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section displays correctly on standard phone \u2014 Safari for iOS",
+        "steps": [
+          "Open the platform URL in Safari for iOS on a standard phone and perform a category search.",
+          "Verify the vehicle type section is displayed immediately below the city name.",
+          "Check that the section is fully visible and not covered by any other UI element.",
+          "Tap a vehicle type filter and confirm the results are updated.",
+          "Ensure the layout is consistent and there is no horizontal scroll introduced."
+        ],
+        "testcase_id": "TC_0004",
+        "scenario": "Vehicle type section displays correctly on standard phone \u2014 Safari for iOS",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section displays correctly on standard phone \u2014 Safari for iOS is completed successfully; validation evidence captured in step: Ensure the layout is consistent and there is no horizontal scroll introduced; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section remains visible and accessible with virtual keyboard open",
+        "steps": [
+          "Open the platform URL and perform a category search to reach the B2B result page.",
+          "Tap into a search input field to trigger the virtual keyboard.",
+          "Verify that the vehicle type section remains visible and is not hidden behind the keyboard.",
+          "Scroll if necessary and ensure the section is still accessible for interaction.",
+          "Tap a vehicle type chip and confirm the results update as expected with keyboard open."
+        ],
+        "priority": "high",
+        "testcase_id": "TC_0005",
+        "scenario": "Vehicle type section remains visible and accessible with virtual keyboard open",
+        "expected_result": "Vehicle type section remains visible and accessible with virtual keyboard open is completed successfully; validation evidence captured in step: Tap a vehicle type chip and confirm the results update as expected with keyboard open; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section is horizontally scrollable on overflow \u2014 positive",
+        "steps": [
+          "Open the platform URL and perform a category search with multiple vehicle types present.",
+          "Scroll to the vehicle type section below the city name.",
+          "Verify that if the number of vehicle types exceeds the viewport width, the section becomes horizontally scrollable.",
+          "Swipe horizontally to reveal additional vehicle type chips and confirm all are reachable.",
+          "Tap on the last visible vehicle type and verify the results update accordingly."
+        ],
+        "testcase_id": "TC_0006",
+        "scenario": "Vehicle type section is horizontally scrollable on overflow \u2014 positive",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section is horizontally scrollable on overflow \u2014 positive is completed successfully; validation evidence captured in step: Tap on the last visible vehicle type and verify the results update accordingly; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section displays correctly in slow network conditions (3G) \u2014 graceful degradation",
+        "steps": [
+          "Simulate a 3G network environment and open the platform URL.",
+          "Perform a category search to reach the B2B result page.",
+          "Verify the vehicle type section loads below the city name, even if images or secondary content load slowly.",
+          "Confirm that vehicle type chips remain interactive and responsive during slow network conditions.",
+          "Tap a vehicle type chip and ensure the results update, even if delayed, without UI breakage."
+        ],
+        "priority": "high",
+        "testcase_id": "TC_0007",
+        "scenario": "Vehicle type section displays correctly in slow network conditions (3G) \u2014 graceful degradation",
+        "expected_result": "Vehicle type section displays correctly in slow network conditions (3G) \u2014 graceful degradation is completed successfully; validation evidence captured in step: Tap a vehicle type chip and ensure the results update, even if delayed, without UI breakage; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section empty state \u2014 no vehicle types associated",
+        "steps": [
+          "Open the platform URL and perform a category search for which no vehicle types are configured.",
+          "Scroll to the section below the city name.",
+          "Verify the vehicle type section is either hidden or displays an appropriate empty state message.",
+          "Ensure there is no broken layout or placeholder artifacts in the absence of vehicle types."
+        ],
+        "priority": "Medium",
+        "testcase_id": "TC_0008",
+        "scenario": "Vehicle type section empty state \u2014 no vehicle types associated",
+        "expected_result": "Vehicle type section empty state \u2014 no vehicle types associated is completed successfully; validation evidence captured in step: Ensure there is no broken layout or placeholder artifacts in the absence of vehicle types; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section displays correctly with exactly one vehicle type \u2014 boundary case",
+        "steps": [
+          "Open the platform URL and perform a category search that returns exactly one vehicle type.",
+          "Scroll to the section below the city name.",
+          "Verify the vehicle type is displayed inline without scroll, list, or panel.",
+          "Tap the vehicle type chip and confirm the results update accordingly."
+        ],
+        "priority": "Medium",
+        "testcase_id": "TC_0009",
+        "scenario": "Vehicle type section displays correctly with exactly one vehicle type \u2014 boundary case",
+        "expected_result": "Vehicle type section displays correctly with exactly one vehicle type \u2014 boundary case is completed successfully; validation evidence captured in step: Tap the vehicle type chip and confirm the results update accordingly; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section UI reflows correctly after applying filters and sorting",
+        "steps": [
+          "Open the platform URL and perform a category search to reach the B2B result page.",
+          "Apply a filter and confirm the vehicle type section remains immediately below the city name.",
+          "Change the sorting order and verify the UI reflows without disturbing the position or rendering of the vehicle type section.",
+          "Tap a vehicle type chip and ensure the results and filter state are updated accordingly."
+        ],
+        "testcase_id": "TC_0010",
+        "scenario": "Vehicle type section UI reflows correctly after applying filters and sorting",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section UI reflows correctly after applying filters and sorting is completed successfully; validation evidence captured in step: Tap a vehicle type chip and ensure the results and filter state are updated accordingly; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section remains visible after infinite scroll loads more results",
+        "steps": [
+          "Open the platform URL and perform a category search that triggers infinite scroll on the B2B result page.",
+          "Scroll down to load additional results.",
+          "Scroll back up and verify the vehicle type section is still present below the city name and remains interactive.",
+          "Tap a vehicle type chip and confirm the results update as expected."
+        ],
+        "testcase_id": "TC_0011",
+        "scenario": "Vehicle type section remains visible after infinite scroll loads more results",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section remains visible after infinite scroll loads more results is completed successfully; validation evidence captured in step: Tap a vehicle type chip and confirm the results update as expected; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section persists and restores correctly after back navigation from details page",
+        "steps": [
+          "Open the platform URL and perform a category search to reach the B2B result page.",
+          "Tap a listing to open its details page.",
+          "Navigate back to the result page.",
+          "Verify the vehicle type section is still present below the city name and the scroll position is restored."
+        ],
+        "priority": "Medium",
+        "testcase_id": "TC_0012",
+        "scenario": "Vehicle type section persists and restores correctly after back navigation from details page",
+        "expected_result": "Vehicle type section persists and restores correctly after back navigation from details page is completed successfully; validation evidence captured in step: Verify the vehicle type section is still present below the city name and the scroll position is restored; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section renders correctly after manual city change \u2014 integration",
+        "steps": [
+          "Open the platform URL and perform a category search to reach the B2B result page.",
+          "Manually change the city using the city selector or input.",
+          "Verify that the vehicle type section updates to show vehicle types associated with the newly selected city.",
+          "Ensure the section appears immediately below the updated city name and is interactive."
+        ],
+        "priority": "Medium",
+        "testcase_id": "TC_0013",
+        "scenario": "Vehicle type section renders correctly after manual city change \u2014 integration",
+        "expected_result": "Vehicle type section renders correctly after manual city change \u2014 integration is completed successfully; validation evidence captured in step: Ensure the section appears immediately below the updated city name and is interactive; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section displays correctly with regional script content \u2014 @Lang Regional Script",
+        "steps": [
+          "Open the platform URL and perform a category search where vehicle types and city name are displayed in a regional language script.",
+          "Verify the vehicle type section below the city name renders all text in the regional script without encoding errors or garbled characters.",
+          "Check that all vehicle type chips are fully readable and selectable in the regional script.",
+          "Tap a vehicle type chip and confirm results update as expected with regional script maintained."
+        ],
+        "testcase_id": "TC_0014",
+        "scenario": "Vehicle type section displays correctly with regional script content \u2014 @Lang Regional Script",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section displays correctly with regional script content \u2014 @Lang Regional Script is completed successfully; validation evidence captured in step: Tap a vehicle type chip and confirm results update as expected with regional script maintained; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section displays correctly with bilingual content \u2014 @Lang Bilingual",
+        "steps": [
+          "Open the platform URL and perform a category search where vehicle types and city name are displayed in both English and a regional language.",
+          "Verify the vehicle type section below the city name renders both English and regional language text without overlap or truncation.",
+          "Ensure both language versions are readable and accessible in the vehicle type section.",
+          "Tap a vehicle type chip and confirm the results update accordingly."
+        ],
+        "testcase_id": "TC_0015",
+        "scenario": "Vehicle type section displays correctly with bilingual content \u2014 @Lang Bilingual",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section displays correctly with bilingual content \u2014 @Lang Bilingual is completed successfully; validation evidence captured in step: Tap a vehicle type chip and confirm the results update accordingly; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section handles mixed script content in vehicle types \u2014 @Lang Mixed Script",
+        "steps": [
+          "Open the platform URL and perform a category search where vehicle type names contain both English and regional script characters.",
+          "Verify the vehicle type section below the city name displays mixed script vehicle type names without display errors.",
+          "Check that mixed script chips are selectable and results update as expected."
+        ],
+        "testcase_id": "TC_0016",
+        "scenario": "Vehicle type section handles mixed script content in vehicle types \u2014 @Lang Mixed Script",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section handles mixed script content in vehicle types \u2014 @Lang Mixed Script is completed successfully; validation evidence captured in step: Check that mixed script chips are selectable and results update as expected; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section responds correctly to regional language input in search \u2014 @Lang Input Search",
+        "steps": [
+          "Open the platform URL and enter a category search query in a regional language script.",
+          "Verify that the B2B result page loads with the city name and vehicle type section rendered appropriately.",
+          "Check that the vehicle type section below the city name displays vehicle types relevant to the regional language search.",
+          "Tap a vehicle type chip and confirm the results update as expected."
+        ],
+        "testcase_id": "TC_0017",
+        "scenario": "Vehicle type section responds correctly to regional language input in search \u2014 @Lang Input Search",
+        "priority": "Medium",
+        "expected_result": "Vehicle type section responds correctly to regional language input in search \u2014 @Lang Input Search is completed successfully; validation evidence captured in step: Tap a vehicle type chip and confirm the results update as expected; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Vehicle type section does not render when vehicle type data is missing \u2014 negative",
+        "steps": [
+          "Open the platform URL and perform a category search where vehicle type data is not available for the results.",
+          "Scroll to the section below the city name.",
+          "Verify the vehicle type section is not rendered and no placeholder or broken UI is present."
+        ],
+        "priority": "high",
+        "testcase_id": "TC_0018",
+        "scenario": "Vehicle type section does not render when vehicle type data is missing \u2014 negative",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section does not render when vehicle type data is missing \u2014 negative; validation evidence captured in step: Verify the vehicle type section is not rendered and no placeholder or broken UI is present; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section is not interactive when disabled by business logic",
+        "steps": [
+          "Open the platform URL and perform a category search for a business category where vehicle type selection is disabled.",
+          "Scroll to the vehicle type section below the city name.",
+          "Verify the vehicle type chips are displayed but not tappable or selectable."
+        ],
+        "testcase_id": "TC_0019",
+        "scenario": "Vehicle type section is not interactive when disabled by business logic",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section is not interactive when disabled by business logic; validation evidence captured in step: Verify the vehicle type chips are displayed but not tappable or selectable; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section does not overlap or obscure other UI elements \u2014 negative",
+        "steps": [
+          "Open the platform URL and perform a category search on a compact phone with the maximum supported number of vehicle types.",
+          "Scroll to the vehicle type section below the city name.",
+          "Verify the section does not overlap, obscure, or push other UI elements out of view."
+        ],
+        "testcase_id": "TC_0020",
+        "scenario": "Vehicle type section does not overlap or obscure other UI elements \u2014 negative",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section does not overlap or obscure other UI elements \u2014 negative; validation evidence captured in step: Verify the section does not overlap, obscure, or push other UI elements out of view; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section does not cause horizontal scroll on any device size",
+        "steps": [
+          "Open the platform URL and perform a category search on compact phone, standard phone, and large phone.",
+          "For each device, verify the vehicle type section below the city name does not cause horizontal scroll in the viewport.",
+          "Attempt to scroll horizontally on the main page and confirm the viewport remains locked."
+        ],
+        "testcase_id": "TC_0021",
+        "scenario": "Vehicle type section does not cause horizontal scroll on any device size",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section does not cause horizontal scroll on any device size; validation evidence captured in step: Attempt to scroll horizontally on the main page and confirm the viewport remains locked; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section handles invalid or corrupted vehicle type data gracefully",
+        "steps": [
+          "Open the platform URL and perform a category search where vehicle type data is intentionally corrupted or contains invalid characters.",
+          "Scroll to the vehicle type section below the city name.",
+          "Verify the section either hides the invalid data or displays a fallback message, with no broken layout or encoding errors."
+        ],
+        "testcase_id": "TC_0022",
+        "scenario": "Vehicle type section handles invalid or corrupted vehicle type data gracefully",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section handles invalid or corrupted vehicle type data gracefully; validation evidence captured in step: Verify the section either hides the invalid data or displays a fallback message, with no broken layout or encoding errors; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section not visible when city name is missing due to data issue",
+        "steps": [
+          "Open the platform URL and perform a category search where the city name fails to load due to a backend data issue.",
+          "Scroll to the expected position for the vehicle type section.",
+          "Verify the vehicle type section does not appear in an ambiguous position or break the surrounding layout."
+        ],
+        "testcase_id": "TC_0023",
+        "scenario": "Vehicle type section not visible when city name is missing due to data issue",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section not visible when city name is missing due to data issue; validation evidence captured in step: Verify the vehicle type section does not appear in an ambiguous position or break the surrounding layout; no unintended data/state change occurs."
+      },
+      {
+        "title": "Vehicle type section does not render when network is offline \u2014 negative",
+        "steps": [
+          "Simulate offline mode on the device.",
+          "Open the platform URL and attempt a category search.",
+          "Verify the vehicle type section does not appear and an appropriate offline or error message is shown without broken UI."
+        ],
+        "testcase_id": "TC_0024",
+        "scenario": "Vehicle type section does not render when network is offline \u2014 negative",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Vehicle type section does not render when network is offline \u2014 negative; validation evidence captured in step: Verify the vehicle type section does not appear and an appropriate offline or error message is shown without broken UI; no unintended data/state change occurs."
+      }
+    ],
+    "fingerprints": [
+      "1557db4e5a92c03edbe36817b0ac32a230e07b4b89ae5d9158e9c38d7f65b03f",
+      "b576d4141d6acbfeb2b3c9c6d08957f40c5eb7df3e9da23f372c18b8819adbb5",
+      "ec94fd125bbe009181d31d4c72784ce996e3a1d00f07fa4f2d3730ca0fa497b8",
+      "265a95a35a58e482828c4a25921e735651f65876bf1e5051c6240739d457a866",
+      "952be8c6983f5656e8525512beafe6ba5177b4ef90c25519bc9c13b40738cbc1",
+      "45209be95a4e73e86ea10af832685cdd8bcd65963211c710e82acaca3c875db5",
+      "c29b43230b0eada5ea9ee7f3b83b8243329ccde01c25e7d16c6ec05f7ebb66b9",
+      "e8716314dea27ba2984ca295a3099c6c92dcf4b9742acf05550971436b255ef6",
+      "3adb3813625de6701ee49fe93dc9a82c5a2df28231e2b0f189d44f3342d3954b",
+      "a656d2ad0370edfa54958e13ab549b8504c6642636fbf75e2a4b9e2180ab2729",
+      "dc72c1876c33b67e23f795fef631241f27a03b0b8c51f3249721b8df92b3163b",
+      "1f5a3655f503cadc51f60fc2d5babd549ad03bdbdcdfe7aed977773d9dfcc665",
+      "4b56d3ba2af954e13fa181205bdb906777d28438d9caa0ddf31cb13230b02fbd",
+      "0435771b80ba6aeabc04be39ffdac2a81f09eb94d3771c667b3f9feaa5f6df7e",
+      "1c3cf1b97e58f86da0cd86167bdcb73392ae7f0272cdad2adc704a67342014bf",
+      "87d6e0299f8bae09f6811f7878bbd5c610dc16b3e011a7a20d004ddd95b9943e",
+      "1a41b21edd2a0ae75881dddd22a53cf2b4e5460d4116913ae47bd81601d8fb22",
+      "c644ae3b49aac9b8f62c298068d6ac00ebd60f42148e257a81b7bdc444d9ef2f",
+      "dcc993eb9fba3cc27feeec0529323cbe31998999a7c86a4488839e452d89cb54",
+      "d3b0bcecd965dddbd1481e6427c655669798d5d6dfd27cba6f212874f947b783",
+      "f81ee74405621274f5ec7fa6568fce196d2024e0f007b6a63c8a9f8301ada549",
+      "12810487ccda17a8a9f42a15d39127dad82c84bb9fbe80970d19b0fd7e7fb450",
+      "df7a0c50d4d44114dd9e6d9926fc9fb159b4ee86f4f160432b2864ee7abc97df",
+      "3ccb9cde79c19f50810a645c77b7119a836d16308b57ce75ff6506c10b51b33f"
+    ],
+    "stats": {
+      "total_cases": 24,
+      "positive_cases": 17,
+      "negative_cases": 7,
+      "high_priority": 4
+    },
+    "reinforcement": {
+      "avg_steps": 4.12,
+      "duplicate_ratio": 0.0,
+      "high_priority_ratio": 0.17,
+      "negative_ratio": 0.04,
+      "score": 0.5
+    }
+  },
+  "E2E flow for movie hotkey on homepage": {
+    "created_at": "2026-03-10T08:42:53.269452",
+    "last_updated": "2026-03-10T08:42:53.269598",
+    "scenarios": [
+      {
+        "title": "Movie hotkey tap navigates to movie vertical and displays listings \u2014 Chrome for Android",
+        "steps": [
+          "Open the platform URL on Chrome for Android and confirm the homepage loads with visible hotkeys.",
+          "Locate the movie hotkey among the visible hotkeys and verify it is clearly tappable.",
+          "Tap the movie hotkey and verify the platform navigates to the movie vertical listing page.",
+          "Confirm that movie listings appear with appropriate metadata (e.g., title, rating, genre) relevant to the movie vertical.",
+          "Tap on a movie listing and verify the details page loads with complete information.",
+          "Use the back navigation to return to the movie listing page and verify the previous scroll position and filters are preserved.",
+          "Switch to another vertical using its hotkey and verify the context switches cleanly without residual movie-specific filters."
+        ],
+        "testcase_id": "TC_0001",
+        "scenario": "Movie hotkey tap navigates to movie vertical and displays listings \u2014 Chrome for Android",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey tap navigates to movie vertical and displays listings \u2014 Chrome for Android is completed successfully; validation evidence captured in step: Switch to another vertical using its hotkey and verify the context switches cleanly without residual movie-specific filters; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey accessibility and tap response on compact phone",
+        "steps": [
+          "Open the platform URL on a compact phone and ensure the homepage displays all hotkeys without horizontal scroll.",
+          "Verify the movie hotkey is visually distinct and comfortably tappable without mis-taps.",
+          "Tap the movie hotkey and confirm immediate navigation to the movie vertical listing.",
+          "Check that all movie listings are accessible and no content is hidden or cut off due to screen size.",
+          "Open the virtual keyboard by focusing a search or filter input and verify the listing content scrolls above the keyboard.",
+          "Close the keyboard and ensure the movie listing content remains visible and intact."
+        ],
+        "testcase_id": "TC_0002",
+        "scenario": "Movie hotkey accessibility and tap response on compact phone",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey accessibility and tap response on compact phone is completed successfully; API returns expected status code with valid response contract; validation evidence captured in step: Close the keyboard and ensure the movie listing content remains visible and intact; data is retrievable in subsequent verification call."
+      },
+      {
+        "title": "Movie hotkey tap initiates correct vertical journey on Safari for iOS",
+        "steps": [
+          "Open the platform URL on Safari for iOS and verify the homepage loads with all hotkeys visible.",
+          "Identify the movie hotkey and confirm its label and icon are rendered without truncation or overlap.",
+          "Tap the movie hotkey and verify the movie vertical listing page loads with relevant movie results.",
+          "Scroll through the movie listings and ensure smooth scrolling with no layout breakage.",
+          "Tap a movie to open its details page and verify all expected details (title, cast, synopsis) are present.",
+          "Use browser back to return to the listing and confirm the state is preserved."
+        ],
+        "testcase_id": "TC_0003",
+        "scenario": "Movie hotkey tap initiates correct vertical journey on Safari for iOS",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey tap initiates correct vertical journey on Safari for iOS is completed successfully; validation evidence captured in step: Use browser back to return to the listing and confirm the state is preserved; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey interaction and vertical navigation consistency across hotkeys",
+        "steps": [
+          "Open the platform URL and ensure the homepage shows multiple hotkeys including the movie hotkey.",
+          "Tap the movie hotkey and verify navigation to the movie vertical listing page.",
+          "Return to the homepage and tap another vertical's hotkey (e.g., restaurants) to confirm correct navigation to that vertical.",
+          "Switch back to the movie hotkey and ensure the movie vertical listing is displayed again.",
+          "Verify that switching between hotkeys does not retain filters or results from previous verticals."
+        ],
+        "testcase_id": "TC_0004",
+        "scenario": "Movie hotkey interaction and vertical navigation consistency across hotkeys",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey interaction and vertical navigation consistency across hotkeys is completed successfully; validation evidence captured in step: Verify that switching between hotkeys does not retain filters or results from previous verticals; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey tap gesture and long-press gesture validation",
+        "steps": [
+          "Open the platform URL and find the movie hotkey on the homepage.",
+          "Tap the movie hotkey and confirm navigation to the movie vertical listing page.",
+          "Return to the homepage and perform a long-press gesture on the movie hotkey.",
+          "Verify that long-press does not trigger any unintended action or context menu; only tap should initiate navigation.",
+          "Tap the movie hotkey again to ensure tap behaviour remains unaffected."
+        ],
+        "testcase_id": "TC_0005",
+        "scenario": "Movie hotkey tap gesture and long-press gesture validation",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey tap gesture and long-press gesture validation is completed successfully; validation evidence captured in step: Tap the movie hotkey again to ensure tap behaviour remains unaffected; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey visual rendering and accessibility on large phone using Samsung Internet",
+        "steps": [
+          "Open the platform URL on Samsung Internet browser on a large phone.",
+          "Check that the movie hotkey is present, visually distinct, and does not overlap or wrap with other elements.",
+          "Tap the movie hotkey and verify the movie vertical listing page loads without horizontal scroll.",
+          "Scroll through listings and ensure all content is visible and accessible.",
+          "Open the virtual keyboard in a filter or search field and confirm no content is hidden behind the keyboard."
+        ],
+        "testcase_id": "TC_0006",
+        "scenario": "Movie hotkey visual rendering and accessibility on large phone using Samsung Internet",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey visual rendering and accessibility on large phone using Samsung Internet is completed successfully; validation evidence captured in step: Open the virtual keyboard in a filter or search field and confirm no content is hidden behind the keyboard; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey swipe gesture does not interfere with tap navigation",
+        "steps": [
+          "Open the platform URL and identify the movie hotkey.",
+          "Perform a horizontal swipe gesture across the hotkey row and verify hotkeys scroll if needed but do not trigger navigation.",
+          "Tap the movie hotkey after swiping and confirm navigation to the movie vertical listing page.",
+          "Repeat the swipe gesture on the listing page and ensure no accidental navigation or refresh occurs."
+        ],
+        "testcase_id": "TC_0007",
+        "scenario": "Movie hotkey swipe gesture does not interfere with tap navigation",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey swipe gesture does not interfere with tap navigation is completed successfully; validation evidence captured in step: Repeat the swipe gesture on the listing page and ensure no accidental navigation or refresh occurs; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey tap behaviour under slow 3G network conditions",
+        "steps": [
+          "Simulate a slow 3G network and open the platform URL.",
+          "Ensure the homepage loads and the movie hotkey is visible, even if delayed.",
+          "Tap the movie hotkey and verify the movie vertical listing page loads gracefully, showing loading indicators if necessary.",
+          "Once loaded, check that all movie listings appear and are interactable.",
+          "Attempt to open a movie details page and confirm it loads, even with network latency."
+        ],
+        "testcase_id": "TC_0008",
+        "scenario": "Movie hotkey tap behaviour under slow 3G network conditions",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey tap behaviour under slow 3G network conditions is completed successfully; validation evidence captured in step: Attempt to open a movie details page and confirm it loads, even with network latency; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey tap preserves context when returning from details page",
+        "steps": [
+          "Open the platform URL and tap the movie hotkey to navigate to the movie vertical listing.",
+          "Scroll down through the listings and tap a movie to open its details page.",
+          "Use the back navigation to return to the movie listings.",
+          "Verify that the scroll position and any applied filters are preserved after returning."
+        ],
+        "testcase_id": "TC_0009",
+        "scenario": "Movie hotkey tap preserves context when returning from details page",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey tap preserves context when returning from details page is completed successfully; validation evidence captured in step: Verify that the scroll position and any applied filters are preserved after returning; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey visible and functional only on homepage",
+        "steps": [
+          "Open the platform URL and verify the movie hotkey is visible and tappable on the homepage.",
+          "Navigate to a different section (e.g., another vertical or details page) and confirm the movie hotkey is no longer visible or accessible.",
+          "Return to the homepage and verify the movie hotkey reappears and is functional."
+        ],
+        "testcase_id": "TC_0010",
+        "scenario": "Movie hotkey visible and functional only on homepage",
+        "priority": "Medium",
+        "expected_result": "Movie hotkey visible and functional only on homepage is completed successfully; validation evidence captured in step: Return to the homepage and verify the movie hotkey reappears and is functional; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Regional Script: Movie hotkey and vertical journey in Hindi script",
+        "steps": [
+          "Open the platform URL with the homepage displayed in Hindi script.",
+          "Verify the movie hotkey label and icon are rendered in Hindi without garbling or encoding issues.",
+          "Tap the movie hotkey and confirm navigation to the movie vertical listing page with all content in Hindi.",
+          "Open a movie details page and verify all details (title, description) appear in Hindi script."
+        ],
+        "testcase_id": "TC_0011",
+        "scenario": "@Lang Regional Script: Movie hotkey and vertical journey in Hindi script",
+        "priority": "Medium",
+        "expected_result": "@Lang Regional Script: Movie hotkey and vertical journey in Hindi script is completed successfully; validation evidence captured in step: Open a movie details page and verify all details (title, description) appear in Hindi script; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Bilingual: Movie hotkey and listings with mixed English and regional language",
+        "steps": [
+          "Open the platform URL with homepage content in both English and a regional language.",
+          "Verify the movie hotkey displays both English and regional language labels without overlap or truncation.",
+          "Tap the movie hotkey and confirm the movie listing page shows bilingual content for each listing.",
+          "Open a movie details page and verify all information is displayed in both languages without layout issues."
+        ],
+        "testcase_id": "TC_0012",
+        "scenario": "@Lang Bilingual: Movie hotkey and listings with mixed English and regional language",
+        "priority": "Medium",
+        "expected_result": "@Lang Bilingual: Movie hotkey and listings with mixed English and regional language is completed successfully; validation evidence captured in step: Open a movie details page and verify all information is displayed in both languages without layout issues; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Mixed Script: Movie hotkey and vertical listing with mixed script metadata",
+        "steps": [
+          "Open the platform URL where the homepage and movie hotkey use mixed script (English and regional) in the same label.",
+          "Verify the mixed script label is rendered correctly on the movie hotkey.",
+          "Tap the movie hotkey and confirm the movie listing page displays mixed script metadata (e.g., title in English, genre in regional script).",
+          "Open a movie details page and ensure all mixed script text is displayed without encoding errors."
+        ],
+        "testcase_id": "TC_0013",
+        "scenario": "@Lang Mixed Script: Movie hotkey and vertical listing with mixed script metadata",
+        "priority": "Medium",
+        "expected_result": "@Lang Mixed Script: Movie hotkey and vertical listing with mixed script metadata is completed successfully; validation evidence captured in step: Open a movie details page and ensure all mixed script text is displayed without encoding errors; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "@Lang Input Search: Movie search using regional language input",
+        "steps": [
+          "Open the platform URL and tap the movie hotkey to access the movie vertical listing.",
+          "Focus the search input field and use the virtual keyboard to enter a movie name in a regional language script.",
+          "Verify autosuggest and search results correctly reflect the regional language input.",
+          "Tap a search result and confirm the movie details page loads with content relevant to the search query."
+        ],
+        "testcase_id": "TC_0014",
+        "scenario": "@Lang Input Search: Movie search using regional language input",
+        "priority": "Medium",
+        "expected_result": "@Lang Input Search: Movie search using regional language input is completed successfully; validation evidence captured in step: Tap a search result and confirm the movie details page loads with content relevant to the search query; success state is visible to user and data remains consistent after refresh."
+      },
+      {
+        "title": "Movie hotkey absent on homepage \u2014 critical failure",
+        "steps": [
+          "Open the platform URL and load the homepage.",
+          "Verify that the movie hotkey is present among the visible hotkeys.",
+          "If the movie hotkey is missing, confirm that the movie vertical cannot be accessed from the homepage.",
+          "Attempt to access the movie vertical by other means and confirm navigation is not possible."
+        ],
+        "testcase_id": "TC_0015",
+        "scenario": "Movie hotkey absent on homepage \u2014 critical failure",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie hotkey absent on homepage \u2014 critical failure; validation evidence captured in step: Attempt to access the movie vertical by other means and confirm navigation is not possible; no unintended data/state change occurs."
+      },
+      {
+        "title": "Movie hotkey incorrectly triggers another vertical",
+        "steps": [
+          "Open the platform URL and locate the movie hotkey on the homepage.",
+          "Tap the movie hotkey and verify that it navigates to the movie vertical listing page.",
+          "If the platform navigates to a different vertical (e.g., flights or restaurants), flag the incorrect mapping."
+        ],
+        "testcase_id": "TC_0016",
+        "scenario": "Movie hotkey incorrectly triggers another vertical",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie hotkey incorrectly triggers another vertical; validation evidence captured in step: Tap the movie hotkey and verify that it navigates to the movie vertical listing page; no unintended data/state change occurs."
+      },
+      {
+        "title": "Movie hotkey visible outside homepage \u2014 access restriction",
+        "steps": [
+          "Open the platform URL and navigate to a non-homepage section (e.g., details page or other vertical).",
+          "Verify that the movie hotkey is not present or accessible outside the homepage.",
+          "If the movie hotkey is visible and functional outside the homepage, confirm that tapping it does not trigger navigation or causes an error."
+        ],
+        "testcase_id": "TC_0017",
+        "scenario": "Movie hotkey visible outside homepage \u2014 access restriction",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie hotkey visible outside homepage \u2014 access restriction; validation evidence captured in step: If the movie hotkey is visible and functional outside the homepage, confirm that tapping it does not trigger navigation or causes an error; no unintended data/state change occurs."
+      },
+      {
+        "title": "Movie hotkey tap produces no navigation or broken state",
+        "steps": [
+          "Open the platform URL and locate the movie hotkey.",
+          "Tap the movie hotkey and verify expected navigation to the movie vertical.",
+          "If tapping the hotkey results in no action, a blank page, or an error message, log the failure."
+        ],
+        "testcase_id": "TC_0018",
+        "scenario": "Movie hotkey tap produces no navigation or broken state",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie hotkey tap produces no navigation or broken state; validation evidence captured in step: Tap the movie hotkey and verify expected navigation to the movie vertical; no unintended data/state change occurs."
+      },
+      {
+        "title": "Movie vertical listings fail to load after hotkey tap",
+        "steps": [
+          "Open the platform URL and tap the movie hotkey.",
+          "Confirm navigation to the movie vertical listing page.",
+          "If movie listings do not load, display an error message, or show an empty state without valid messaging, flag the error."
+        ],
+        "testcase_id": "TC_0019",
+        "scenario": "Movie vertical listings fail to load after hotkey tap",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie vertical listings fail to load after hotkey tap; validation evidence captured in step: Confirm navigation to the movie vertical listing page; no unintended data/state change occurs."
+      },
+      {
+        "title": "Movie hotkey tap under offline network condition",
+        "steps": [
+          "Disable network connectivity and open the platform URL.",
+          "If the homepage loads from cache, locate the movie hotkey and tap it.",
+          "Verify that an appropriate offline or error message is displayed and the platform does not attempt to load the movie vertical."
+        ],
+        "testcase_id": "TC_0020",
+        "scenario": "Movie hotkey tap under offline network condition",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie hotkey tap under offline network condition; validation evidence captured in step: Verify that an appropriate offline or error message is displayed and the platform does not attempt to load the movie vertical; no unintended data/state change occurs."
+      },
+      {
+        "title": "Movie hotkey tap triggers navigation to a broken or 404 page",
+        "steps": [
+          "Open the platform URL and locate the movie hotkey.",
+          "Tap the movie hotkey and observe if the platform navigates to a 404 or broken page.",
+          "If a broken page is encountered, confirm that a user-friendly error message is shown."
+        ],
+        "testcase_id": "TC_0021",
+        "scenario": "Movie hotkey tap triggers navigation to a broken or 404 page",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie hotkey tap triggers navigation to a broken or 404 page; validation evidence captured in step: If a broken page is encountered, confirm that a user-friendly error message is shown; no unintended data/state change occurs."
+      },
+      {
+        "title": "Movie hotkey tap gesture misinterpreted as swipe \u2014 navigation not triggered",
+        "steps": [
+          "Open the platform URL and locate the movie hotkey.",
+          "Perform a quick tap and slight swipe gesture on the movie hotkey.",
+          "Verify that the tap is not misinterpreted as a swipe and navigation to the movie vertical occurs.",
+          "If navigation does not occur, log the gesture handling issue."
+        ],
+        "testcase_id": "TC_0022",
+        "scenario": "Movie hotkey tap gesture misinterpreted as swipe \u2014 navigation not triggered",
+        "priority": "Medium",
+        "expected_result": "System blocks invalid/unauthorized action for Movie hotkey tap gesture misinterpreted as swipe \u2014 navigation not triggered; validation evidence captured in step: Verify that the tap is not misinterpreted as a swipe and navigation to the movie vertical occurs; no unintended data/state change occurs."
+      }
+    ],
+    "fingerprints": [
+      "a84d20bbfcd7f0ece7aaaeca76a3b4e5fceab56c772c24cab681071909cb51e6",
+      "70fc37b496695203f32e31677621231384b1b7384ab72bc25ff3ada431ec1831",
+      "f4e01afa17df9437d42248622a24d86199bff01cc7c675d24678505642251ca5",
+      "c5f664b4c1c22c39a49423e9348a80195997e59c3e4a610f599a622b19f2dfaa",
+      "61f25153b98ca388e81dc11331e596da2c76c80c9ba2d26c2816c4c8052aab21",
+      "501b9784d79d69f2e70f38b08c9a7722fa9915d80575062936cc3303c8d8fb38",
+      "57cbfd9542cb5322686c11beaed19276ac5bcc4870c1354fe60d04858b79f88b",
+      "59d1eeb73c334099366b9efbcb31f43f609bafa7511f1a3aa522d37002c493f7",
+      "0165a68709881052fab7d4026868c17bd5b618e041bd16aed082d56236e99a57",
+      "9c511911be1b5fcce95c8b8f5bb33d1779b3271412a25044c98309333d1eb945",
+      "06ae7a966fccef56d3827af0d97ed9b92ab8ac43f3f8903bd4ba21b193047e0f",
+      "7b86ff9af1b3eb186bbb37493b847da6a06ec330f77e90cbccf0dd6b5238dbd2",
+      "dc0cca7719869041d40a7898cfc27751e9f8117840b1d0a4e9e6608ac882ef85",
+      "46103452d3909542084903514bb22835399daaf42c70d77da434ff25e0d31217",
+      "cc73e5f857098e415821cb954e16fbd443efbf7e6b4b6c81f090eedcdf317006",
+      "2a08cd76416ce9eaba40133dd6ca253528c88f66ea5cb7cb8be6724ea9a3f576",
+      "d036eae431e3a34165f2157b1636efa992237a60b2c78993be6e46b611a06a19",
+      "8ae7188b4f53343add3948b8253db085977c01037b5a2dc0ebe7819db4440101",
+      "185180dabdf54d39a4cfc4267f6af5cb939edfbfe523d5c331644d10a61866c7",
+      "2c513b64287d0b4248578e99824daf4e3e8c3e42769190d2bbc54edd7725bec1",
+      "ce42ab49918ba2894cc16faa6ce4fbdeb4dde229280d0519a533f5f4e495378f",
+      "b6ba3468778f5dad10f9a00f9695a88a0cb93587b564834bb9fe09815f63f488"
+    ],
+    "stats": {
+      "total_cases": 22,
+      "positive_cases": 14,
+      "negative_cases": 8,
+      "high_priority": 0
+    },
+    "reinforcement": {
+      "avg_steps": 4.18,
+      "duplicate_ratio": 0.0,
+      "high_priority_ratio": 0.0,
+      "negative_ratio": 0.0,
+      "score": 0.46
+    }
   }
 }
