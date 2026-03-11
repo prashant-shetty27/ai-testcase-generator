@@ -427,23 +427,36 @@ PASS 2 — FILL COVERAGE GAPS
 
   Only after BOTH passes are complete, return the JSON.
 
-EXAMPLE DATA FIELD — each test case must include an "examples" field:
-  - Generate 3–5 realistic, contextually relevant data combinations a tester would actually use.
-  - Cover multiple dimensions that apply to the feature: city, category, brand, type, range, language, etc.
-  - Format as short label: value pairs on separate lines.
-  - Use real Indian cities, real brand/category names relevant to the vertical, realistic price/count ranges.
-  - Vary the combinations — don't repeat the same city or brand across all examples.
-  - e.g. for a vehicle search feature:
+EXAMPLE DATA FIELD — each test case must include an "examples" field.
+  First, identify which type of feature this test case belongs to:
+
+  TYPE A — Data-driven features (search, filter, browse, booking, listing):
+    Generate 3–5 input combinations with real Indian cities, real brand/category/type names, and realistic ranges.
+    Vary city and key dimensions across rows — do not repeat the same city or value.
+    e.g. vehicle search:
       City: Mumbai | Category: SUV | Brand: Maruti Suzuki | Budget: ₹8L–₹15L
       City: Pune | Category: Sedan | Brand: Hyundai | Budget: ₹6L–₹10L
       City: Bengaluru | Category: Hatchback | Brand: Tata | Budget: ₹4L–₹7L
-  - e.g. for a movie hotkey feature:
+    e.g. movie search:
       City: Delhi | Genre: Action | Language: Hindi | Show: Evening
       City: Mumbai | Genre: Comedy | Language: English | Show: Morning
-      City: Chennai | Genre: Drama | Language: Tamil | Show: Matinee
-  - e.g. for a job listing feature:
-      City: Hyderabad | Role: Software Engineer | Experience: 2–5 yrs | Salary: ₹8L–₹15L
-      City: Bengaluru | Role: Product Manager | Experience: 5–8 yrs | Salary: ₹20L–₹35L
+
+  TYPE B — Flow/workflow features (sync, auth, onboarding, permissions, settings, campaign-gated flows):
+    Do NOT invent city/brand combinations — they are irrelevant.
+    Instead, describe the key scenario conditions that make this test case distinct.
+    Format as short condition labels on separate lines.
+    e.g. Instagram sync flow:
+      Account: Professional | FB Page: Linked | Admin: Yes | Campaign 129: Active
+      Account: Personal (not professional) | Campaign 129: Active
+      Account: Professional | FB Page: Not linked | Campaign 129: Active
+    e.g. campaign gating:
+      Campaign: 120 Inactive → redirects to self-signup
+      Campaign: 120 Active → proceeds to Select Business page
+
+  TYPE C — Pure UI / rendering / language tests:
+    Leave "examples" as an empty string "".
+
+  DECISION RULE: If the test case involves user-entered search/filter data → TYPE A. If it involves a multi-step flow, permission check, account state, or campaign condition → TYPE B. If it is a @Lang or pure visual test → TYPE C.
 
 Return STRICT JSON only:
 
