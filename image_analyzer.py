@@ -71,8 +71,7 @@ PAGE_ALIAS_MAP = {
 }
 
 KNOWN_PLATFORMS = {
-    "web", "touch", "mobile web", "android app", "ios app",
-    "hybrid app", "api",
+    "web", "touch", "api", "android_app", "ios_app", "hybrid_app", "backend", "internal",
 }
 
 
@@ -162,7 +161,7 @@ Return STRICT JSON only:
   "constraints": ["<constraint1>"]
 }}
 
-Platform values must be from: web, touch, android app, ios app, hybrid app, api.
+Platform values must be from: web, touch, android_app, ios_app, hybrid_app, api, backend, internal.
 Module values must be from: login, search, catalogue, verticals, profile, payment gateway, reviews ratings, chatbot, kyc, contract, movies, restaurants, real estate, healthcare, home services, beauty, education, hotels, jobs, finance, legal, matrimony, pets, events.
 Page values must be from (use exact underscore format): result_page, details_page, home_page, login_page, search_page, user_profile_page, catalogue_page, edit_listings_page, payment_gateway_page, reviews_ratings, kyc, others.
 If unsure about module/page, omit them — do NOT invent values.
@@ -199,10 +198,12 @@ If unsure about module/page, omit them — do NOT invent values.
             normalised.append(pl)
         elif "mobile" in pl or "touch" in pl:
             normalised.append("touch")
-        elif "android" in pl and "app" in pl:
-            normalised.append("android app")
-        elif "ios" in pl and "app" in pl:
-            normalised.append("ios app")
+        elif "android" in pl:
+            normalised.append("android_app")
+        elif "ios" in pl:
+            normalised.append("ios_app")
+        elif "hybrid" in pl:
+            normalised.append("hybrid_app")
         elif "web" in pl:
             normalised.append("web")
     parsed["platforms"] = normalised if normalised else (platforms_hint or ["touch"])
