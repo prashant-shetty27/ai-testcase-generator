@@ -27,6 +27,7 @@ KNOWN_MODULES = {
     "restaurants", "real estate", "healthcare", "home services",
     "beauty", "education", "hotels", "jobs", "finance",
     "legal", "matrimony", "pets", "events",
+    "leads", "notifications", "sync", "integrations",
 }
 
 # Full set of valid page enum values accepted by TestGenerationRequest
@@ -162,7 +163,7 @@ Return STRICT JSON only:
 }}
 
 Platform values must be from: web, touch, android_app, ios_app, hybrid_app, api, backend, internal.
-Module values must be from: login, search, catalogue, verticals, profile, payment gateway, reviews ratings, chatbot, kyc, contract, movies, restaurants, real estate, healthcare, home services, beauty, education, hotels, jobs, finance, legal, matrimony, pets, events.
+Module values must be from: login, search, catalogue, verticals, profile, payment gateway, reviews ratings, chatbot, kyc, contract, movies, restaurants, real estate, healthcare, home services, beauty, education, hotels, jobs, finance, legal, matrimony, pets, events, leads, notifications, sync, integrations.
 Page values must be from (use exact underscore format): result_page, details_page, home_page, login_page, search_page, user_profile_page, catalogue_page, edit_listings_page, payment_gateway_page, reviews_ratings, kyc, others.
 If unsure about module/page, omit them — do NOT invent values.
 """

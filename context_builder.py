@@ -435,6 +435,58 @@ def get_module_context(modules: list[str]) -> str:
             "Provider detail page: services offered, timings, contact, supported pet types — all must be accurate"
         ],
 
+        "leads": [
+            "Lead creation: every qualifying user action (call click, form submit, chat initiation, direction request, share) must create a lead entry with correct source tag",
+            "Lead deduplication: same user repeating the same action within the dedup window must NOT create a duplicate lead — verify the window boundary (N-1, N, N+1)",
+            "Lead data accuracy: lead record must capture correct business ID, user identifier, action type, timestamp, platform, and city — any missing field is a defect",
+            "Lead source attribution: leads from different entry points (result page, PDP, PRP, direct search, campaign link) must each carry the correct source tag — no misattribution",
+            "Lead status transitions: New → Contacted → Qualified → Converted / Lost — each transition must be valid; invalid transitions must be blocked",
+            "Lead notification: assigned agent or business must receive notification within the SLA window after lead is created",
+            "Lead visibility: lead must appear in the correct dashboard/panel immediately after creation — no delay or stale state",
+            "Lead update: editing a lead (notes, status, callback time) must save correctly and reflect immediately without page reload",
+            "Lead delete / archive: must remove from active list and not reappear on refresh",
+            "Bulk lead actions: bulk status update or bulk assign must apply to all selected leads and not affect unselected ones",
+            "Lead pagination and filtering: filter by status, source, date range, platform must narrow results correctly; pagination must not lose filter state",
+            "Offline / network failure: lead created during poor connectivity must be queued and submitted once connection restores — not silently dropped",
+            "Lead count accuracy: count displayed on dashboard must match the actual number of records in the filtered view",
+        ],
+
+        "notifications": [
+            "Notification trigger: notification must fire for every qualifying event defined in the requirement — missing trigger is a defect",
+            "Notification content: title, body, and deep-link URL must be accurate and match the triggering event context",
+            "Notification delivery: must reach the correct user/device within the defined SLA — late or missing delivery is a defect",
+            "Notification deduplication: same event must not send duplicate notifications to the same user within the dedup window",
+            "Notification deep link: tapping the notification must open the correct screen with the correct context pre-loaded",
+            "Notification permission denied: app must gracefully degrade — no crash, no blank screen; in-app fallback must be shown",
+            "Notification badge count: must increment on receive and clear on open — badge must not persist after all notifications are read",
+            "Notification centre / inbox: all notifications must be listed in chronological order; read/unread state must be accurate",
+            "Push vs in-app: if both channels defined, both must fire independently — one failing must not suppress the other",
+        ],
+
+        "sync": [
+            "Prerequisite check: system must validate all pre-conditions before initiating sync — if any prerequisite fails, show a clear actionable error, do not proceed",
+            "Campaign / feature flag gating: sync must only be available when the relevant campaign or flag is active — inactive flag must redirect or block with correct message",
+            "Auth / permission flow: OAuth or permission grant must complete fully before sync starts — partial auth must be handled gracefully",
+            "Sync initiation: on successful auth, sync must start and show a progress or confirmation state",
+            "Sync success: post-sync, the connected state must be reflected immediately in the UI — stale 'not connected' state is a defect",
+            "Sync failure / partial failure: clear error message must be shown; user must be able to retry without re-entering credentials",
+            "Sync disconnect: disconnect action must revoke access, clear connected state in UI, and not affect other connected services",
+            "Sync data propagation: content published after sync (updates, deals, events, posts) must appear on the connected platform within the defined SLA",
+            "Sync conflict: if data exists on both sides with different values, the defined priority rule (JD takes priority / platform takes priority) must be enforced",
+            "Re-initiation: after disconnect or failure, user must be able to restart the sync flow from the correct entry point without errors",
+        ],
+
+        "integrations": [
+            "Integration activation: enabling an integration must persist the connected state across sessions and page reloads",
+            "Integration data flow: data pushed from the integration source must appear correctly in the destination system within the defined SLA",
+            "Integration token expiry: when the third-party token expires, system must prompt re-authentication — not silently fail or show stale data",
+            "Integration error handling: if the third-party API returns an error, a clear user-facing message must be shown with a retry option",
+            "Integration disable / revoke: disabling must stop all data flow immediately and reflect disconnected state in the UI",
+            "Webhook / callback: inbound events from the third party must trigger the correct internal action — missed or duplicate webhooks must be handled",
+            "Data mapping accuracy: fields mapped between systems must carry the correct values — no truncation, encoding issues, or field swaps",
+            "Rate limiting: if the third-party API rate-limits requests, system must queue and retry gracefully — not drop data or crash",
+        ],
+
         "events": [
             "Event type filter: each event category must return only relevant vendors — no cross-type bleed; use event types stated in the requirement",
             "Service category filter: each vendor type (planner, caterer, photographer, venue, etc.) must be independently searchable and return the correct listing set",
@@ -458,6 +510,24 @@ def get_module_context(modules: list[str]) -> str:
 
         if normalized in module_map:
             pointers.update(module_map[normalized])
+
+    # Fallback: when no module is recognised, inject universal flow-testing principles
+    # so the AI has structural guidance even for cross-cutting or custom features
+    if not pointers:
+        pointers.update([
+            "Entry points: test every documented way a user can reach this feature — direct URL, navigation, deep link, notification tap, redirect",
+            "Happy path: verify the complete flow end-to-end with all valid inputs produces the correct outcome",
+            "Error states: test each error condition defined in the requirement — wrong input, missing prerequisite, permission denied, network failure",
+            "State transitions: verify each defined state change (e.g. pending → active → completed) is reachable and irreversible where required",
+            "Data persistence: data saved or submitted must persist correctly across page reload, session restart, and app relaunch",
+            "Concurrent action: if two users or sessions act on the same resource simultaneously, the system must not produce corrupt or duplicate state",
+            "Boundary conditions: test at exact minimum, maximum, and just-outside-range values for any numeric or time-based rule",
+            "Notification / confirmation: any action that triggers a notification, email, or in-app confirmation must be verified for content accuracy and delivery",
+            "Permission / role gating: actions restricted to certain roles or account types must be blocked for unauthorised users with a clear message",
+            "Empty / zero state: when there is no data to display, show a correct empty state — no blank screen, no 500 error",
+            "Back navigation and deep link: navigating back or arriving via deep link must restore correct context — no broken state",
+            "No module selected — AI must derive test dimensions entirely from the requirement text. Cover all actors, entry points, conditions, and business rules stated in the requirement.",
+        ])
 
     return "\n".join(f"- {item}" for item in sorted(pointers))
 

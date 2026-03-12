@@ -75,6 +75,10 @@ class ModuleEnum(str, Enum):
     matrimony = "matrimony"
     pets = "pets"
     events = "events"
+    leads = "leads"
+    notifications = "notifications"
+    sync = "sync"
+    integrations = "integrations"
     others = "others"
 
 
