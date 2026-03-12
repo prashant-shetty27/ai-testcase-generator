@@ -520,7 +520,7 @@
 
 <main class="container">
     <div style="margin-bottom: 14px; padding: 10px 14px; background: #edf5ff; border-radius: 10px; border: 1.5px solid #b8d4f0; text-align: center; font-size: 13px; font-weight: 600; color: #145da0;">
-        Dear {{ requester_name or user.name or 'User' }},&nbsp;
+        Dear <span id="dearName">{{ requester_name or user.name or 'User' }}</span>,&nbsp;
         <span id="motivational-quote" style="font-weight:400;">{{ motivational_quote }}</span>
     </div>
     <h1 class="title">AI Testcase Generator</h1>
@@ -806,7 +806,10 @@
         setNameError(false);
         requesterNameField.value = name;
         nameGate.style.display = "none";
-        // Background server save for logging
+        // Update Dear box immediately without waiting for page reload
+        const dearName = document.getElementById("dearName");
+        if (dearName) dearName.textContent = name;
+        // Background server save
         const fd = new FormData();
         fd.append("requester_name", name);
         fetch("/set-requester-name", { method: "POST", headers: { "Accept": "application/json" }, body: fd }).catch(() => {});
