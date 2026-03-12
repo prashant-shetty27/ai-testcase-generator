@@ -229,22 +229,31 @@ Apply ONLY when the requirement explicitly mentions call numbers, phone display,
     - Paid Expired contract → VN must deactivate (number no longer shown inline or via button).
     - Non-paid → paid upgrade → DVN must be replaced by VN (verify old DVN is removed).
 
-RULE J — Multilingual / Regional Language cases (India context — MANDATORY for all frontend requirements):
-  ORDERING: @Lang cases are ALWAYS generated LAST — after all primary positive, boundary, and negative cases. @Lang must NEVER be test case #1, #2, or #3. They are supplementary coverage appended at the end.
-  @Lang cases are ALWAYS required for any requirement that involves a frontend/UI component — no exceptions except the two skip conditions below.
-  India operates in 22+ official languages across multiple scripts (Devanagari, Tamil, Telugu, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Odia, and more). Every frontend feature a user sees or interacts with must be tested for language handling because:
-  - Any label, name, category, listing, button text, error message, count, price, date, or placeholder can appear in a regional language.
-  - Prices are NOT purely numeric — they carry ₹ symbols and labels (e.g., ₹५०० per unit).
-  - Counts are NOT purely numeric — they carry unit labels (e.g., १०० परिणाम / 100 results).
-  - Dates carry month names and day labels that appear in regional scripts.
-  Generate ALL of the following `@Lang` labelled test cases for every frontend requirement:
-  - `@Lang Regional Script`: content (labels, names, listings, error messages) displayed in a regional language script — verify no garbling, symbol substitution, or encoding error.
-  - `@Lang Bilingual`: English and regional language content appear on the same screen simultaneously — verify both render correctly without overlap, truncation, or layout break.
-  - `@Lang Mixed Script`: some words in English, some in regional script in the same field or section — verify the system accepts and displays correctly without forcing a single script.
-  - `@Lang Input Search`: user types input (search query, form field, chatbot message) in a regional language — verify the system responds correctly to regional language input without errors or ignored characters.
-  Skip `@Lang` cases ONLY when:
-  - The requirement is strictly about a backend API, database operation, or system config with zero user-facing rendering.
-  - The requirement explicitly states it is English-only scope.
+RULE J — Multilingual / Regional Language cases (India context):
+  ORDERING: @Lang cases are ALWAYS generated LAST — after all primary positive, boundary, and negative cases. Never test case #1, #2, or #3.
+
+  @Lang is MANDATORY only for consumer-facing UI features where content rendering is the primary concern:
+    ✓ Search results pages, listing pages (PRP/PDP/catalogue), movie listings, product/category browsing
+    ✓ Any feature where listings, names, prices, counts, dates, or error messages are displayed to a consumer user
+    ✓ Features that explicitly involve language selection, regional script display, or multilingual content
+
+  @Lang is OPTIONAL (generate only if directly relevant) for:
+    - Admin dashboards, leads sections, CRM tools, ops/internal panels — these are operator-facing, not consumer-facing; language rendering is rarely the concern
+    - Sync flows, permission flows, campaign flows, settings — generate @Lang only if the requirement explicitly mentions language or regional script support
+    - Forms and data entry screens — generate @Lang Input Search only if the form accepts user-typed search or regional input
+
+  @Lang is SKIPPED entirely when:
+    - The requirement is strictly backend / API / database with zero user-facing rendering
+    - The requirement explicitly states English-only scope
+    - The feature is a backend admin action (approve, reject, delete, update status) with no content display
+
+  When @Lang IS generated, each case must test a DISTINCTLY DIFFERENT scenario — no near-duplicates:
+  - `@Lang Regional Script`: verify content (listings, labels, error messages) renders correctly in regional script — no garbling or encoding errors. USE ONLY when the feature displays content to users.
+  - `@Lang Bilingual`: verify English + regional text coexist on screen without overlap or truncation. USE ONLY when the feature shows mixed-language content simultaneously.
+  - `@Lang Mixed Script`: verify a field accepts and stores mixed English + regional script input. USE ONLY when the feature has a text input where users type.
+  - `@Lang Input Search`: verify regional script input triggers correct results. USE ONLY when the feature has a search or query input.
+
+  If fewer than 4 of the above scenarios are genuinely applicable to the feature — generate only those that apply. DO NOT generate @Lang cases just to fill a quota.
 
 RULE I — Search routing (enforced in all search-related test cases only — skip for non-search requirements like KYC, payments, profile):
   Category search (autosuggest OR freetext) → ALWAYS lands on Result Page.

@@ -40,8 +40,9 @@ MANDATORY OUTPUT RULES:
   3. Negative cases (invalid input, error states, blocked access)
   4. @Lang cases LAST — they are supplementary coverage, never the lead test case
   @Lang cases must NEVER appear as test case #1, #2, or #3. They follow after all functional cases are complete.
-- @Lang COVERAGE — for any frontend/UI requirement: ALL 4 @Lang cases MUST be present somewhere in your output: @Lang Regional Script, @Lang Bilingual, @Lang Mixed Script, @Lang Input Search. Missing even one is invalid. But they come AFTER functional cases.
-- @Lang cases test LANGUAGE RENDERING of the primary feature — they are not general language tests. Each @Lang step must verify the PRIMARY TEST SUBJECT's behaviour in that language context, not just "text is displayed".
+- @Lang COVERAGE — mandatory ONLY for consumer-facing UI with content rendering (search results, listings, PRP/PDP, movies, product/category pages). For admin tools, dashboards, leads, CRM, ops panels, sync flows, settings — @Lang is optional; generate only if the requirement explicitly mentions language or regional script. SKIP @Lang entirely for pure backend/API requirements.
+- When @Lang IS generated: each case must be DISTINCTLY different — no near-duplicates. Only generate the types that genuinely apply: Regional Script (content display), Bilingual (mixed-language screen), Mixed Script (text input field), Input Search (search query input). If only 1-2 apply, generate only those. Never generate @Lang cases to fill a quota.
+- @Lang cases test LANGUAGE RENDERING of the primary feature — each step must verify the PRIMARY TEST SUBJECT's behaviour in that language context, not just "text is displayed".
 - Browser mention: maximum ONCE, at step 1 only, and ONLY when layout/rendering is the specific thing being tested. Omit entirely for functional tests.
 - Step 1 for search/browse flows: use the actual platform name when known — web → "Open the website", touch → "Open the mobile site", android app → "Open the Android app", ios app → "Open the iOS app". Say "Open the platform URL" ONLY when platform is unknown. NEVER say "Open the B2B homepage".
 - Step 1 for authenticated flows: "Login with valid credentials and navigate to [specific section]".
