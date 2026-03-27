@@ -558,6 +558,21 @@
             <textarea id="requirement" name="requirement" style="display:none" aria-hidden="true"></textarea>
         </section>
 
+        <section class="section" style="padding-top:10px;padding-bottom:10px;">
+            <label class="label" style="margin-bottom:8px;">Output format</label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border:1.5px solid var(--accent);border-radius:8px;background:#edf5ff;font-size:13px;font-weight:600;user-select:none;" id="fmtLabel1">
+                    <input type="radio" name="output_format" id="fmtCasesOnly" value="cases_only" checked style="accent-color:var(--accent);">
+                    Only Cases
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--panel);font-size:13px;font-weight:600;user-select:none;" id="fmtLabel2">
+                    <input type="radio" name="output_format" id="fmtFull" value="full" style="accent-color:var(--accent);">
+                    Cases, Steps &amp; Expected
+                </label>
+            </div>
+            <input type="hidden" id="casesOnlyField" name="cases_only" value="true">
+        </section>
+
         <section class="section">
             <div class="toolbar">
                 <h2 style="margin: 0;">Platforms</h2>
@@ -640,13 +655,6 @@
                     <input id="updateComment" name="update_comment" type="text" placeholder="Optional context for update runs">
                 </div>
             </div>
-            <div style="margin-top:12px;">
-                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;">
-                    <input type="checkbox" id="casesOnlyToggle" style="width:16px;height:16px;cursor:pointer;">
-                    <span style="font-size:13px;font-weight:600;">Cases only <span style="font-weight:400;color:var(--muted);">— export case titles without steps</span></span>
-                </label>
-            </div>
-            <input type="hidden" id="casesOnlyField" name="cases_only" value="false">
             <input type="hidden" name="test_types" value="e2e">
             <input id="requesterNameField" type="hidden" name="requester_name" value="{{ requester_name or '' }}">
         </section>
@@ -761,11 +769,19 @@
     const requirement = document.getElementById("requirement");
     const platformError = document.getElementById("platformError");
     const requesterNameField = document.getElementById("requesterNameField");
-    const casesOnlyToggle = document.getElementById("casesOnlyToggle");
     const casesOnlyField = document.getElementById("casesOnlyField");
-    casesOnlyToggle.addEventListener("change", () => {
-        casesOnlyField.value = casesOnlyToggle.checked ? "true" : "false";
-    });
+    const fmtLabel1 = document.getElementById("fmtLabel1");
+    const fmtLabel2 = document.getElementById("fmtLabel2");
+    function updateFmtStyle() {
+        const isCasesOnly = document.getElementById("fmtCasesOnly").checked;
+        casesOnlyField.value = isCasesOnly ? "true" : "false";
+        fmtLabel1.style.borderColor = isCasesOnly ? "var(--accent)" : "var(--border)";
+        fmtLabel1.style.background = isCasesOnly ? "#edf5ff" : "var(--panel)";
+        fmtLabel2.style.borderColor = !isCasesOnly ? "var(--accent)" : "var(--border)";
+        fmtLabel2.style.background = !isCasesOnly ? "#edf5ff" : "var(--panel)";
+    }
+    document.getElementById("fmtCasesOnly").addEventListener("change", updateFmtStyle);
+    document.getElementById("fmtFull").addEventListener("change", updateFmtStyle);
     const nameGate = document.getElementById("nameGate");
     const nameGateForm = document.getElementById("nameGateForm");
     const requesterNameInput = document.getElementById("requesterName");
