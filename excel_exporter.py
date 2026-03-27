@@ -1,7 +1,19 @@
+import re
 from openpyxl import Workbook, load_workbook
 from datetime import datetime
 from templates.manual_template import ManualTemplate
 from templates.automation_template import AutomationTemplate
+
+# Strips trailing label suffixes added by the AI (e.g. "— positive", "— negative",
+# "— concurrency negative") from case titles in Cases Only mode.
+_LABEL_SUFFIX_RE = re.compile(
+    r"\s*[—–-]\s*([\w\s]*?\s*)?(positive|negative)([\s\w]*)?\s*$",
+    re.IGNORECASE,
+)
+
+
+def _clean_case_title(title: str) -> str:
+    return _LABEL_SUFFIX_RE.sub("", title).strip() if title else title
 
 
 def export_to_excel(tests, template_type="manual", output_path=None, cases_only=False):
@@ -16,7 +28,6 @@ def export_to_excel(tests, template_type="manual", output_path=None, cases_only=
             "Priority",
             "Category",
             "Case",
-            "Expected Result"
         ])
     else:
         ws.append([
@@ -44,12 +55,12 @@ def export_to_excel(tests, template_type="manual", output_path=None, cases_only=
                 continue
 
             if cases_only:
+                raw_title = tc.get("scenario") or tc.get("title") or "N/A"
                 ws.append([
                     tc.get("testcase_id"),
                     tc.get("priority", "Medium"),
                     category,
-                    tc.get("scenario") or tc.get("title") or "N/A",
-                    tc.get("expected_result", ""),
+                    _clean_case_title(raw_title),
                 ])
             else:
                 ws.append(template.map_testcase(category, tc))
