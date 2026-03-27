@@ -2,7 +2,7 @@ import os
 import base64
 from pathlib import Path
 from dotenv import load_dotenv
-from openai import OpenAI
+import anthropic
 
 load_dotenv()
 
@@ -88,13 +88,13 @@ Steps must be short and direct — active voice, under 20 words each, no filler 
 Return STRICT JSON only: {"positive_tests": [{"title": "", "steps": [], "examples": ""}], "negative_tests": [{"title": "", "steps": [], "examples": ""}]}"""
 
 
-def _get_client() -> OpenAI:
+def _get_client() -> anthropic.Anthropic:
     global _client
     if _client is None:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
-            raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
-        _client = OpenAI(api_key=api_key)
+            raise RuntimeError("ANTHROPIC_API_KEY environment variable is not set.")
+        _client = anthropic.Anthropic(api_key=api_key)
     return _client
 
 
@@ -115,8 +115,6 @@ def _encode_image_to_base64(image_path: str) -> tuple[str, str]:
     return data, media_type
 
 
-_REASONING_MODELS = {"o1", "o3", "o4-mini", "o1-mini", "o1-preview"}
-
 def ask_ai(
     prompt: str,
     strict_mode: bool = False,
@@ -124,53 +122,37 @@ def ask_ai(
     system_prompt: str = None
 ) -> str:
     """
-    Central AI invocation layer.
-    Supports:
-    - o3 / reasoning models (no temperature, uses reasoning_effort)
-    - JSON enforcement
-    - Custom system prompt (pass hard rules here for maximum compliance)
-    - Error resilience
+    Central AI invocation via Claude (Anthropic).
+    Uses prefill to enforce strict JSON output.
     """
+    model = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
-    model = os.getenv("OPENAI_MODEL", "gpt-4.1")
-    is_reasoning = model in _REASONING_MODELS
-
-    # Allow scaling output size via env; keep safe defaults.
-    max_tokens_env = os.getenv("AI_MAX_TOKENS", "12000")
     try:
-        max_tokens = int(max_tokens_env)
+        max_tokens = int(os.getenv("AI_MAX_TOKENS", "12000"))
     except ValueError:
         max_tokens = 12000
     max_tokens = max(1000, min(max_tokens, 100000))
 
-    default_system = (
-        "You are a senior QA architect with strong "
-        "focus on structured, deterministic output."
-    )
+    sys = system_prompt if system_prompt else TESTCASE_SYSTEM_PROMPT
+    temperature = 0.2 if strict_mode else 0.5
 
-    kwargs = {
-        "model": model,
-        "max_completion_tokens": max_tokens,
-        "response_format": {"type": "json_object"} if expect_json else None,
-        "messages": [
-            {
-                "role": "system",
-                "content": system_prompt if system_prompt else default_system
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    }
+    messages = [{"role": "user", "content": prompt}]
 
-    if not is_reasoning:
-        # Reasoning models don't accept temperature
-        kwargs["temperature"] = 0.3 if strict_mode else 0.6
+    # Prefill with `{` to force Claude to return valid JSON immediately.
+    if expect_json:
+        messages.append({"role": "assistant", "content": "{"})
 
     try:
-        response = _get_client().chat.completions.create(**kwargs)
-        return response.choices[0].message.content
+        response = _get_client().messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            system=sys,
+            messages=messages,
+            temperature=temperature,
+        )
+        text = response.content[0].text
+        # Restore the prefilled opening brace
+        return ("{" + text) if expect_json else text
 
     except Exception as e:
         print("AI SERVICE ERROR:", str(e))
@@ -179,61 +161,54 @@ def ask_ai(
 
 def ask_ai_with_image(image_path: str, prompt: str, expect_json: bool = True) -> str:
     """
-    Vision-capable AI call using GPT-4o.
-    Accepts a local image file path + a text prompt.
-    Returns the model response as a string.
+    Vision call using Claude — analyses UI screenshots/mockups to extract
+    test-relevant features and business rules.
     """
     suffix = Path(image_path).suffix.lower()
     if suffix not in ALLOWED_IMAGE_TYPES:
         raise ValueError(f"Unsupported image type: {suffix}. Allowed: {ALLOWED_IMAGE_TYPES}")
 
     b64_data, media_type = _encode_image_to_base64(image_path)
-    data_url = f"data:{media_type};base64,{b64_data}"
 
-    max_tokens_env = os.getenv("AI_MAX_TOKENS", "7000")
+    model = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
     try:
-        max_tokens = int(max_tokens_env)
+        max_tokens = int(os.getenv("AI_MAX_TOKENS", "7000"))
     except ValueError:
         max_tokens = 7000
     max_tokens = max(1000, min(max_tokens, 12000))
 
-    try:
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You are a senior QA architect with 12+ years of experience. "
-                    "You specialize in analysing UI screenshots, mockups, and design files "
-                    "to produce structured, production-level test cases."
-                )
-            },
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": data_url, "detail": "high"}
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": media_type,
+                        "data": b64_data,
                     },
-                    {
-                        "type": "text",
-                        "text": prompt
-                    }
-                ]
-            }
-        ]
-
-        kwargs = {
-            "model": "gpt-4o",
-            "max_tokens": max_tokens,
-            "messages": messages,
+                },
+                {"type": "text", "text": prompt},
+            ],
         }
-        # json_object response_format is not supported on vision calls in all regions;
-        # rely on prompt-level instruction + post-parse instead.
-        if expect_json:
-            kwargs["response_format"] = {"type": "json_object"}
+    ]
 
-        response = _get_client().chat.completions.create(**kwargs)
-        return response.choices[0].message.content
+    if expect_json:
+        messages.append({"role": "assistant", "content": "{"})
+
+    try:
+        response = _get_client().messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            system=(
+                "You are a senior QA architect specialising in analysing UI screenshots "
+                "and mockups to produce structured, production-level test cases."
+            ),
+            messages=messages,
+        )
+        text = response.content[0].text
+        return ("{" + text) if expect_json else text
 
     except Exception as e:
         print("AI VISION SERVICE ERROR:", str(e))
