@@ -4,10 +4,17 @@ from datetime import datetime
 from templates.manual_template import ManualTemplate
 from templates.automation_template import AutomationTemplate
 
-# Strips trailing label suffixes added by the AI (e.g. "— positive", "— negative",
-# "— concurrency negative") from case titles in Cases Only mode.
+# Strips trailing QA classification label suffixes added by the AI.
+# Catches patterns like: "— positive", "— boundary", "— functional", "— concurrency high",
+# "— edge case", "— happy path", "— error state", "— high", etc.
+# Does NOT strip meaningful technical context like "— Chrome on Windows".
+_QA_LABELS = (
+    r"positive|negative|boundary|functional|integration|smoke|regression|"
+    r"edge\s+case|happy\s+path|error\s+state|validation|high|medium|low|"
+    r"concurrency(\s+(high|medium|low|positive|negative|boundary))?"
+)
 _LABEL_SUFFIX_RE = re.compile(
-    r"\s*[—–-]\s*([\w\s]*?\s*)?(positive|negative)([\s\w]*)?\s*$",
+    rf"\s*[—–-]\s*({_QA_LABELS})\s*$",
     re.IGNORECASE,
 )
 
