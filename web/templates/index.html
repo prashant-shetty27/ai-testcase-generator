@@ -560,13 +560,13 @@
 
         <section class="section">
             <div class="toolbar">
-                <h2 style="margin: 0;">Platforms (Mandatory)</h2>
+                <h2 style="margin: 0;">Platforms</h2>
                 <div class="tools">
                     <button type="button" class="chip" id="selectAllPlatforms">Select All</button>
                     <button type="button" class="chip" id="clearPlatforms">Clear</button>
                 </div>
             </div>
-            <p class="meta">Only selected platforms are used. Illogical platform mixing is filtered; explicit handoff flows (for example Web -> App) are generated when requested.</p>
+            <p class="meta">Optional — if none selected, platform is auto-detected from your requirement. Illogical platform mixing is filtered; explicit handoff flows (for example Web → App) are generated when requested.</p>
             <div class="platform-grid">
                 <div class="platform-card">
                     <input type="checkbox" id="p_web" name="platforms" value="web">
@@ -625,7 +625,7 @@
                     </label>
                 </div>
             </div>
-            <p id="platformError" class="error hidden" style="color:#b07d00;background:#fffbe6;border:1px solid #ffe58f;padding:6px 10px;border-radius:6px;">No platform selected — platform-specific rules will not be applied.</p>
+            <p id="platformError" class="error hidden" style="color:#b07d00;background:#fffbe6;border:1px solid #ffe58f;padding:6px 10px;border-radius:6px;">No platform selected — platform will be auto-detected from your requirement text.</p>
         </section>
 
         <section class="section">
@@ -691,7 +691,7 @@
 
         <section class="section">
             <div class="toolbar">
-                <h2 style="margin: 0;">Platforms (Mandatory)</h2>
+                <h2 style="margin: 0;">Platforms</h2>
                 <div class="tools">
                     <button type="button" class="chip" id="imgSelectAll">Select All</button>
                     <button type="button" class="chip" id="imgClearAll">Clear</button>
@@ -723,7 +723,7 @@
                     <label for="ip_hybrid"><p class="platform-name">Hybrid App</p><p class="platform-note">WebView + native bridge.</p></label>
                 </div>
             </div>
-            <p id="imgPlatformError" class="error hidden" style="color:#b07d00;background:#fffbe6;border:1px solid #ffe58f;padding:6px 10px;border-radius:6px;">No platform selected — platform-specific rules will not be applied.</p>
+            <p id="imgPlatformError" class="error hidden" style="color:#b07d00;background:#fffbe6;border:1px solid #ffe58f;padding:6px 10px;border-radius:6px;">No platform selected — platform will be auto-detected from your requirement text.</p>
         </section>
 
         <section class="section">

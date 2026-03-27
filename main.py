@@ -30,6 +30,37 @@ from excel_exporter import (
 app = FastAPI(title="AI Testcase Generator", version="1.0")
 from motivational_quotes import get_daily_quote
 
+
+def _infer_platforms(requirement: str) -> list[str]:
+    """
+    Auto-detect the most likely platform(s) from requirement text.
+    Called when the user submits without selecting any platform.
+    Priority order: explicit keywords first, then contextual signals, fallback to web.
+    """
+    text = requirement.lower()
+
+    signals: list[tuple[str, list[str]]] = [
+        ("api",           ["api", "endpoint", "rest", "graphql", "webhook", "json response", "http request", "curl", "postman"]),
+        ("backend",       ["backend", "server", "database", "cron job", "migration", "data pipeline", "kafka", "celery", "worker"]),
+        ("internal_tool", ["admin panel", "admin dashboard", "ops tool", "internal tool", "cms", "back office"]),
+        ("android",       ["android", "play store", "apk"]),
+        ("ios",           ["ios", "iphone", "ipad", "app store", "swift", "testflight"]),
+        ("hybrid",        ["hybrid app", "webview", "react native", "flutter", "capacitor"]),
+        ("touch",         ["mobile web", "mobile browser", "touch", "responsive", "pwa"]),
+        ("web",           ["website", "web app", "browser", "desktop", "chrome", "safari", "firefox", "url", "webpage"]),
+    ]
+
+    matched = []
+    for platform, keywords in signals:
+        if any(kw in text for kw in keywords):
+            matched.append(platform)
+
+    # Collapse android + ios into both if both detected
+    if not matched:
+        matched = ["web"]  # safest default — most requirements are web-first
+
+    return matched
+
 SESSION_SECRET = os.getenv("SESSION_SECRET", "change-me-in-production")
 ENABLE_SLACK_AUTH = os.getenv("ENABLE_SLACK_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"}
 _default_cookie_secure = "true" if os.getenv("ENABLE_SLACK_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"} else "false"
@@ -561,9 +592,7 @@ async def generate_form(
         if not requirement:
             raise HTTPException(status_code=400, detail="Requirement cannot be empty")
 
-        selected_platforms = [p for p in platforms if p]
-        if not selected_platforms:
-            raise HTTPException(status_code=400, detail="At least one platform must be selected.")
+        selected_platforms = [p for p in platforms if p] or _infer_platforms(requirement)
 
         # Build request object manually
         request_obj = TestGenerationRequest(
