@@ -26,65 +26,43 @@ def build_complete_prompt(
     # ----------------------------------------
 
     if not has_memory:
-        # First-time requirement
         dynamic_generation_rules = """
-Generate:
-- Minimum 8 positive cases
-- Minimum 6 negative cases
-- Minimum 3 High priority cases
-- Minimum 2 boundary cases
-- Minimum 2 integration scenarios
+Generate as many cases as the requirement warrants — no minimum, no maximum.
+Quality over quantity: 6 precise, requirement-specific cases beat 15 generic ones.
+Every case must be directly derived from a specific business rule, user journey, data condition, or error flow stated in the requirement.
 """
     else:
         confidence_buckets = [
             (
                 confidence < 0.4,
                 """
-Classification confidence is LOW.
-Expand coverage broadly across:
-- UI
-- API
-- Validation
-- Security
-- Performance
-Add exploratory edge cases.
-Increase diversity over depth.
+Classification confidence is LOW — requirement is ambiguous.
+Cover the distinct flows you can identify: core user journeys, explicit error conditions, boundary values stated in the requirement.
+Do NOT pad with generic web hygiene. Only generate cases you can ground in the requirement text.
 """
             ),
             (
                 0.4 <= confidence < 0.7,
                 """
 Classification confidence is MEDIUM.
-Generate balanced coverage:
-- Expand boundary scenarios
-- Add integration flows
-- Increase negative path depth
-Avoid duplication of prior scenarios.
+Expand on boundary conditions and negative paths that are explicitly implied by the requirement.
+Avoid duplicating prior scenarios. Every new case must test a distinct condition not previously covered.
 """
             ),
             (
                 0.7 <= confidence < 0.9,
                 """
 Classification confidence is HIGH.
-Focus on:
-- Deep edge cases
-- Risk-heavy areas
-- Cross-layer interactions
-- Complex negative scenarios
-Add advanced validations.
+Go deeper on risk-heavy areas: concurrency, state transitions, data consistency, cross-system side effects.
+Each case must test a specific interaction the requirement defines — not generic patterns.
 """
             ),
             (
                 confidence >= 0.9,
                 """
 Classification confidence is VERY HIGH.
-Generate precision-focused scenarios:
-- Rare edge cases
-- Concurrency risks
-- Data consistency anomalies
-- Failure injection cases
-- Advanced stress conditions
-Ensure no repetition of previous patterns.
+Generate precision-targeted cases: rare but plausible edge conditions, concurrent actor conflicts, data rollback failures, silent corruption scenarios.
+No repetition of previous patterns. Every case must expose a distinct risk.
 """
             ),
         ]
@@ -153,13 +131,17 @@ Confidence: {confidence}
 PHASE 1 — ANALYSE BEFORE YOU GENERATE
 ═══════════════════════════════════════════
 Before writing any test case, read the requirement fully and identify:
-A. Complete end-to-end business flows involved.
-B. Revenue-impacting paths (payments, contracts, leads, upgrades).
-C. Integration touchpoints (API calls, third-party systems, data sync).
-D. Boundary values (min/max, thresholds, limits explicitly stated).
-E. Negative paths (invalid input, blocked access, error states).
-F. Data consistency risks (state changes, concurrent actions, rollback).
+A. Complete end-to-end business flows stated in the requirement — only what is explicitly described.
+B. Revenue-impacting paths (payments, contracts, leads, credits, upgrades) — these get HIGH priority.
+C. Integration touchpoints explicitly mentioned (API calls, third-party systems, data sync between modules).
+D. Boundary values explicitly stated in the requirement (min/max counts, credit limits, unlock limits, time windows).
+E. Negative paths implied by the requirement's own rules (what happens when a condition fails, a limit is hit, a user lacks permission).
+F. Data consistency risks specific to this feature (concurrent actions on the same record, state transitions, rollback on failure).
 G. PRIMARY TEST SUBJECT vs REFERENCE TERMS — this is critical:
+
+RELEVANCE GATE — before writing each case:
+  Ask: "Is this testing a specific rule, flow, or condition that this requirement defines?"
+  If YES → write it. If NO (it's a generic web/app pattern not mentioned in the requirement) → skip it.
    - PRIMARY TEST SUBJECT: the feature, behaviour, or element the requirement is actually asking you to test.
    - REFERENCE TERM: a word or element used to describe position, condition, or context — NOT the thing being tested.
    - A requirement can have MULTIPLE reference terms simultaneously — identify ALL of them before writing steps.

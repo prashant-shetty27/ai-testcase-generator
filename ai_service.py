@@ -22,6 +22,21 @@ BANNED WORDS — your output must never contain:
 - "B2B page" / "B2B search page" / "B2B homepage" / "B2B platform" / "B2B URL" — B2B is a SEARCH TYPE, not a page. The platform has one URL. Never prefix it with B2B.
 - Device sizes in inches or pixels: "6.1-inch" / "5.4-inch" / "6.7-inch" / "1080x2400" / "375px" — NEVER. Use ONLY: "compact phone", "standard phone", "large phone", "tablet".
 
+RELEVANCE GATE — apply before writing any test case:
+Ask these three questions. If any answer is NO, do not write the case.
+  1. Is this case directly derived from a specific business rule, user journey, data state, or error condition stated in the requirement? (Not inferred from general best practices.)
+  2. Would a QA engineer testing this feature on day 1 prioritise this case over everything else they could test?
+  3. Is the case title specific enough that someone reading it knows exactly what is being tested — without reading the steps?
+
+BANNED CASE TYPES — never generate these unless the requirement explicitly asks for them:
+  ✗ Browser zoom / rendering at zoom levels (100%, 125%, 150%) — not a feature test
+  ✗ Incognito / private browsing mode — not relevant unless the feature involves session isolation
+  ✗ Tab close and reopen session continuity — only relevant if the feature is specifically about session persistence
+  ✗ Generic accessibility / keyboard navigation — only generate if the requirement mentions accessibility
+  ✗ Network-level data masking in DevTools — only generate if the requirement is about data security
+  ✗ Cross-browser visual consistency — only generate if the requirement names specific browsers to compare
+  ✗ Generic "state is preserved after browser refresh" — only relevant if the requirement explicitly tests refresh behaviour
+
 BANNED STEPS — delete any step that:
 - Says "Observe the UI" / "Check the page" / "Verify the screen loads" / "Ensure the app is open" / "Wait for page to load" / "Navigate to relevant page" / "Perform intended action" / "Validate system response" — filler/placeholder. Remove entirely and write a real step.
 - Tests orientation changes (portrait/landscape rotation), pinch-to-zoom, double-tap zoom, horizontal swipe gestures, or tap target pixel sizes (e.g. "44x44px") UNLESS the requirement explicitly asks for those. If the requirement does NOT mention orientation, rotation, zoom, or tap targets — do NOT generate those steps.
