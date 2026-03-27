@@ -4,21 +4,30 @@ from templates.manual_template import ManualTemplate
 from templates.automation_template import AutomationTemplate
 
 
-def export_to_excel(tests, template_type="manual", output_path=None):
+def export_to_excel(tests, template_type="manual", output_path=None, cases_only=False):
 
     wb = Workbook()
     ws = wb.active
     ws.title = "Test Cases"
 
-    ws.append([
-        "Testcase ID",
-        "Priority",
-        "Category",
-        "Scenario",
-        "Steps",
-        "Example Data",
-        "Expected Result"
-    ])
+    if cases_only:
+        ws.append([
+            "Testcase ID",
+            "Priority",
+            "Category",
+            "Case",
+            "Expected Result"
+        ])
+    else:
+        ws.append([
+            "Testcase ID",
+            "Priority",
+            "Category",
+            "Scenario",
+            "Steps",
+            "Example Data",
+            "Expected Result"
+        ])
 
     template = AutomationTemplate if template_type == "automation" else ManualTemplate
 
@@ -34,7 +43,16 @@ def export_to_excel(tests, template_type="manual", output_path=None):
             if not isinstance(tc, dict):
                 continue
 
-            ws.append(template.map_testcase(category, tc))
+            if cases_only:
+                ws.append([
+                    tc.get("testcase_id"),
+                    tc.get("priority", "Medium"),
+                    category,
+                    tc.get("scenario") or tc.get("title") or "N/A",
+                    tc.get("expected_result", ""),
+                ])
+            else:
+                ws.append(template.map_testcase(category, tc))
 
     if output_path:
         file_path = output_path

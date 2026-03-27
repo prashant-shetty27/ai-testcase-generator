@@ -640,6 +640,13 @@
                     <input id="updateComment" name="update_comment" type="text" placeholder="Optional context for update runs">
                 </div>
             </div>
+            <div style="margin-top:12px;">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;">
+                    <input type="checkbox" id="casesOnlyToggle" style="width:16px;height:16px;cursor:pointer;">
+                    <span style="font-size:13px;font-weight:600;">Cases only <span style="font-weight:400;color:var(--muted);">— export case titles without steps</span></span>
+                </label>
+            </div>
+            <input type="hidden" id="casesOnlyField" name="cases_only" value="false">
             <input type="hidden" name="test_types" value="e2e">
             <input id="requesterNameField" type="hidden" name="requester_name" value="{{ requester_name or '' }}">
         </section>
@@ -754,6 +761,11 @@
     const requirement = document.getElementById("requirement");
     const platformError = document.getElementById("platformError");
     const requesterNameField = document.getElementById("requesterNameField");
+    const casesOnlyToggle = document.getElementById("casesOnlyToggle");
+    const casesOnlyField = document.getElementById("casesOnlyField");
+    casesOnlyToggle.addEventListener("change", () => {
+        casesOnlyField.value = casesOnlyToggle.checked ? "true" : "false";
+    });
     const nameGate = document.getElementById("nameGate");
     const nameGateForm = document.getElementById("nameGateForm");
     const requesterNameInput = document.getElementById("requesterName");

@@ -565,6 +565,7 @@ async def generate_form(
     test_types: list[str] = Form([]),
     update_comment: str = Form(None),
     output_filename: str = Form(None),
+    cases_only: str = Form("false"),
 ):
     from models.test_request import TestGenerationRequest
     _require_authenticated_user(request)
@@ -619,7 +620,8 @@ async def generate_form(
         export_to_excel(
             tests,
             template_type="manual",
-            output_path=file_path
+            output_path=file_path,
+            cases_only=(cases_only == "true"),
         )
 
         log_generation_run(
