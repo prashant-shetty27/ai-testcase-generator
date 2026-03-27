@@ -34,12 +34,16 @@ BANNED STEPS — delete any step that:
 - Appends a cross-cutting concern (logging, analytics, compliance monitoring, session recording, audit trail) as a final step to a functional test case — these are SEPARATE test cases, not tail steps. If logging must be tested, write exactly ONE dedicated logging test case. Never repeat it as a step in other test cases.
 
 MANDATORY OUTPUT RULES:
-- TEST CASE ORDER — always generate in this sequence:
-  1. Primary positive functional cases first (the core happy path scenarios)
-  2. Boundary and edge cases
-  3. Negative cases (invalid input, error states, blocked access)
-  4. @Lang cases LAST — they are supplementary coverage, never the lead test case
-  @Lang cases must NEVER appear as test case #1, #2, or #3. They follow after all functional cases are complete.
+- TEST CASE ORDER — always generate in this strict sequence (never mix tiers):
+  1. HIGH priority cases — core business flows, revenue paths, credit/payment actions, concurrency/data integrity risks
+  2. MEDIUM priority cases — functional display, boundary conditions, standard negatives, integration flows
+  3. LOW priority cases — accessibility, browser rendering/zoom, incognito, network-level masking, non-transactional session edge cases
+  4. @Lang cases ABSOLUTELY LAST — after all Low priority cases
+  NEVER place a Low priority case before a Medium or High priority case. Accessibility and browser-rendering cases must never appear in the first half of the output.
+- PRIORITY ASSIGNMENT — do NOT default everything to Medium:
+  HIGH: core unlock/payment/credit flows, revenue-impacting paths, concurrency risk, critical auth/access control
+  MEDIUM: functional display/navigation, filter/sort, boundary conditions, standard error states, integrations
+  LOW: accessibility (keyboard nav, screen reader), browser rendering at zoom levels, incognito mode, network masking checks, tab close/reopen continuity (non-transactional)
 - @Lang COVERAGE — mandatory ONLY for consumer-facing UI with content rendering (search results, listings, PRP/PDP, movies, product/category pages). For admin tools, dashboards, leads, CRM, ops panels, sync flows, settings — @Lang is optional; generate only if the requirement explicitly mentions language or regional script. SKIP @Lang entirely for pure backend/API requirements.
 - When @Lang IS generated: each case must be DISTINCTLY different — no near-duplicates. Only generate the types that genuinely apply: Regional Script (content display), Bilingual (mixed-language screen), Mixed Script (text input field), Input Search (search query input). If only 1-2 apply, generate only those. Never generate @Lang cases to fill a quota.
 - @Lang cases test LANGUAGE RENDERING of the primary feature — each step must verify the PRIMARY TEST SUBJECT's behaviour in that language context, not just "text is displayed".

@@ -281,6 +281,45 @@ DOMAIN TERMS — never invent or assume examples unless the requirement explicit
   "Vehicle type", "category", "product type", "service type" are context-specific — do not assume values like "Car, Truck, Bike" unless those exact values appear in the requirement.
 
 ═══════════════════════════════════════════
+RULE K — PRIORITY ASSIGNMENT (apply to every test case)
+═══════════════════════════════════════════
+Assign priority based on business impact — do NOT default every case to Medium.
+
+  HIGH — assign when:
+    • Core business flow: unlock/purchase/payment/credit deduction, lead access, wallet transactions
+    • Revenue-impacting path: any action that charges the user, deducts credits, or controls access to paid features
+    • Data integrity or concurrency risk: concurrent actions, race conditions, duplicate writes, rollback failures
+    • Critical auth/security: session expiry mid-transaction, unauthorised access to locked data
+    • Hard business rule enforcement: daily limit reached, eligibility checks, access control
+
+  MEDIUM — assign when:
+    • Standard functional display: list rendering, card fields, filter/sort behaviour, navigation
+    • Boundary conditions on functional flows: limit thresholds, empty states, count boundaries
+    • Standard negative cases: error message display, blocked actions with clear feedback
+    • Integration flows: cross-module state updates, state propagation between screens
+
+  LOW — assign when (these are supplementary, always generated LAST):
+    • Accessibility: keyboard-only navigation, screen reader labels, tab order, contrast
+    • Browser rendering / visual consistency: zoom levels, layout at different viewpoints, cross-browser pixel checks
+    • Incognito / private browsing mode
+    • Network-level security checks: verifying data is masked in DevTools/network inspector (not the feature itself)
+    • Session continuity across non-transactional events: tab close/reopen with no pending transaction
+    • Performance or SLA assertions embedded in functional flows
+
+═══════════════════════════════════════════
+RULE L — TEST CASE ORDERING (enforce across all generated cases)
+═══════════════════════════════════════════
+Generated test cases MUST be ordered in this sequence — never mix tiers:
+
+  1. HIGH priority cases first — core flows, revenue paths, concurrency/data risks
+  2. MEDIUM priority cases — functional display, boundary, standard negatives, integrations
+  3. LOW priority cases last — accessibility, rendering, incognito, network masking, zoom
+  4. @Lang cases absolutely last (after all Low priority cases)
+
+  NEVER place a Low priority case before any Medium or High priority case.
+  NEVER place accessibility or browser-rendering cases in the first half of the output.
+
+═══════════════════════════════════════════
 PHASE 4 — STEP WRITING RULES
 ═══════════════════════════════════════════
 Test case TITLE — must be scenario-specific, never generic:
