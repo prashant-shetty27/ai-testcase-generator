@@ -96,12 +96,12 @@ Return STRICT JSON only: {"positive_tests": [{"title": "", "steps": [], "example
 def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
-            raise RuntimeError("GEMINI_API_KEY environment variable is not set.")
+            raise RuntimeError("GROQ_API_KEY environment variable is not set.")
         _client = OpenAI(
             api_key=api_key,
-            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            base_url="https://api.groq.com/openai/v1",
         )
     return _client
 
@@ -136,7 +136,7 @@ def ask_ai(
     - Error resilience
     """
 
-    model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+    model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 
     # Allow scaling output size via env; keep safe defaults.
     max_tokens_env = os.getenv("AI_MAX_TOKENS", "12000")
@@ -226,7 +226,7 @@ def ask_ai_with_image(image_path: str, prompt: str, expect_json: bool = True) ->
         ]
 
         kwargs = {
-            "model": os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+            "model": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
             "max_tokens": max_tokens,
             "messages": messages,
         }
