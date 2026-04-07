@@ -136,15 +136,15 @@ def ask_ai(
     - Error resilience
     """
 
-    model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
     # Allow scaling output size via env; keep safe defaults.
-    max_tokens_env = os.getenv("AI_MAX_TOKENS", "12000")
+    max_tokens_env = os.getenv("AI_MAX_TOKENS", "7000")
     try:
         max_tokens = int(max_tokens_env)
     except ValueError:
-        max_tokens = 12000
-    max_tokens = max(1000, min(max_tokens, 100000))
+        max_tokens = 7000
+    max_tokens = max(1000, min(max_tokens, 7000))
 
     default_system = (
         "You are a senior QA architect with strong "
@@ -226,7 +226,7 @@ def ask_ai_with_image(image_path: str, prompt: str, expect_json: bool = True) ->
         ]
 
         kwargs = {
-            "model": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+            "model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
             "max_tokens": max_tokens,
             "messages": messages,
         }
