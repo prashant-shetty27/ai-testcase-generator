@@ -96,10 +96,13 @@ Return STRICT JSON only: {"positive_tests": [{"title": "", "steps": [], "example
 def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
-            raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
-        _client = OpenAI(api_key=api_key)
+            raise RuntimeError("GEMINI_API_KEY environment variable is not set.")
+        _client = OpenAI(
+            api_key=api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
     return _client
 
 
@@ -120,8 +123,6 @@ def _encode_image_to_base64(image_path: str) -> tuple[str, str]:
     return data, media_type
 
 
-_REASONING_MODELS = {"o1", "o3", "o4-mini", "o1-mini", "o1-preview"}
-
 def ask_ai(
     prompt: str,
     strict_mode: bool = False,
@@ -130,15 +131,12 @@ def ask_ai(
 ) -> str:
     """
     Central AI invocation layer.
-    Supports:
-    - o3 / reasoning models (no temperature, uses reasoning_effort)
     - JSON enforcement
     - Custom system prompt (pass hard rules here for maximum compliance)
     - Error resilience
     """
 
-    model = os.getenv("OPENAI_MODEL", "gpt-4.1")
-    is_reasoning = model in _REASONING_MODELS
+    model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
     # Allow scaling output size via env; keep safe defaults.
     max_tokens_env = os.getenv("AI_MAX_TOKENS", "12000")
@@ -171,9 +169,7 @@ def ask_ai(
     if expect_json:
         kwargs["response_format"] = {"type": "json_object"}
 
-    if not is_reasoning:
-        # Reasoning models don't accept temperature
-        kwargs["temperature"] = 0.3 if strict_mode else 0.6
+    kwargs["temperature"] = 0.3 if strict_mode else 0.6
 
     try:
         response = _get_client().chat.completions.create(**kwargs)
@@ -219,7 +215,7 @@ def ask_ai_with_image(image_path: str, prompt: str, expect_json: bool = True) ->
                 "content": [
                     {
                         "type": "image_url",
-                        "image_url": {"url": data_url, "detail": "high"}
+                        "image_url": {"url": data_url}
                     },
                     {
                         "type": "text",
@@ -230,12 +226,10 @@ def ask_ai_with_image(image_path: str, prompt: str, expect_json: bool = True) ->
         ]
 
         kwargs = {
-            "model": "gpt-4o",
+            "model": os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
             "max_tokens": max_tokens,
             "messages": messages,
         }
-        # json_object response_format is not supported on vision calls in all regions;
-        # rely on prompt-level instruction + post-parse instead.
         if expect_json:
             kwargs["response_format"] = {"type": "json_object"}
 
