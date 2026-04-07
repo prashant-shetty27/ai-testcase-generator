@@ -344,7 +344,7 @@ def generate(request: TestGenerationRequest, http_request: Request):
             error=str(exc),
             duration_ms=int((perf_counter() - started_at) * 1000),
         )
-        raise
+        raise HTTPException(status_code=500, detail=str(exc))
 
 
 # -------------------------
@@ -658,7 +658,7 @@ async def generate_form(
             error=str(exc),
             duration_ms=int((perf_counter() - started_at) * 1000),
         )
-        raise
+        raise HTTPException(status_code=500, detail=str(exc))
     
 @app.post("/generate-simple")
 async def generate_simple(request: Request, requirement: str = Form(...)):
@@ -730,7 +730,7 @@ async def generate_simple(request: Request, requirement: str = Form(...)):
             error=str(exc),
             duration_ms=int((perf_counter() - started_at) * 1000),
         )
-        raise
+        raise HTTPException(status_code=500, detail=str(exc))
 
 
 # -------------------------

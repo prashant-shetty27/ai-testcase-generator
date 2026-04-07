@@ -1,4 +1,9 @@
 import os
+import certifi
+# Must be set before httpx/openai are imported so SSL context picks it up
+os.environ.setdefault("SSL_CERT_FILE", certifi.where())
+os.environ.setdefault("REQUESTS_CA_BUNDLE", certifi.where())
+
 import base64
 from pathlib import Path
 from dotenv import load_dotenv
@@ -151,7 +156,6 @@ def ask_ai(
     kwargs = {
         "model": model,
         "max_completion_tokens": max_tokens,
-        "response_format": {"type": "json_object"} if expect_json else None,
         "messages": [
             {
                 "role": "system",
@@ -164,6 +168,9 @@ def ask_ai(
         ]
     }
 
+    if expect_json:
+        kwargs["response_format"] = {"type": "json_object"}
+
     if not is_reasoning:
         # Reasoning models don't accept temperature
         kwargs["temperature"] = 0.3 if strict_mode else 0.6
@@ -174,7 +181,7 @@ def ask_ai(
 
     except Exception as e:
         print("AI SERVICE ERROR:", str(e))
-        raise RuntimeError("AI generation failed.")
+        raise RuntimeError(f"AI generation failed: {e}") from e
 
 
 def ask_ai_with_image(image_path: str, prompt: str, expect_json: bool = True) -> str:
