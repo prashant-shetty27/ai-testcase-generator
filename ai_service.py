@@ -14,6 +14,8 @@ load_dotenv()
 _client = None
 
 ALLOWED_IMAGE_TYPES = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
+DEFAULT_OPENAI_VISION_MODEL = "gpt-4o"
 
 # System prompt used for ALL test case generation calls.
 # Placed in the system message for maximum model compliance.
@@ -96,14 +98,19 @@ Return STRICT JSON only: {"positive_tests": [{"title": "", "steps": [], "example
 def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        api_key = os.getenv("GROQ_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise RuntimeError("GROQ_API_KEY environment variable is not set.")
-        _client = OpenAI(
-            api_key=api_key,
-            base_url="https://api.groq.com/openai/v1",
-        )
+            raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
+        _client = OpenAI(api_key=api_key)
     return _client
+
+
+def _get_text_model() -> str:
+    return os.getenv("OPENAI_MODEL", DEFAULT_OPENAI_MODEL)
+
+
+def _get_vision_model() -> str:
+    return os.getenv("OPENAI_VISION_MODEL", os.getenv("OPENAI_MODEL", DEFAULT_OPENAI_VISION_MODEL))
 
 
 def _encode_image_to_base64(image_path: str) -> tuple[str, str]:
@@ -136,7 +143,7 @@ def ask_ai(
     - Error resilience
     """
 
-    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+    model = _get_text_model()
 
     # Allow scaling output size via env; keep safe defaults.
     max_tokens_env = os.getenv("AI_MAX_TOKENS", "7000")
@@ -226,7 +233,7 @@ def ask_ai_with_image(image_path: str, prompt: str, expect_json: bool = True) ->
         ]
 
         kwargs = {
-            "model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
+            "model": _get_vision_model(),
             "max_tokens": max_tokens,
             "messages": messages,
         }
